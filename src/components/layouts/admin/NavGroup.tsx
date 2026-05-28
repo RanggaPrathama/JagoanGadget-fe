@@ -37,9 +37,11 @@ export function NavGroup({ title, items }: NavGroupProps) {
   const { state, isMobile } = useSidebar()
   const href = useLocation({ select: (location) => location.href })
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>{title}</SidebarGroupLabel>
-      <SidebarMenu>
+    <SidebarGroup className='gap-2 px-1 py-0'>
+      <SidebarGroupLabel className='px-3 text-[0.7rem] font-medium tracking-[0.18em] text-sidebar-foreground/55 uppercase'>
+        {title}
+      </SidebarGroupLabel>
+      <SidebarMenu className='gap-1.5'>
         {items.map((item) => {
           const key = `${item.title}-${item.url}`
 
@@ -59,7 +61,11 @@ export function NavGroup({ title, items }: NavGroupProps) {
 }
 
 function NavBadge({ children }: { children: ReactNode }) {
-  return <Badge className='rounded-full px-1 py-0 text-xs'>{children}</Badge>
+  return (
+    <Badge className='rounded-full border-sidebar-border/70 bg-sidebar-accent/80 px-1.5 py-0 text-[10px] text-sidebar-foreground shadow-none'>
+      {children}
+    </Badge>
+  )
 }
 
 function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
@@ -70,6 +76,7 @@ function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
         asChild
         isActive={checkIsActive(href, item)}
         tooltip={item.title}
+        className='h-11 rounded-2xl px-3 text-[0.95rem] text-sidebar-foreground/78 transition-all duration-200 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-foreground data-[active=true]:shadow-[inset_0_1px_0_hsl(var(--sidebar-accent-foreground)/0.06)]'
       >
         <Link to={item.url} onClick={() => setOpenMobile(false)}>
           {item.icon && <item.icon />}
@@ -97,7 +104,10 @@ function SidebarMenuCollapsible({
     >
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip={item.title}>
+          <SidebarMenuButton
+            tooltip={item.title}
+            className='h-11 rounded-2xl px-3 text-[0.95rem] text-sidebar-foreground/78 transition-all duration-200 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-foreground data-[active=true]:shadow-[inset_0_1px_0_hsl(var(--sidebar-accent-foreground)/0.06)]'
+          >
             {item.icon && <item.icon />}
             <span>{item.title}</span>
             {item.badge && <NavBadge>{item.badge}</NavBadge>}
@@ -105,12 +115,13 @@ function SidebarMenuCollapsible({
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent className='CollapsibleContent'>
-          <SidebarMenuSub>
+          <SidebarMenuSub className='ms-4 gap-1 border-sidebar-border/50'>
             {item.items.map((subItem) => (
               <SidebarMenuSubItem key={subItem.title}>
                 <SidebarMenuSubButton
                   asChild
                   isActive={checkIsActive(href, subItem)}
+                  className='rounded-xl text-sidebar-foreground/68 transition-colors hover:bg-sidebar-accent/55 hover:text-sidebar-foreground data-[active=true]:bg-sidebar-accent/80 data-[active=true]:text-sidebar-foreground'
                 >
                   <Link to={subItem.url} onClick={() => setOpenMobile(false)}>
                     {subItem.icon && <subItem.icon />}
@@ -141,6 +152,7 @@ function SidebarMenuCollapsedDropdown({
           <SidebarMenuButton
             tooltip={item.title}
             isActive={checkIsActive(href, item)}
+            className='h-11 rounded-2xl px-3 text-[0.95rem] text-sidebar-foreground/78 transition-all duration-200 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-foreground'
           >
             {item.icon && <item.icon />}
             <span>{item.title}</span>

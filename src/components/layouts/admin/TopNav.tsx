@@ -1,70 +1,63 @@
 import { Link } from '@tanstack/react-router'
-import { Menu } from 'lucide-react'
+import { Fragment } from 'react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 
-type TopNavProps = React.HTMLAttributes<HTMLElement> & {
-  links: {
-    title: string
-    href: string
-    isActive: boolean
-    disabled?: boolean
-  }[]
+export type BreadcrumbLinkItem = {
+  title: string
+  href?: string
+  disabled?: boolean
 }
 
-export function TopNav({ className, links, ...props }: TopNavProps) {
-  return (
-    <>
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            size='icon'
-            variant='outline'
-            className={cn('md:size-7 lg:hidden', className)}
-          >
-            <Menu />
-            <span className='sr-only'>Toggle navigation menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent side='bottom' align='start'>
-          {links.map(({ title, href, isActive, disabled }) => (
-            <DropdownMenuItem key={`${title}-${href}`} asChild>
-              <Link
-                to={href}
-                className={!isActive ? 'text-muted-foreground' : ''}
-                disabled={disabled}
-              >
-                {title}
-              </Link>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+type TopNavProps = React.HTMLAttributes<HTMLElement> & {
+  items: BreadcrumbLinkItem[]
+}
 
-      <nav
-        className={cn(
-          'hidden items-center space-x-4 lg:flex lg:space-x-4 xl:space-x-6',
-          className
-        )}
-        {...props}
-      >
-        {links.map(({ title, href, isActive, disabled }) => (
-          <Link
-            key={`${title}-${href}`}
-            to={href}
-            disabled={disabled}
-            className={`text-sm font-medium transition-colors hover:text-primary ${isActive ? '' : 'text-muted-foreground'}`}
-          >
-            {title}
-          </Link>
-        ))}
-      </nav>
-    </>
+export function TopNav({ className, items, ...props }: TopNavProps) {
+  if (!items.length) {
+    return null
+  }
+
+  return (
+    <Breadcrumb className={cn('min-w-0', className)} {...props}>
+      <BreadcrumbList className='min-w-0 flex-nowrap gap-2 text-xs sm:text-sm'>
+        {items.map((item, index) => {
+          const isLast = index === items.length - 1
+
+          return (
+            <Fragment key={`${item.title}-${item.href ?? index}`}>
+              <BreadcrumbItem
+                className={cn(
+                  'min-w-0',
+                  index < items.length - 2 && 'hidden sm:inline-flex'
+                )}
+              >
+                {isLast || !item.href || item.disabled ? (
+                  <BreadcrumbPage className='truncate text-sm font-medium'>
+                    {item.title}
+                  </BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink asChild className='truncate text-muted-foreground'>
+                    <Link to={item.href}>{item.title}</Link>
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+              {!isLast ? (
+                <BreadcrumbSeparator
+                  className={cn(index < items.length - 2 && 'hidden sm:block')}
+                />
+              ) : null}
+            </Fragment>
+          )
+        })}
+      </BreadcrumbList>
+    </Breadcrumb>
   )
 }

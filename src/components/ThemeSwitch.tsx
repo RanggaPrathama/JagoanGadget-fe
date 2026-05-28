@@ -19,7 +19,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export function ThemeSwitch() {
+type ThemeSwitchProps = {
+  compact?: boolean
+}
+
+export function ThemeSwitch({ compact = false }: ThemeSwitchProps) {
   const { resolvedTheme, setTheme, setThemePreset, theme, themePreset } =
     useTheme()
 
@@ -39,13 +43,17 @@ export function ThemeSwitch() {
         <Button
           variant='outline'
           size='sm'
-          className='scale-95 gap-2 rounded-full px-3'
+          className={compact ? 'size-9 rounded-full p-0' : 'scale-95 gap-2 rounded-full px-3'}
         >
           <Palette className='size-4 text-primary' />
-          <span className='hidden lg:inline'>{THEME_PRESET_LABELS[themePreset]}</span>
-          <span className='hidden text-[10px] uppercase text-muted-foreground sm:inline'>
-            {theme === 'system' ? 'sys' : theme}
-          </span>
+          {!compact ? (
+            <>
+              <span className='hidden lg:inline'>{THEME_PRESET_LABELS[themePreset]}</span>
+              <span className='hidden text-[10px] uppercase text-muted-foreground sm:inline'>
+                {theme === 'system' ? 'sys' : theme}
+              </span>
+            </>
+          ) : null}
           <span className='sr-only'>Select theme preset and color mode</span>
         </Button>
       </DropdownMenuTrigger>

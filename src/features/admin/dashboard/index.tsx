@@ -8,30 +8,20 @@ import {
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 // import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/components/layouts/admin/Header'
-import { Main } from '@/components/layouts/admin/Main'
-import { TopNav } from '@/components/layouts/admin/TopNav'
-import { ProfileDropdown } from '@/components/ProfileDropdown'
-import { Search } from '@/components/Search'
-import { ThemeSwitch } from '@/components/ThemeSwitch'
+import { AdminPageShell } from '@/components/layouts/admin/AdminPageShell'
 import { Analytics } from './components/Analytics'
 import { Overview } from './components/Overview'
 import { RecentSales } from './components/RecentSales'
 
 export function Dashboard() {
   return (
-    <>
-      {/* ===== Top Heading ===== */}
-      <Header>
-        <TopNav links={topNav} className='me-auto' />
-        <Search />
-        <ThemeSwitch />
-        {/* <ConfigDrawer /> */}
-        <ProfileDropdown />
-      </Header>
-
-      {/* ===== Main ===== */}
-      <Main>
+    <AdminPageShell
+      breadcrumbs={[
+        { title: 'Admin', href: '/admin/' },
+        { title: 'Dashboard' },
+      ]}
+      notificationCount={3}
+    >
         <div className='mb-2 flex items-center justify-between space-y-2'>
           <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
           <div className='flex items-center space-x-2'>
@@ -184,34 +174,6 @@ export function Dashboard() {
             <Analytics />
           </TabsContent>
         </Tabs>
-      </Main>
-    </>
+    </AdminPageShell>
   )
 }
-
-const topNav = [
-  {
-    title: 'Overview',
-    href: 'dashboard/overview',
-    isActive: true,
-    disabled: false,
-  },
-  {
-    title: 'Customers',
-    href: 'dashboard/customers',
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: 'Products',
-    href: 'dashboard/products',
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: 'Settings',
-    href: 'dashboard/settings',
-    isActive: false,
-    disabled: true,
-  },
-]

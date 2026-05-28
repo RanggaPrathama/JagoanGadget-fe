@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminCategoryIndexRouteImport } from './routes/admin/category/index'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
@@ -22,25 +23,33 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCategoryIndexRoute = AdminCategoryIndexRouteImport.update({
+  id: '/category/',
+  path: '/category/',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/admin/category/': typeof AdminCategoryIndexRoute
 }
 export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
+  '/admin/category': typeof AdminCategoryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/admin': typeof AdminRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/admin/category/': typeof AdminCategoryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/admin' | '/admin/'
+  fullPaths: '/admin' | '/admin/' | '/admin/category/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/admin'
-  id: '__root__' | '/admin' | '/admin/'
+  to: '/admin' | '/admin/category'
+  id: '__root__' | '/admin' | '/admin/' | '/admin/category/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -63,15 +72,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/category/': {
+      id: '/admin/category/'
+      path: '/category'
+      fullPath: '/admin/category/'
+      preLoaderRoute: typeof AdminCategoryIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminCategoryIndexRoute: typeof AdminCategoryIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
+  AdminCategoryIndexRoute: AdminCategoryIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

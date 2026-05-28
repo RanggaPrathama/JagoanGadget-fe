@@ -35,9 +35,9 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size='lg'
-              className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+              className='h-14 rounded-2xl px-3 transition-all duration-200 hover:bg-sidebar-accent/45 data-[state=open]:bg-sidebar-accent/55 data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-2xl group-data-[collapsible=icon]:px-0'
             >
-              <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
+              <div className='flex aspect-square size-9 items-center justify-center rounded-2xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm ring-1 ring-sidebar-primary/20'>
                 <activeTeam.logo className='size-4' />
               </div>
               <div className='grid flex-1 text-start text-sm leading-tight'>
@@ -46,7 +46,7 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
                 </span>
                 <span className='truncate text-xs'>{activeTeam.plan}</span>
               </div>
-              <ChevronsUpDown className='ms-auto' />
+              <ChevronsUpDown className='ms-auto text-sidebar-foreground/60' />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
