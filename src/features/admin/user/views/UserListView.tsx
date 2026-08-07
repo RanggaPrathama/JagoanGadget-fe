@@ -16,7 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import { cn } from "@/lib/utils";
-import { userColumns } from "../components/user-columns";
+import { getUserColumns } from "../components/user-columns";
 import { useUserList } from "../hooks/useUserList";
 import { StatCard } from "@/components/card/StatCard";
 
@@ -144,7 +144,7 @@ export function UserListView() {
 
           <div className="h-[min(72vh,44rem)] min-h-[28rem] overflow-hidden">
             <DataTable
-              columns={userColumns}
+              columns={getUserColumns()}
               rows={users}
               loading={isLoading || isRefreshing}
               emptyMessage="Belum ada data user."
