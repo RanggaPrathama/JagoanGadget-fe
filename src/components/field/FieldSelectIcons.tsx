@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, ComponentType } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as LucideIcons from "lucide-react";
 import { Check, Search, X } from "lucide-react";
 
@@ -121,8 +121,6 @@ export function FieldSelectIcons({
     };
   }, [open]);
 
-  const ActiveIcon = selectedIcon ? getIconComponent(selectedIcon.name) : Search;
-
   return (
     <FieldShell label={label} error={error} htmlFor={name} disabled={disabled}>
       <div ref={rootRef} className="relative">
@@ -138,7 +136,11 @@ export function FieldSelectIcons({
           )}
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-background/80 text-foreground ring-1 ring-border/80">
-            <ActiveIcon className="h-4 w-4" />
+            {selectedIcon ? (
+              React.createElement(getIconComponent(selectedIcon.name), { className: "h-4 w-4" })
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
           </span>
 
           <span className="min-w-0 flex-1">
