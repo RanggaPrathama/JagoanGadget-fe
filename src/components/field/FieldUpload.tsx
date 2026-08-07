@@ -121,7 +121,7 @@ function FieldUpload({
         getErrorMessage(err, "Gagal mengunggah file. Coba lagi."),
       );
       setPendingPreview(null);
-      console.log("FieldUpload: upload error", err); // eslint-disable-line no-console
+      console.log("FieldUpload: upload error", err);
     },
   });
 

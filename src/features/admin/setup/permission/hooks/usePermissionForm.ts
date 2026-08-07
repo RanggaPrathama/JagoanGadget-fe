@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useStore } from "@tanstack/react-store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -109,8 +109,11 @@ export function usePermissionForm({ permissionId }: UsePermissionFormOptions) {
   });
 
   // Build menu lookup map
-  const rawMenus = menusQuery.data?.items ?? [];
-  const menuMap = new Map(rawMenus.map((menu) => [menu.id, menu]));
+  const rawMenus = useMemo(() => menusQuery.data?.items ?? [], [menusQuery.data?.items]);
+  const menuMap = useMemo(
+    () => new Map(rawMenus.map((menu) => [menu.id, menu])),
+    [rawMenus],
+  );
 
   const mutation = useMutation({
     mutationFn: async (values: PermissionFormValues) => {

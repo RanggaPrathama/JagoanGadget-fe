@@ -11,7 +11,6 @@ export type ErrorResponseBody = {
 
 export function handleServerError(error: unknown) {
   if (import.meta.env.DEV) {
-    // eslint-disable-next-line no-console
     console.log(error)
   }
 
