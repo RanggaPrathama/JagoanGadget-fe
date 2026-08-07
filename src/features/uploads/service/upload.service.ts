@@ -50,11 +50,11 @@ export async function putTempFile(
     throw new Error("Gagal mengunggah file. Coba lagi.");
   }
 
-  let data: UploadTempResult;
+  let data: UploadTempResult | null = null;
   try {
     data = (await response.json()) as UploadTempResult;
   } catch {
-    data = {};
+    // Some signed-URL hosts return 200 with an empty body — leave data null.
   }
 
   if (!data?.tempKey) {
