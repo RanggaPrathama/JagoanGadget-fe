@@ -26,7 +26,7 @@ No test framework configured (no vitest/jest/cypress/playwright in deps).
 | Icons | @hugeicons/react (sidebar), lucide-react (general UI) |
 | Charts | recharts |
 | Data Grid | ag-grid-community + ag-grid-react v36 |
-| Theme | next-themes + 11 CSS custom property theme presets |
+| Theme | Custom cookie-based ThemeProvider (cookies: `vite-ui-theme`, `vite-ui-theme-preset`) + 8 CSS custom property theme presets |
 
 ## Architecture
 
@@ -52,14 +52,14 @@ No test framework configured (no vitest/jest/cypress/playwright in deps).
 **Shared UI:** `src/components/ui/` = shadcn primitives. `src/components/` = app-specific (Search, CommandMenu, ThemeSwitch, ProfileDropdown, NavigationProgress). Layouts in `src/components/layouts/{admin,auth,user}/`. Data-display components in `src/components/{data-table,table,dialog,field}/`.
 
 **State:** React Context for UI-only. **Auth is react-query based — there is no AuthProvider/AuthContext.** Auth state lives in the `["auth-session"]` query (better-auth); the current user's access control lives in the `["me"]` query (see Auth section). Providers (in `src/context/`):
-- `ThemeProvider` — next-themes with 6 theme presets
+- `ThemeProvider` — custom cookie-based provider (cookies `vite-ui-theme` / `vite-ui-theme-preset`, sets `data-theme` + `light`/`dark` class + `colorScheme`) with 8 theme presets
 - `FontProvider` — font selection (inter/manrope/system)
 - `LayoutProvider` — admin sidebar layout state
 - `SearchProvider` — admin command-menu search
 
 TanStack Query for server state (QueryClient configured with 401/403 skip-retry, 3 retries in prod, 10s staleTime, mutation error → sonner toast).
 
-**Styling:** Tailwind CSS v4 utility classes. Theme CSS custom properties in `src/styles/themes/` (11 .css files, 6 exposed as presets) loaded via `src/styles/theme.css`. User layout custom properties (`--user-ink`, `--user-muted`, `--user-canvas`, etc.) in `src/styles/index.css`. Font config in `src/config/fonts.ts`.
+**Styling:** Tailwind CSS v4 utility classes. Theme CSS custom properties in `src/styles/themes/` (8 `.css` files: default, claude, light-green, astro-vista, navy-gold, graphite-pulse, slate-blue, vercel) enumerated in `src/lib/theme.ts` (`THEME_PRESETS`) and all imported via `src/styles/theme.css`. The custom `ThemeProvider` (`src/context/ThemeProvider.tsx`) manages mode (`light`/`dark`/`system`) + preset via cookies (`vite-ui-theme`, `vite-ui-theme-preset`), setting `data-theme`, `light`/`dark` class, and `colorScheme` on `<html>`. User layout custom properties (`--user-ink`, `--user-muted`, `--user-canvas`, etc.) in `src/styles/index.css`.
 
 ## Auth
 
@@ -89,20 +89,16 @@ TanStack Query for server state (QueryClient configured with 401/403 skip-retry,
 - `handleServerError(error)` called on all non-2xx responses for toast notifications
 - `abortable()` helper — returns `{ controller, signal }` for request cancellation
 
-**API services** (`src/lib/api/`):
-- `auth.api.ts` — `signIn`, `signUp`, `signOut`, `getProfile`
-- `products.api.ts` — `getAll` (with filters), `getBySlug`, `create`, `update`, `delete`
-- `categories.api.ts` — `getAll`, `create`, `delete`
-- `index.ts` — re-exports all
+**API services:** Auth and access-control live in `src/features/auth/service/` (`auth.service.ts` — `signInWithEmail`, `signUpWithEmail`, `signOutAuth`, `getAuthSession`, `clearAuthCache` via better-auth client; `me.service.ts` — `getMe`, `meQueryOptions`, `invalidateMe`). The axios instance is `src/lib/axios.ts` (`api` singleton, `baseURL` from `config.apiBaseUrl`, `withCredentials: true`, 401→redirect, `abortable()` helper). Per-feature service files live under `src/features/` (e.g. `src/features/admin/`, `src/features/settings/service/settings.service.ts`, `src/features/uploads/service/upload.service.ts`). The old `src/lib/api/` directory was removed.
 
 Usage (with TanStack Query):
 ```ts
 import { useQuery } from '@tanstack/react-query'
-import { productsApi } from '@/lib/api'
+import { api } from '@/lib/axios'
 
 const { data } = useQuery({
   queryKey: ['products', filters],
-  queryFn: () => productsApi.getAll(filters).then(r => r.data),
+  queryFn: () => api.get('/products', { params: filters }).then(r => r.data),
 })
 ```
 
@@ -124,5 +120,6 @@ See `.env.example`:
 ```
 VITE_APP_TITLE=Jagoan Gadget
 VITE_API_BASE_URL=http://localhost:2000/api   # default, used by Better Auth client
+VITE_MOCK_BACKEND=true   # default ON; set 'false' when real API is wired (only affects settings + upload services)
 NODE_ENV=development
 ```
