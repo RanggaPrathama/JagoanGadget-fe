@@ -1,4 +1,4 @@
-import { useTheme } from "next-themes";
+import { useTheme } from "@/context/ThemeProvider";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
