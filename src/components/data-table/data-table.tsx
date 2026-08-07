@@ -2,9 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import type {
   ColDef,
-  FilterChangedEvent,
-  GridReadyEvent,
-  PaginationChangedEvent,
   RowClickedEvent,
 } from "ag-grid-community";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -101,29 +98,20 @@ export function DataTable<TData>({
     setPage(api.paginationGetCurrentPage() + 1);
   }, [totalRows]);
 
-  const handleGridReady = useCallback(
-    (_event: GridReadyEvent<TData>) => {
-      syncGridState();
-    },
-    [syncGridState],
-  );
+  const handleGridReady = useCallback(() => {
+    syncGridState();
+  }, [syncGridState]);
 
-  const handleFilterChanged = useCallback(
-    (_event: FilterChangedEvent<TData>) => {
-      const api = gridRef.current?.api;
-      if (!api) return;
-      api.paginationGoToFirstPage();
-      syncGridState();
-    },
-    [syncGridState],
-  );
+  const handleFilterChanged = useCallback(() => {
+    const api = gridRef.current?.api;
+    if (!api) return;
+    api.paginationGoToFirstPage();
+    syncGridState();
+  }, [syncGridState]);
 
-  const handlePaginationChanged = useCallback(
-    (_event: PaginationChangedEvent<TData>) => {
-      syncGridState();
-    },
-    [syncGridState],
-  );
+  const handlePaginationChanged = useCallback(() => {
+    syncGridState();
+  }, [syncGridState]);
 
   // --- Loading overlay ---
   useEffect(() => {
