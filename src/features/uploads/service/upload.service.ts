@@ -38,16 +38,25 @@ export async function putTempFile(
   uploadUrl: string,
   file: File,
 ): Promise<UploadTempResult> {
-
-  const response = await api.put(uploadUrl, file, {
+  const response = await fetch(uploadUrl, {
+    method: "PUT",
     headers: {
       "Content-Type": file.type || "application/octet-stream",
     },
+    body: file,
   });
 
-  const data = unwrapData<UploadTempResult>(response.data);
-  console.log("putTempFile: server response", data); 
-  
+  if (!response.ok) {
+    throw new Error("Gagal mengunggah file. Coba lagi.");
+  }
+
+  let data: UploadTempResult;
+  try {
+    data = (await response.json()) as UploadTempResult;
+  } catch {
+    data = {};
+  }
+
   if (!data?.tempKey) {
     throw new Error("Key file sementara tidak diterima dari server. Coba lagi.");
   }
