@@ -253,7 +253,6 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
           parentId: parentId || null,
         });
 
-        console.log(`test ${generateRequestIdRef.current} ${requestId}`);
         if (generateRequestIdRef.current !== requestId) {
           return;
         }
