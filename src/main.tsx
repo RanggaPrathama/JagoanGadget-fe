@@ -10,7 +10,6 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { handleServerError } from "@/lib/handle-server-error";
 import { configureAuthStore } from "@/stores/auth-store";
-// import { DirectionProvider } from './context/direction-provider'
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -56,12 +55,9 @@ const queryClient = new QueryClient({
         console.error(error);
         if (error.response?.status === 401) {
           toast.error("Session expired!");
-          //const redirect = router.history.location.href
-          // router.navigate({ to: '/sign-in', search: { redirect } })
         }
         if (error.response?.status === 500) {
           toast.error("Internal Server Error!");
-          // if (import.meta.env.PROD) router.navigate({ to: '/500' })
         }
       }
     },
@@ -91,9 +87,7 @@ if (!rootElement.innerHTML) {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <FontProvider>
-            {/* <DirectionProvider> */}
             <RouterProvider router={router} />
-            {/* </DirectionProvider> */}
           </FontProvider>
         </ThemeProvider>
       </QueryClientProvider>
