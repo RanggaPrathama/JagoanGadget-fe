@@ -20,13 +20,16 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
-import { sidebarData } from './layouts/admin/data/sidebar-data'
-import { ScrollArea } from './ui/scroll-area'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { useMe } from '@/hooks/useMe'
+import { buildSidebarDataFromMe } from '@/utils/access-control'
 
 export function CommandMenu() {
   const navigate = useNavigate()
   const { setTheme, setThemePreset, theme, themePreset } = useTheme()
   const { open, setOpen } = useSearch()
+  const { data } = useMe()
+  const sidebarData = data ? buildSidebarDataFromMe(data) : null
 
   const runCommand = React.useCallback(
     (command: () => unknown) => {
@@ -42,7 +45,7 @@ export function CommandMenu() {
       <CommandList>
         <ScrollArea type='hover' className='h-72 pe-1'>
           <CommandEmpty>No results found.</CommandEmpty>
-          {sidebarData.navGroups.map((group) => (
+          {(sidebarData?.navGroups ?? []).map((group) => (
             <CommandGroup key={group.title} heading={group.title}>
               {group.children.map((navItem, i) => (
                 <CommandItem
