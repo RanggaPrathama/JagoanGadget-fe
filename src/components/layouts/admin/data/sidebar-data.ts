@@ -1,23 +1,7 @@
 import {
-  Construction,
   LayoutDashboard,
-  Monitor,
-  Bug,
   ListTodo,
-  FileX,
-  HelpCircle,
-  Lock,
-  Bell,
   Package,
-  Palette,
-  ServerOff,
-  Settings,
-  Wrench,
-  UserCog,
-  UserX,
-  Users,
-  MessagesSquare,
-  ShieldCheck,
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
@@ -27,8 +11,8 @@ import { type SidebarData } from '@/types/sidebar'
 
 export const sidebarData: SidebarData = {
   user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
+    name: 'rangga',
+    email: 'rangga@gmail.com',
     avatar: '/avatars/shadcn.jpg',
   },
   teams: [
@@ -51,7 +35,7 @@ export const sidebarData: SidebarData = {
   navGroups: [
     {
       title: 'General',
-      items: [
+      children: [
         {
           title: 'Dashboard',
           url: '/',
@@ -68,6 +52,6 @@ export const sidebarData: SidebarData = {
           icon: Package,
         },
       ],
-    }
+    },
   ],
 }

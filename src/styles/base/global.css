@@ -1,0 +1,88 @@
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    @apply overflow-x-hidden;
+    scrollbar-width: auto;
+    scrollbar-color: color-mix(in oklab, var(--border) 88%, white) transparent;
+  }
+
+  body {
+    @apply w-full overflow-x-hidden bg-background text-foreground has-[div[data-variant='inset']]:bg-sidebar;
+  }
+
+  html::-webkit-scrollbar {
+    width: 14px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--border) 88%, white);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--foreground) 24%, var(--border));
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+
+  [data-layout="user"],
+  [data-layout="user-auth"] {
+    --user-ink: var(--foreground);
+    --user-muted: color-mix(in oklab, var(--foreground) 62%, var(--background));
+    --user-canvas: color-mix(in oklab, var(--muted) 78%, var(--background));
+    --user-surface: var(--card);
+    --user-surface-alt: color-mix(in oklab, var(--card) 72%, var(--muted));
+    --user-soft: var(--border);
+    --user-accent: var(--primary);
+    --user-accent-strong: color-mix(in oklab, var(--primary) 82%, black);
+    --user-accent-soft: color-mix(in oklab, var(--primary) 20%, white);
+    --user-accent-glow: color-mix(in oklab, var(--primary) 22%, transparent);
+    --user-depth: color-mix(in oklab, var(--card) 88%, white);
+    --user-danger: var(--destructive);
+    --radius-user-card: 32px;
+    --radius-user-pill: 999px;
+    --radius-user-input: 18px;
+  }
+
+  .dark [data-layout="user"],
+  .dark [data-layout="user-auth"] {
+    --user-accent-strong: color-mix(in oklab, var(--primary) 76%, white);
+    --user-accent-soft: color-mix(in oklab, var(--primary) 24%, black);
+    --user-accent-glow: color-mix(in oklab, var(--primary) 26%, transparent);
+    --user-depth: color-mix(in oklab, var(--card) 82%, black);
+  }
+
+  body[data-scroll-locked] {
+    overflow: unset !important;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+}

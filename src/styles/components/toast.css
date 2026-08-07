@@ -1,0 +1,268 @@
+@layer components {
+  .cn-toast {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid color-mix(in oklab, var(--border) 75%, white) !important;
+    border-radius: 1.35rem !important;
+    background:
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 96%, white) 0%, color-mix(in oklab, var(--muted) 28%, white) 100%) !important;
+    box-shadow:
+      0 22px 50px -30px color-mix(in oklab, black 28%, transparent),
+      0 10px 24px -18px color-mix(in oklab, black 18%, transparent) !important;
+    backdrop-filter: blur(14px);
+    padding: 1rem 1rem 1rem 0.9rem !important;
+    gap: 0.875rem !important;
+  }
+
+  .cn-toast::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--foreground) 12%, transparent);
+  }
+
+  .cn-toast-content {
+    gap: 0.3rem;
+  }
+
+  .cn-toast-title {
+    font-size: 0.95rem;
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--foreground);
+  }
+
+  .cn-toast-description {
+    font-size: 0.825rem;
+    line-height: 1.5;
+    color: color-mix(in oklab, var(--foreground) 66%, white);
+  }
+
+  .cn-toast-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    flex-shrink: 0;
+    border-radius: 0.95rem;
+    border: 1px solid color-mix(in oklab, var(--border) 80%, white);
+    background: linear-gradient(180deg, color-mix(in oklab, white 88%, transparent), color-mix(in oklab, var(--muted) 24%, white));
+    box-shadow: inset 0 1px 0 color-mix(in oklab, white 80%, transparent);
+  }
+
+  .cn-toast-success {
+    background:
+      radial-gradient(circle at top left, color-mix(in oklab, oklch(0.72 0.17 154) 14%, transparent), transparent 38%),
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 96%, white) 0%, color-mix(in oklab, oklch(0.72 0.17 154) 8%, white) 100%) !important;
+  }
+
+  .cn-toast-success::before {
+    background: oklch(0.72 0.17 154);
+  }
+
+  .cn-toast-success .cn-toast-icon {
+    color: oklch(0.62 0.16 154);
+    border-color: color-mix(in oklab, oklch(0.72 0.17 154) 18%, white);
+    background: linear-gradient(180deg, color-mix(in oklab, oklch(0.72 0.17 154) 18%, white), color-mix(in oklab, oklch(0.72 0.17 154) 8%, white));
+  }
+
+  .cn-toast-info {
+    background:
+      radial-gradient(circle at top left, color-mix(in oklab, oklch(0.68 0.13 244) 14%, transparent), transparent 38%),
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 96%, white) 0%, color-mix(in oklab, oklch(0.68 0.13 244) 8%, white) 100%) !important;
+  }
+
+  .cn-toast-info::before {
+    background: oklch(0.68 0.13 244);
+  }
+
+  .cn-toast-info .cn-toast-icon,
+  .cn-toast-loading .cn-toast-icon {
+    color: oklch(0.58 0.12 244);
+    border-color: color-mix(in oklab, oklch(0.68 0.13 244) 18%, white);
+    background: linear-gradient(180deg, color-mix(in oklab, oklch(0.68 0.13 244) 18%, white), color-mix(in oklab, oklch(0.68 0.13 244) 8%, white));
+  }
+
+  .cn-toast-warning {
+    background:
+      radial-gradient(circle at top left, color-mix(in oklab, oklch(0.8 0.14 84) 18%, transparent), transparent 38%),
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 96%, white) 0%, color-mix(in oklab, oklch(0.8 0.14 84) 9%, white) 100%) !important;
+  }
+
+  .cn-toast-warning::before {
+    background: oklch(0.8 0.14 84);
+  }
+
+  .cn-toast-warning .cn-toast-icon {
+    color: oklch(0.67 0.13 84);
+    border-color: color-mix(in oklab, oklch(0.8 0.14 84) 22%, white);
+    background: linear-gradient(180deg, color-mix(in oklab, oklch(0.8 0.14 84) 22%, white), color-mix(in oklab, oklch(0.8 0.14 84) 10%, white));
+  }
+
+  .cn-toast-error {
+    background:
+      radial-gradient(circle at top left, color-mix(in oklab, oklch(0.64 0.2 20) 15%, transparent), transparent 38%),
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 96%, white) 0%, color-mix(in oklab, oklch(0.64 0.2 20) 8%, white) 100%) !important;
+  }
+
+  .cn-toast-error::before {
+    background: oklch(0.64 0.2 20);
+  }
+
+  .cn-toast-error .cn-toast-icon {
+    color: oklch(0.58 0.18 20);
+    border-color: color-mix(in oklab, oklch(0.64 0.2 20) 18%, white);
+    background: linear-gradient(180deg, color-mix(in oklab, oklch(0.64 0.2 20) 18%, white), color-mix(in oklab, oklch(0.64 0.2 20) 8%, white));
+  }
+
+  .cn-toast-action,
+  .cn-toast-cancel,
+  .cn-toast-close {
+    transition: all 180ms ease;
+  }
+
+  .cn-toast-action {
+    border-radius: 999px !important;
+    border: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent) !important;
+    background: var(--foreground) !important;
+    color: var(--background) !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 10px 20px -14px color-mix(in oklab, black 32%, transparent);
+  }
+
+  .cn-toast-action:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+
+  .cn-toast-cancel {
+    border-radius: 999px !important;
+    border: 1px solid color-mix(in oklab, var(--border) 84%, white) !important;
+    background: color-mix(in oklab, var(--background) 84%, white) !important;
+    color: color-mix(in oklab, var(--foreground) 78%, white) !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+  }
+
+  .cn-toast-cancel:hover,
+  .cn-toast-close:hover {
+    background: color-mix(in oklab, var(--muted) 45%, white) !important;
+  }
+
+  .cn-toast-close {
+    border-radius: 999px !important;
+    border: 1px solid transparent !important;
+    color: color-mix(in oklab, var(--foreground) 52%, white) !important;
+  }
+
+  .dark .cn-toast {
+    border-color: color-mix(in oklab, var(--border) 88%, black) !important;
+    background:
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 92%, black) 0%, color-mix(in oklab, var(--muted) 26%, black) 100%) !important;
+    box-shadow:
+      0 24px 52px -28px color-mix(in oklab, black 58%, transparent),
+      inset 0 1px 0 color-mix(in oklab, white 6%, transparent) !important;
+  }
+
+  .dark .cn-toast-success,
+  .dark .cn-toast-info,
+  .dark .cn-toast-warning,
+  .dark .cn-toast-error,
+  .dark .cn-toast-loading {
+    background:
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 92%, black) 0%, color-mix(in oklab, var(--muted) 26%, black) 100%) !important;
+  }
+
+  .dark .cn-toast-success {
+    background:
+      radial-gradient(circle at 0% 50%, color-mix(in oklab, oklch(0.72 0.17 154) 16%, transparent), transparent 20%),
+      radial-gradient(circle at 82% 18%, color-mix(in oklab, oklch(0.72 0.17 154) 9%, transparent), transparent 26%),
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 92%, black) 0%, color-mix(in oklab, var(--muted) 26%, black) 100%) !important;
+  }
+
+  .dark .cn-toast-info,
+  .dark .cn-toast-loading {
+    background:
+      radial-gradient(circle at 0% 50%, color-mix(in oklab, oklch(0.68 0.13 244) 16%, transparent), transparent 20%),
+      radial-gradient(circle at 82% 18%, color-mix(in oklab, oklch(0.68 0.13 244) 9%, transparent), transparent 26%),
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 92%, black) 0%, color-mix(in oklab, var(--muted) 26%, black) 100%) !important;
+  }
+
+  .dark .cn-toast-warning {
+    background:
+      radial-gradient(circle at 0% 50%, color-mix(in oklab, oklch(0.8 0.14 84) 15%, transparent), transparent 20%),
+      radial-gradient(circle at 82% 18%, color-mix(in oklab, oklch(0.8 0.14 84) 9%, transparent), transparent 26%),
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 92%, black) 0%, color-mix(in oklab, var(--muted) 26%, black) 100%) !important;
+  }
+
+  .dark .cn-toast-error {
+    background:
+      radial-gradient(circle at 0% 50%, color-mix(in oklab, oklch(0.64 0.2 20) 15%, transparent), transparent 20%),
+      radial-gradient(circle at 82% 18%, color-mix(in oklab, oklch(0.64 0.2 20) 9%, transparent), transparent 26%),
+      linear-gradient(135deg, color-mix(in oklab, var(--card) 92%, black) 0%, color-mix(in oklab, var(--muted) 26%, black) 100%) !important;
+  }
+
+  .dark .cn-toast-title {
+    color: color-mix(in oklab, white 90%, var(--foreground));
+  }
+
+  .dark .cn-toast-description {
+    color: color-mix(in oklab, white 60%, var(--foreground));
+  }
+
+  .dark .cn-toast-icon {
+    border-color: color-mix(in oklab, var(--border) 90%, black);
+    background: linear-gradient(180deg, color-mix(in oklab, white 6%, transparent), color-mix(in oklab, var(--card) 88%, black));
+  }
+
+  .dark .cn-toast-success::before {
+    background: oklch(0.72 0.17 154);
+  }
+
+  .dark .cn-toast-success .cn-toast-icon {
+    color: oklch(0.72 0.17 154);
+    border-color: color-mix(in oklab, oklch(0.72 0.17 154) 34%, black);
+    background: color-mix(in oklab, oklch(0.72 0.17 154) 14%, black);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, white 10%, transparent);
+  }
+
+  .dark .cn-toast-info::before,
+  .dark .cn-toast-loading::before {
+    background: oklch(0.68 0.13 244);
+  }
+
+  .dark .cn-toast-info .cn-toast-icon,
+  .dark .cn-toast-loading .cn-toast-icon {
+    color: oklch(0.72 0.11 244);
+    border-color: color-mix(in oklab, oklch(0.68 0.13 244) 34%, black);
+    background: color-mix(in oklab, oklch(0.68 0.13 244) 14%, black);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, white 10%, transparent);
+  }
+
+  .dark .cn-toast-warning::before {
+    background: oklch(0.8 0.14 84);
+  }
+
+  .dark .cn-toast-warning .cn-toast-icon {
+    color: oklch(0.8 0.14 84);
+    border-color: color-mix(in oklab, oklch(0.8 0.14 84) 34%, black);
+    background: color-mix(in oklab, oklch(0.8 0.14 84) 14%, black);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, white 10%, transparent);
+  }
+
+  .dark .cn-toast-error::before {
+    background: oklch(0.64 0.2 20);
+  }
+
+  .dark .cn-toast-error .cn-toast-icon {
+    color: oklch(0.68 0.18 20);
+    border-color: color-mix(in oklab, oklch(0.64 0.2 20) 34%, black);
+    background: color-mix(in oklab, oklch(0.64 0.2 20) 14%, black);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, white 10%, transparent);
+  }
+}

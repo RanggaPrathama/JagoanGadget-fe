@@ -1,8 +1,8 @@
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColDef } from 'ag-grid-community'
 
-import { DataTable, DataTableColumnHeader } from '@/components/data-table'
-import { AdminPageShell } from '@/components/layouts/admin/AdminPageShell'
+import { DataTable } from '@/components/data-table'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 
 type CategoryItem = {
   id: string
@@ -57,87 +57,105 @@ const categories: CategoryItem[] = [
   },
 ]
 
-const columns: ColumnDef<CategoryItem>[] = [
+function NameCellRenderer(params: { data: CategoryItem }) {
+  return (
+    <div className='space-y-1'>
+      <p className='font-medium'>{params.data.name}</p>
+      <p className='text-sm text-muted-foreground'>{params.data.id}</p>
+    </div>
+  )
+}
+
+function SlugCellRenderer(params: { data: CategoryItem }) {
+  return (
+    <span className='rounded-full bg-muted px-3 py-1 text-xs font-medium tracking-wide text-muted-foreground'>
+      /{params.data.slug}
+    </span>
+  )
+}
+
+function ProductsCellRenderer(params: { data: CategoryItem }) {
+  return <div className='text-right font-medium'>{params.data.totalProducts}</div>
+}
+
+function StatusCellRenderer(params: { data: CategoryItem }) {
+  return (
+    <Badge
+      variant={params.data.status === 'Active' ? 'secondary' : 'outline'}
+      className='rounded-full px-3 py-1'
+    >
+      {params.data.status}
+    </Badge>
+  )
+}
+
+const columns: ColDef<CategoryItem>[] = [
   {
-    accessorKey: 'name',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Category' />
-    ),
-    cell: ({ row }) => (
-      <div className='space-y-1'>
-        <p className='font-medium'>{row.original.name}</p>
-        <p className='text-sm text-muted-foreground'>{row.original.id}</p>
-      </div>
-    ),
+    field: 'name',
+    headerName: 'Category',
+    cellRenderer: NameCellRenderer,
+    minWidth: 260,
+    filter: 'agTextColumnFilter',
+    floatingFilterComponentParams: {
+      suppressFilterButton: true,
+    },
   },
   {
-    accessorKey: 'slug',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Slug' />
-    ),
-    cell: ({ row }) => (
-      <span className='rounded-full bg-muted px-3 py-1 text-xs font-medium tracking-wide text-muted-foreground'>
-        /{row.original.slug}
-      </span>
-    ),
+    field: 'slug',
+    headerName: 'Slug',
+    cellRenderer: SlugCellRenderer,
+    minWidth: 220,
+    filter: 'agTextColumnFilter',
+    floatingFilterComponentParams: {
+      suppressFilterButton: true,
+    },
   },
   {
-    accessorKey: 'totalProducts',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Products'
-        className='justify-end'
-      />
-    ),
-    cell: ({ row }) => (
-      <div className='text-right font-medium'>{row.original.totalProducts}</div>
-    ),
+    field: 'totalProducts',
+    headerName: 'Products',
+    type: 'rightAligned',
+    cellRenderer: ProductsCellRenderer,
+    maxWidth: 160,
+    filter: 'agNumberColumnFilter',
+    floatingFilterComponentParams: {
+      suppressFilterButton: true,
+    },
   },
   {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Status' />
-    ),
-    cell: ({ row }) => (
-      <Badge
-        variant={row.original.status === 'Active' ? 'secondary' : 'outline'}
-        className='rounded-full px-3 py-1'
-      >
-        {row.original.status}
-      </Badge>
-    ),
+    field: 'status',
+    headerName: 'Status',
+    cellRenderer: StatusCellRenderer,
+    maxWidth: 180,
+    filter: 'agTextColumnFilter',
+    floatingFilterComponentParams: {
+      suppressFilterButton: true,
+    },
   },
 ]
 
 export function Category() {
   return (
-    <AdminPageShell
-      breadcrumbs={[
-        { title: 'Admin', href: '/admin/' },
-        { title: 'Catalog' },
-        { title: 'Category' },
-      ]}
-      notificationCount={6}
-    >
-      <div className='space-y-6'>
-        <div className='space-y-2'>
-          <h1 className='text-3xl font-semibold tracking-tight'>Category</h1>
-          <p className='max-w-2xl text-sm leading-6 text-muted-foreground'>
-            Reusable data table ini mengikuti pola dokumentasi shadcn, lalu
-            dipoles dengan shell yang lebih modern supaya cocok untuk dashboard
-            admin yang lebih rapi.
-          </p>
-        </div>
-
-        <DataTable
-          columns={columns}
-          data={categories}
-          searchColumn='name'
-          searchPlaceholder='Search category...'
-          emptyMessage='No categories matched your search.'
-        />
+    <div className='space-y-6'>
+      <div className='space-y-2'>
+        <h1 className='text-3xl font-semibold tracking-tight'>Category</h1>
+        <p className='max-w-2xl text-sm leading-6 text-muted-foreground'>
+          Reusable data table ini mengikuti pola dokumentasi shadcn, lalu
+          dipoles dengan shell yang lebih modern supaya cocok untuk dashboard
+          admin yang lebih rapi.
+        </p>
       </div>
-    </AdminPageShell>
+
+      <Card className='overflow-hidden border-border/60 bg-card/90 shadow-sm'>
+        <CardContent className='px-0 pb-0 pt-0'>
+          <div className='h-[min(72vh,44rem)] min-h-[28rem] overflow-hidden'>
+            <DataTable
+              columns={columns}
+              rows={categories}
+              emptyMessage='No categories matched your search.'
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

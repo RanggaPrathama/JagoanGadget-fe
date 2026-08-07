@@ -1,48 +1,90 @@
-import { Toaster as Sonner, type ToasterProps } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon, InformationCircleIcon, Alert02Icon, MultiplicationSignCircleIcon, Loading03Icon } from "@hugeicons/core-free-icons"
-import { useTheme } from "@/context/ThemeProvider"
+import { useTheme } from "next-themes";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CheckmarkCircle02Icon,
+  InformationCircleIcon,
+  Alert02Icon,
+  MultiplicationSignCircleIcon,
+  Loading03Icon,
+} from "@hugeicons/core-free-icons";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { resolvedTheme } = useTheme()
+  const { theme = "system" } = useTheme();
 
   return (
     <Sonner
-      theme={resolvedTheme as ToasterProps["theme"]}
+      theme={theme as ToasterProps["theme"]}
       className="toaster group"
+      expand
+      visibleToasts={4}
+      offset={20}
       icons={{
         success: (
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={CheckmarkCircle02Icon}
+            strokeWidth={2.1}
+            className="size-4.5"
+          />
         ),
         info: (
-          <HugeiconsIcon icon={InformationCircleIcon} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={InformationCircleIcon}
+            strokeWidth={2.1}
+            className="size-4.5"
+          />
         ),
         warning: (
-          <HugeiconsIcon icon={Alert02Icon} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={Alert02Icon}
+            strokeWidth={2.1}
+            className="size-4.5"
+          />
         ),
         error: (
-          <HugeiconsIcon icon={MultiplicationSignCircleIcon} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={MultiplicationSignCircleIcon}
+            strokeWidth={2.1}
+            className="size-4.5"
+          />
         ),
         loading: (
-          <HugeiconsIcon icon={Loading03Icon} strokeWidth={2} className="size-4 animate-spin" />
+          <HugeiconsIcon
+            icon={Loading03Icon}
+            strokeWidth={2.1}
+            className="size-4.5 animate-spin"
+          />
         ),
       }}
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
+          "--normal-bg": "color-mix(in oklab, var(--card) 94%, white)",
+          "--normal-text": "var(--foreground)",
+          "--normal-border": "color-mix(in oklab, var(--border) 82%, white)",
+          "--border-radius": "1.25rem",
         } as React.CSSProperties
       }
       toastOptions={{
+        duration: 4200,
         classNames: {
           toast: "cn-toast",
+          content: "cn-toast-content",
+          title: "cn-toast-title",
+          description: "cn-toast-description",
+          icon: "cn-toast-icon",
+          success: "cn-toast-success",
+          info: "cn-toast-info",
+          warning: "cn-toast-warning",
+          error: "cn-toast-error",
+          loading: "cn-toast-loading",
+          actionButton: "cn-toast-action",
+          cancelButton: "cn-toast-cancel",
+          closeButton: "cn-toast-close",
         },
       }}
       {...props}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };

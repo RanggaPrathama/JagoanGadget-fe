@@ -1,0 +1,338 @@
+@layer components {
+  .ag-table-theme {
+    --ag-table-border: color-mix(in oklab, var(--border) 84%, transparent);
+    --ag-table-border-strong: color-mix(in oklab, var(--border) 96%, transparent);
+    --ag-table-header-bg: color-mix(in oklab, var(--muted) 72%, var(--background));
+    --ag-table-header-filter-bg: color-mix(in oklab, var(--muted) 40%, var(--background));
+    --ag-table-input-bg: color-mix(in oklab, var(--background) 96%, var(--muted));
+    --ag-table-input-text: color-mix(in oklab, var(--foreground) 78%, var(--background));
+    --ag-table-hover: color-mix(in oklab, var(--muted) 58%, var(--background));
+    --ag-table-selected: color-mix(in oklab, var(--primary) 10%, var(--background));
+    --ag-table-selected-border: color-mix(in oklab, var(--primary) 44%, var(--border));
+    --ag-table-chip-bg: color-mix(in oklab, var(--muted) 72%, var(--background));
+
+    --ag-background-color: transparent;
+    --ag-foreground-color: hsl(var(--foreground));
+    --ag-secondary-foreground-color: hsl(var(--muted-foreground));
+    --ag-header-foreground-color: hsl(var(--foreground));
+    --ag-header-background-color: var(--ag-table-header-bg);
+    --ag-odd-row-background-color: transparent;
+    --ag-row-hover-color: var(--ag-table-hover);
+    --ag-selected-row-background-color: var(--ag-table-selected);
+    --ag-border-color: var(--ag-table-border);
+    --ag-row-border-color: var(--ag-table-border);
+    --ag-header-column-separator-color: var(--ag-table-border);
+    --ag-header-column-resize-handle-color: color-mix(in oklab, var(--muted-foreground) 60%, transparent);
+    --ag-input-border-color: var(--ag-table-border);
+    --ag-input-background-color: var(--ag-table-input-bg);
+    --ag-input-text-color: var(--ag-table-input-text);
+    --ag-control-panel-background-color: color-mix(in oklab, var(--card) 88%, var(--background));
+    --ag-subheader-background-color: var(--ag-table-header-filter-bg);
+    --ag-range-selection-border-color: color-mix(in oklab, var(--primary) 46%, transparent);
+    --ag-checkbox-background-color: var(--ag-table-input-bg);
+    --ag-checkbox-checked-color: hsl(var(--primary));
+    --ag-checkbox-unchecked-color: hsl(var(--muted-foreground));
+    --ag-modal-overlay-background-color: color-mix(in oklab, black 42%, transparent);
+    --ag-tooltip-background-color: color-mix(in oklab, var(--popover) 94%, var(--background));
+    --ag-tooltip-text-color: hsl(var(--popover-foreground));
+  }
+
+  .dark .ag-table-theme {
+    --ag-table-border: color-mix(in oklab, var(--border) 78%, black);
+    --ag-table-border-strong: color-mix(in oklab, var(--border) 92%, black);
+    --ag-table-header-bg: color-mix(in oklab, var(--muted) 34%, var(--background));
+    --ag-table-header-filter-bg: color-mix(in oklab, var(--muted) 24%, var(--background));
+    --ag-table-input-bg: color-mix(in oklab, var(--background) 92%, black);
+    --ag-table-input-text: color-mix(in oklab, white 74%, var(--foreground));
+    --ag-table-hover: color-mix(in oklab, var(--muted) 28%, var(--background));
+    --ag-table-selected: color-mix(in oklab, var(--primary) 16%, var(--background));
+    --ag-table-selected-border: color-mix(in oklab, var(--primary) 54%, transparent);
+    --ag-table-chip-bg: color-mix(in oklab, var(--muted) 42%, var(--background));
+  }
+
+  .ag-table-theme .ag-root-wrapper {
+    border: 0;
+    background: transparent;
+    color: hsl(var(--foreground));
+  }
+
+  .ag-table-theme.ag-table-theme--empty .ag-center-cols-viewport,
+  .ag-table-theme.ag-table-theme--empty .ag-center-cols-container {
+    min-height: 220px;
+  }
+
+  .ag-table-theme .ag-header {
+    border-bottom: 1px solid var(--ag-table-border-strong);
+    background: var(--ag-table-header-bg);
+  }
+
+  .ag-table-theme .ag-header-row {
+    margin: 0;
+  }
+
+  .ag-table-theme .ag-row,
+  .ag-table-theme .ag-cell,
+  .ag-table-theme .ag-header-cell-text,
+  .ag-table-theme .ag-header-group-text {
+    color: hsl(var(--foreground));
+  }
+
+  .ag-table-theme .ag-header-row-column {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ag-table-theme .ag-header-cell,
+  .ag-table-theme .ag-header-group-cell {
+    background: transparent;
+    border-inline-end: 1px solid var(--ag-table-border);
+    padding-inline: 0;
+  }
+
+  .ag-table-theme .ag-header-cell::after,
+  .ag-table-theme .ag-header-group-cell::after {
+    display: none;
+  }
+
+  .ag-table-theme .ag-header-cell-label,
+  .ag-table-theme .ag-header-group-cell-label {
+    height: 100%;
+    padding-inline: 1rem;
+  }
+
+  .ag-table-theme .ag-floating-filter {
+    padding-top: 8px;
+    padding-bottom: 10px;
+    border-top: 1px solid var(--ag-table-border);
+    background: var(--ag-table-header-filter-bg);
+  }
+
+  .ag-table-theme .ag-floating-filter-body {
+    align-items: center;
+  }
+
+  .ag-table-theme .ag-floating-filter-input,
+  .ag-table-theme .ag-input-field-input,
+  .ag-table-theme .ag-picker-field-wrapper,
+  .ag-table-theme .ag-select {
+    min-height: 36px;
+    border-radius: 12px;
+    border: 1px solid var(--ag-table-border);
+    background: var(--ag-table-input-bg);
+    color: var(--ag-table-input-text);
+    box-shadow: none;
+  }
+
+  .ag-table-theme .ag-input-field-input::placeholder {
+    color: color-mix(in oklab, var(--muted-foreground) 82%, transparent);
+  }
+
+  .ag-table-theme .ag-input-field-input:focus,
+  .ag-table-theme .ag-picker-field-wrapper:focus-within {
+    border-color: color-mix(in oklab, var(--primary) 60%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 14%, transparent);
+  }
+
+  .ag-popup,
+  .ag-menu,
+  .ag-select-list,
+  .ag-filter-wrapper,
+  .ag-filter-menu,
+  .ag-menu-list,
+  .ag-list-viewport,
+  .ag-list-item,
+  .ag-menu-option,
+  .ag-picker-field-popup,
+  .ag-picker-field-list {
+    --ag-background-color: color-mix(in oklab, var(--background) 92%, var(--card));
+    --ag-foreground-color: hsl(var(--foreground));
+    --ag-secondary-foreground-color: hsl(var(--muted-foreground));
+    --ag-header-foreground-color: hsl(var(--foreground));
+    --ag-header-background-color: color-mix(in oklab, var(--muted) 24%, var(--background));
+    --ag-odd-row-background-color: transparent;
+    --ag-row-hover-color: var(--ag-table-hover);
+    --ag-selected-row-background-color: var(--ag-table-selected);
+    --ag-border-color: var(--ag-table-border);
+    --ag-row-border-color: var(--ag-table-border);
+    --ag-input-border-color: var(--ag-table-border);
+    --ag-input-background-color: var(--ag-table-input-bg);
+    --ag-input-text-color: var(--ag-table-input-text);
+    --ag-control-panel-background-color: color-mix(in oklab, var(--card) 88%, var(--background));
+    --ag-subheader-background-color: var(--ag-table-header-filter-bg);
+    --ag-checkbox-background-color: var(--ag-table-input-bg);
+    --ag-checkbox-checked-color: hsl(var(--primary));
+    --ag-checkbox-unchecked-color: hsl(var(--muted-foreground));
+    --ag-tooltip-background-color: color-mix(in oklab, var(--popover) 94%, var(--background));
+    --ag-tooltip-text-color: hsl(var(--popover-foreground));
+    background: color-mix(in oklab, var(--background) 92%, var(--card));
+    color: hsl(var(--foreground));
+  }
+
+  .ag-popup .ag-theme-quartz,
+  .ag-menu .ag-theme-quartz,
+  .ag-select-list .ag-theme-quartz {
+    background: transparent;
+    color: hsl(var(--foreground));
+  }
+
+  .ag-popup .ag-input-field-input,
+  .ag-popup .ag-picker-field-wrapper,
+  .ag-menu .ag-input-field-input,
+  .ag-menu .ag-picker-field-wrapper,
+  .ag-select-list .ag-input-field-input,
+  .ag-select-list .ag-picker-field-wrapper {
+    background: var(--ag-table-input-bg);
+    color: var(--ag-table-input-text);
+    border-color: var(--ag-table-border);
+  }
+
+  .ag-popup .ag-icon,
+  .ag-menu .ag-icon,
+  .ag-select-list .ag-icon {
+    color: color-mix(in oklab, var(--muted-foreground) 92%, transparent);
+  }
+
+  .ag-popup .ag-virtual-list-item,
+  .ag-menu .ag-virtual-list-item,
+  .ag-select-list .ag-virtual-list-item,
+  .ag-popup .ag-menu-option-part,
+  .ag-menu .ag-menu-option-part,
+  .ag-select-list .ag-menu-option-part {
+    color: hsl(var(--foreground));
+  }
+
+  .ag-table-theme .ag-icon {
+    color: color-mix(in oklab, var(--muted-foreground) 92%, transparent);
+  }
+
+  .ag-table-theme .ag-row {
+    transition:
+      background-color 140ms ease,
+      box-shadow 140ms ease,
+      border-color 140ms ease;
+  }
+
+  .ag-table-theme .ag-row:hover {
+    background: var(--ag-table-hover);
+  }
+
+  .ag-table-theme .ag-row.ag-row-selected {
+    background: var(--ag-table-selected);
+    box-shadow:
+      inset 3px 0 0 hsl(var(--primary)),
+      inset 0 0 0 1px var(--ag-table-selected-border);
+  }
+
+  .ag-table-theme .ag-row.ag-row-selected:hover {
+    background: var(--ag-table-selected);
+  }
+
+  .ag-table-theme .ag-row.ag-row-selected .ag-cell {
+    color: hsl(var(--foreground));
+  }
+
+  .ag-table-theme .ag-cell {
+    display: flex;
+    align-items: center;
+    border-color: var(--ag-table-border);
+  }
+
+  .ag-table-page-size-select {
+    appearance: none;
+    min-width: 4.5rem;
+    background-image:
+      linear-gradient(45deg, transparent 50%, currentColor 50%),
+      linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position:
+      calc(100% - 1rem) calc(50% - 0.15rem),
+      calc(100% - 0.7rem) calc(50% - 0.15rem);
+    background-repeat: no-repeat;
+    background-size: 0.35rem 0.35rem, 0.35rem 0.35rem;
+    padding-right: 2rem;
+  }
+
+  .ag-table-theme .ag-row-last .ag-cell {
+    border-bottom: 0;
+  }
+
+  .ag-table-theme .ag-overlay-no-rows-wrapper {
+    padding: 2rem 1.5rem 2.25rem;
+  }
+
+  .ag-table-theme .ag-overlay-no-rows-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 200px;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+  }
+
+  .ag-empty-icon {
+    opacity: 0.5;
+  }
+
+  .ag-table-theme .ag-overlay-loading-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem 1.5rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+  }
+
+  .ag-loading-spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid color-mix(in oklab, var(--muted-foreground) 30%, transparent);
+    border-top-color: hsl(var(--primary));
+    border-radius: 50%;
+    animation: ag-spin 0.6s linear infinite;
+  }
+
+  @keyframes ag-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .ag-empty-state {
+    display: flex;
+    min-height: 180px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ag-empty-state__panel {
+    width: min(100%, 26rem);
+    border: 1px dashed var(--ag-table-border);
+    border-radius: 1.5rem;
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--card) 82%, transparent),
+        color-mix(in oklab, var(--muted) 22%, transparent)
+      );
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, white 5%, transparent),
+      0 18px 40px -34px color-mix(in oklab, black 45%, transparent);
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .ag-empty-state__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .ag-empty-state__description {
+    margin: 0.45rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--muted-foreground);
+  }
+}

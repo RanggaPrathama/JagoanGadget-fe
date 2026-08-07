@@ -2,15 +2,12 @@
 
 /* Import individual theme files */
 @import './themes/claude.css';
-@import './themes/neobrutualism.css';
-@import './themes/supabase.css';
-@import './themes/mono.css';
-@import './themes/notebook.css';
 @import './themes/light-green.css';
-@import './themes/zen.css';
 @import './themes/astro-vista.css';
-@import './themes/whatsapp.css';
-
+@import './themes/navy-gold.css';
+@import './themes/graphite-pulse.css';
+@import './themes/slate-blue.css';
+@import './themes/vercel.css';
 body {
   @apply overscroll-none;
 }

@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 
 import {
   Combobox,
@@ -7,25 +7,28 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from "@/components/ui/combobox"
-import { cn } from "@/lib/utils"
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
+import { cn } from "@/lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Cancel01Icon } from "@hugeicons/core-free-icons";
 
-import { FieldShell } from "./FieldShell"
-import type { FieldBaseProps, FieldOption } from "./types"
+import { FieldShell } from "./FieldShell";
+import type { FieldBaseProps, FieldOption } from "./types";
 
 export type FieldSelectProps = FieldBaseProps & {
-  placeholder?: string
-  value?: string | number | null
-  onValueChange: (value: string) => void
-  options: FieldOption[]
-  loading?: boolean
-  searchable?: boolean
-  emptyText?: string
-  name?: string
-}
+  placeholder?: string;
+  value?: string | number | null;
+  onValueChange: (value: string) => void;
+  options: FieldOption[];
+  loading?: boolean;
+  searchable?: boolean;
+  emptyText?: string;
+  name?: string;
+};
 
 function toStringValue(value?: string | number | null) {
-  return value === null || value === undefined ? "" : String(value)
+  return value === null || value === undefined ? "" : String(value);
 }
 
 function FieldSelect({
@@ -44,64 +47,23 @@ function FieldSelect({
   searchable = false,
   value,
 }: FieldSelectProps) {
-  const generatedId = React.useId()
-  const fieldId = name || generatedId
-  const selectedValue = toStringValue(value)
-  const selectedOption = options.find((option) => String(option.value) === selectedValue)
-  const isDisabled = disabled || loading
+  const generatedId = React.useId();
+  const fieldId = name || generatedId;
+  const selectedValue = toStringValue(value);
+  const selectedOption = options.find(
+    (option) => String(option.value) === selectedValue,
+  );
+  const isDisabled = disabled || loading;
 
-  if (searchable) {
-    return (
-      <FieldShell
-        className={className}
-        disabled={isDisabled}
-        error={error}
-        hint={hint}
-        htmlFor={fieldId}
-        label={label}
-        required={required}
-      >
-        <Combobox
-          defaultValue={selectedValue}
-          disabled={isDisabled}
-          inputValue={selectedOption?.label ?? ""}
-          onValueChange={(nextValue) => onValueChange(String(nextValue))}
-          value={selectedValue}
-        >
-          <ComboboxInput
-            aria-invalid={!!error}
-            disabled={isDisabled}
-            id={fieldId}
-            name={name}
-            placeholder={loading ? "Loading options..." : placeholder}
-            showClear={false}
-            showTrigger
-          />
-          <ComboboxContent>
-            <ComboboxList>
-              {loading ? (
-                <div className="px-3 py-2 text-sm text-muted-foreground">Loading options...</div>
-              ) : null}
-              {!loading ? (
-                <>
-                  {options.map((option) => (
-                    <ComboboxItem
-                      key={String(option.value)}
-                      disabled={option.disabled}
-                      value={String(option.value)}
-                    >
-                      {option.label}
-                    </ComboboxItem>
-                  ))}
-                  <ComboboxEmpty>{emptyText}</ComboboxEmpty>
-                </>
-              ) : null}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-      </FieldShell>
-    )
-  }
+  // --- searchable combobox state ---
+  const [comboInput, setComboInput] = React.useState("");
+
+  const filteredOptions =
+    searchable && comboInput
+      ? options.filter((opt) =>
+          opt.label.toLowerCase().includes(comboInput.toLowerCase()),
+        )
+      : options;
 
   return (
     <FieldShell
@@ -113,35 +75,99 @@ function FieldSelect({
       label={label}
       required={required}
     >
-      <select
-        aria-invalid={!!error}
-        className={cn(
-          "flex h-9 w-full rounded-4xl border border-input bg-input/30 px-3 py-2 text-sm text-foreground shadow-xs outline-none transition-[color,box-shadow]",
-          "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-          "disabled:cursor-not-allowed disabled:opacity-50",
-          "aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
-        )}
+      <Combobox
+        value={selectedValue || undefined}
         disabled={isDisabled}
-        id={fieldId}
-        name={name}
-        onChange={(event) => onValueChange(event.target.value)}
-        value={selectedValue}
+        {...(searchable && {
+          inputValue: comboInput,
+          onInputValueChange: (val: string) => {
+            setComboInput(val);
+          },
+        })}
+        onValueChange={(nextValue) => {
+          if (nextValue === null || nextValue === undefined) {
+            onValueChange("");
+          } else {
+            onValueChange(String(nextValue));
+          }
+
+          if (searchable) {
+            setComboInput("");
+          }
+        }}
       >
-        <option value="" disabled>
-          {loading ? "Loading options..." : placeholder}
-        </option>
-        {options.map((option) => (
-          <option
-            key={String(option.value)}
-            disabled={option.disabled}
-            value={String(option.value)}
+        <div className="relative w-full">
+          <ComboboxTrigger
+            showChevron={!selectedValue}
+            className={cn(
+              "flex h-9 w-full items-center gap-2 rounded-4xl border border-input bg-input/30 pr-9 pl-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow]",
+              "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+              "disabled:cursor-not-allowed disabled:opacity-50",
+              "aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
+              !selectedValue && "text-muted-foreground",
+            )}
+            aria-invalid={!!error}
+            disabled={isDisabled}
           >
-            {option.label}
-          </option>
-        ))}
-      </select>
+            {selectedOption?.label ?? placeholder}
+          </ComboboxTrigger>
+
+          {/* Clear icon overlay when value selected */}
+          {!!selectedValue && (
+            <button
+              type="button"
+              tabIndex={-1}
+              disabled={isDisabled}
+              onClick={(e) => {
+                e.stopPropagation();
+                onValueChange("");
+                if (searchable) setComboInput("");
+              }}
+              className="absolute right-2 top-0 bottom-0 flex items-center rounded-full p-1 text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+            >
+              <HugeiconsIcon
+                icon={Cancel01Icon}
+                strokeWidth={2}
+                className="size-4"
+              />
+            </button>
+          )}
+        </div>
+        <ComboboxContent>
+          {searchable && (
+            <ComboboxInput
+              showTrigger={false}
+              showClear={false}
+              placeholder={loading ? "Loading options..." : "Search..."}
+              disabled={isDisabled}
+            />
+          )}
+          <ComboboxList>
+            {loading ? (
+              <div className="px-3 py-2 text-sm text-muted-foreground">
+                Loading options...
+              </div>
+            ) : (
+              <>
+                {filteredOptions.map((option) => (
+                  <ComboboxItem
+                    key={String(option.value)}
+                    disabled={option.disabled}
+                    value={String(option.value)}
+                  >
+                    {option.label}
+                  </ComboboxItem>
+                ))}
+                {filteredOptions.length === 0 && (
+                  <ComboboxEmpty>{emptyText}</ComboboxEmpty>
+                )}
+              </>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
     </FieldShell>
-  )
+  );
 }
 
-export { FieldSelect }
+export { FieldSelect };

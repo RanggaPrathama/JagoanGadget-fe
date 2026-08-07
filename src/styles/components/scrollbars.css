@@ -1,0 +1,70 @@
+@layer components {
+  .sidebar-scroll {
+    scrollbar-gutter: stable both-edges;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 18px,
+      black calc(100% - 18px),
+      transparent 100%
+    );
+  }
+
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-sidebar-border) 72%, transparent);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .sidebar-scroll:hover::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--color-sidebar-ring) 55%, var(--color-sidebar-border));
+  }
+
+  .admin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--border) 78%, var(--foreground)) transparent;
+    scrollbar-gutter: stable both-edges;
+    overscroll-behavior: contain;
+  }
+
+  .admin-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .admin-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .admin-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--border) 84%, var(--foreground));
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .admin-scrollbar:hover::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--foreground) 20%, var(--border));
+  }
+
+  .dark .admin-scrollbar {
+    scrollbar-color: color-mix(in oklab, var(--border) 82%, black) transparent;
+  }
+
+  .dark .admin-scrollbar::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--border) 78%, black);
+  }
+
+  .dark .admin-scrollbar:hover::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--foreground) 18%, var(--border));
+  }
+}

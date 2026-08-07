@@ -1,184 +1,303 @@
-"use client"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AgGridReact } from "ag-grid-react";
+import type {
+  ColDef,
+  FilterChangedEvent,
+  GridReadyEvent,
+  PaginationChangedEvent,
+  RowClickedEvent,
+} from "ag-grid-community";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import * as React from "react"
-import {
-  type ColumnDef,
-  type SortingState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
-import { SearchIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { cn } from "@/lib/utils"
+const PAGE_SIZE_OPTIONS = [25, 50, 100] as const;
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  title?: string
-  description?: string
-  searchPlaceholder?: string
-  searchColumn?: string
-  emptyMessage?: string
-  className?: string
+export interface DataTableProps<TData> {
+  columns: ColDef<TData>[];
+  rows: TData[];
+  loading?: boolean;
+  className?: string;
+  pageSize?: number;
+  emptyMessage?: string;
+  onRowClick?: (row: TData) => void;
+  getRowId?: (row: TData) => string;
+  selectedRowId?: string | null;
+  rowSelection?: "single" | "multiple";
+  onSelectedIdsChange?: (ids: string[]) => void;
+  /** Total rows from server (for server-side pagination). Defaults to rows.length */
+  totalRows?: number;
+  /** Server-side pagination flags — override prev/next button state */
+  hasNextPage?: boolean;
+  hasPreviousPage?: boolean;
+  /** Called when prev/next is clicked */
+  onPrevPage?: () => void;
+  onNextPage?: () => void;
+  /** Server-side page & totalPages — override internal display */
+  currentPage?: number;
+  totalPagesOverride?: number;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData>({
   columns,
-  data,
-  searchPlaceholder = "Search data...",
-  searchColumn,
-  emptyMessage = "No results found.",
+  rows,
+  loading = false,
   className,
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  pageSize = 25,
+  emptyMessage = "Tidak ada data",
+  onRowClick,
+  getRowId,
+  selectedRowId,
+  rowSelection = "single",
+  onSelectedIdsChange,
+  totalRows,
+  hasNextPage,
+  hasPreviousPage,
+  onPrevPage,
+  onNextPage,
+  currentPage: serverPage,
+  totalPagesOverride,
+}: DataTableProps<TData>) {
+  const gridRef = useRef<AgGridReact<TData> | null>(null);
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onSortingChange: setSorting,
-    state: {
-      sorting,
+  // --- Pagination state (internal, synced from AG Grid) ---
+  const [page, setPage] = useState(1);
+  const [localFilteredCount, setLocalFilteredCount] = useState(rows.length);
+  const [currentPageSize, setCurrentPageSize] = useState(
+    PAGE_SIZE_OPTIONS.includes(pageSize as (typeof PAGE_SIZE_OPTIONS)[number])
+      ? pageSize
+      : PAGE_SIZE_OPTIONS[0],
+  );
+
+  // Use server totalRows when available, else client-side filter count
+  const filteredRowCount = totalRows ?? localFilteredCount;
+
+  // Reset page when rows length changes (render-time check)
+  const [prevRowsLength, setPrevRowsLength] = useState(rows.length);
+  if (rows.length !== prevRowsLength) {
+    setPrevRowsLength(rows.length);
+    setPage(1);
+    if (totalRows === undefined) setLocalFilteredCount(rows.length);
+  }
+
+  const displayTotalPages =
+    totalPagesOverride ??
+    Math.max(1, Math.ceil(Math.max(filteredRowCount, 1) / currentPageSize));
+  const displayPage = serverPage ?? Math.min(page, displayTotalPages);
+  const rangeStart =
+    filteredRowCount === 0 ? 0 : (displayPage - 1) * currentPageSize + 1;
+  const rangeEnd =
+    filteredRowCount === 0
+      ? 0
+      : Math.min(filteredRowCount, displayPage * currentPageSize);
+
+  // --- Sync React state from AG Grid events ---
+  const syncGridState = useCallback(() => {
+    const api = gridRef.current?.api;
+    if (!api) return;
+    if (totalRows === undefined)
+      setLocalFilteredCount(api.getDisplayedRowCount());
+    setPage(api.paginationGetCurrentPage() + 1);
+  }, [totalRows]);
+
+  const handleGridReady = useCallback(
+    (_event: GridReadyEvent<TData>) => {
+      syncGridState();
     },
-  })
+    [syncGridState],
+  );
 
-  const filterColumn = searchColumn ? table.getColumn(searchColumn) : undefined
-  const filteredRows = table.getFilteredRowModel().rows.length
-  const totalRows = table.getCoreRowModel().rows.length
+  const handleFilterChanged = useCallback(
+    (_event: FilterChangedEvent<TData>) => {
+      const api = gridRef.current?.api;
+      if (!api) return;
+      api.paginationGoToFirstPage();
+      syncGridState();
+    },
+    [syncGridState],
+  );
+
+  const handlePaginationChanged = useCallback(
+    (_event: PaginationChangedEvent<TData>) => {
+      syncGridState();
+    },
+    [syncGridState],
+  );
+
+  // --- Loading overlay ---
+  useEffect(() => {
+    const api = gridRef.current?.api;
+    if (!api) return;
+
+    if (loading) {
+      api.showLoadingOverlay();
+    } else {
+      api.hideOverlay();
+      // hideOverlay() disables AG Grid's auto no-rows overlay.
+      // Must explicitly show it when data is empty & not loading.
+      if (rows.length === 0) {
+        api.showNoRowsOverlay();
+      }
+    }
+  }, [loading, rows.length]);
+
+  // --- Force re-evaluate getRowClass when selectedRowId changes ---
+  useEffect(() => {
+    gridRef.current?.api?.redrawRows();
+  }, [selectedRowId]);
+
+  // --- NO column ---
+  const displayColumns = useMemo(() => {
+    const noCol: ColDef<TData> = {
+      headerName: "No",
+      width: 60,
+      minWidth: 60,
+      flex: 0,
+      resizable: false,
+      sortable: false,
+      filter: false,
+      suppressHeaderMenuButton: true,
+      valueGetter: (params) => (params.node?.rowIndex ?? 0) + 1,
+    };
+    return [noCol, ...columns];
+  }, [columns]);
 
   return (
-    <Card
-      className={cn(
-        "overflow-hidden border-border/60 bg-background/95 shadow-[0_20px_60px_-40px_hsl(var(--foreground)/0.2)] backdrop-blur supports-[backdrop-filter]:bg-background/80",
-        className
-      )}
-    >
-      <div className="flex flex-col gap-3 border-b border-border/60 bg-muted/10 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 items-center gap-3">
-          {filterColumn ? (
-            <div className="relative w-full max-w-sm">
-              <HugeiconsIcon
-                icon={SearchIcon}
-                size={16}
-                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                value={(filterColumn.getFilterValue() as string) ?? ""}
-                onChange={(event) => filterColumn.setFilterValue(event.target.value)}
-                placeholder={searchPlaceholder}
-                className="h-10 rounded-full border-border/70 bg-background/70 pl-11 shadow-none"
-              />
-            </div>
-          ) : null}
-        </div>
-        <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{filteredRows}</span> dari{" "}
-          <span className="font-medium text-foreground">{totalRows}</span> data
-        </p>
+    <div className={cn("flex h-full flex-col", className)}>
+      {/* AG Grid */}
+      <div className="ag-theme-quartz ag-table-theme min-h-0 flex-1">
+        <AgGridReact<TData>
+          ref={gridRef}
+          rowData={rows}
+          columnDefs={displayColumns}
+          defaultColDef={{
+            filter: true,
+            sortable: true,
+            floatingFilter: true,
+            resizable: true,
+            flex: 1,
+            minWidth: 120,
+            suppressHeaderMenuButton: false,
+            filterParams: {
+              debounceMs: 250,
+            },
+          }}
+          onGridReady={handleGridReady}
+          rowSelection={
+            rowSelection === "multiple" ? { mode: "multiRow" } : undefined
+          }
+          onRowClicked={(event: RowClickedEvent<TData>) => {
+            if (event.data) {
+              onRowClick?.(event.data);
+            }
+          }}
+          onSelectionChanged={(event) => {
+            if (rowSelection === "multiple" && getRowId && onSelectedIdsChange) {
+              const ids = event.api
+                .getSelectedRows()
+                .map((row) => getRowId(row));
+              onSelectedIdsChange(ids);
+            }
+          }}
+          onFilterChanged={handleFilterChanged}
+          onPaginationChanged={handlePaginationChanged}
+          domLayout="normal"
+          suppressCellFocus
+          suppressRowClickSelection
+          animateRows={false}
+          headerHeight={46}
+          floatingFiltersHeight={42}
+          rowHeight={54}
+          pagination
+          paginationPageSize={currentPageSize}
+          paginationPageSizeSelector={false}
+          suppressPaginationPanel
+          getRowClass={(params) => {
+            if (!selectedRowId || !params.data || !getRowId) return "";
+            return getRowId(params.data) === selectedRowId
+              ? "ag-row-selected"
+              : "";
+          }}
+          overlayNoRowsTemplate={`<div class="ag-overlay-no-rows-center"><svg class="ag-empty-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>${emptyMessage}</span></div>`}
+          overlayLoadingTemplate={`<div class="ag-overlay-loading-center"><div class="ag-loading-spinner"></div><span>Memuat data...</span></div>`}
+        />
       </div>
 
-      <CardContent className="p-0">
-        <div className="overflow-hidden">
-          <Table>
-            <TableHeader className="bg-muted/35">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="hover:bg-transparent">
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="h-12 px-6 text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  ))}
-                </TableRow>
+      {/* Pagination Footer */}
+      <div className="flex flex-col gap-4 border-t border-border/60 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+          <label className="flex items-center gap-3 text-sm text-muted-foreground">
+            <span>Tampilkan</span>
+            <select
+              value={currentPageSize}
+              onChange={(event) => {
+                const newSize = Number(event.target.value);
+                setCurrentPageSize(newSize);
+                gridRef.current?.api?.setGridOption(
+                  "paginationPageSize",
+                  newSize,
+                );
+                gridRef.current?.api?.paginationGoToFirstPage();
+              }}
+              className="ag-table-page-size-select h-9 rounded-md border border-border/70 bg-background px-3 text-sm text-foreground outline-none transition focus:border-primary/60 focus:ring-2 focus:ring-primary/15"
+            >
+              {PAGE_SIZE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
               ))}
-            </TableHeader>
-
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="border-border/60 transition-colors hover:bg-muted/30"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="px-6 py-4 align-middle">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-40 px-6 text-center">
-                    <div className="mx-auto flex max-w-sm flex-col items-center gap-2 rounded-3xl border border-dashed border-border/70 bg-muted/20 px-6 py-8 text-center">
-                      <p className="text-sm font-medium">{emptyMessage}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Try adjusting your search or add new data to populate this table.
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        <div className="flex flex-col gap-3 border-t border-border/60 bg-muted/20 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing{" "}
-            <span className="font-medium text-foreground">{table.getRowModel().rows.length}</span> of{" "}
-            <span className="font-medium text-foreground">{filteredRows}</span> filtered rows
-          </p>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full px-4"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <div className="rounded-full border border-border/70 bg-background px-4 py-2 text-sm font-medium text-foreground">
-              Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full px-4"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
+            </select>
+            <span>baris</span>
+          </label>
+          <div className="text-sm text-muted-foreground">
+            {filteredRowCount === 0
+              ? emptyMessage
+              : `Menampilkan ${rangeStart}-${rangeEnd} dari ${filteredRowCount}`}
           </div>
         </div>
-      </CardContent>
-    </Card>
-  )
+        <div className="flex items-center gap-3 sm:justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="min-w-24"
+            onClick={() => {
+              if (onPrevPage) onPrevPage();
+              else gridRef.current?.api?.paginationGoToPreviousPage();
+            }}
+            disabled={
+              hasPreviousPage !== undefined
+                ? !hasPreviousPage
+                : displayPage <= 1
+            }
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Prev
+          </Button>
+          <span className="min-w-16 text-center text-sm tabular-nums text-muted-foreground">
+            {displayPage} / {displayTotalPages}
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="min-w-24"
+            onClick={() => {
+              if (onNextPage) onNextPage();
+              else gridRef.current?.api?.paginationGoToNextPage();
+            }}
+            disabled={
+              hasNextPage !== undefined
+                ? !hasNextPage
+                : displayPage >= displayTotalPages
+            }
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }

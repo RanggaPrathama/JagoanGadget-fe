@@ -1,15 +1,18 @@
-import * as React from "react"
+import * as React from "react";
 
-import { Textarea } from "@/components/ui/textarea"
-import { cn } from "@/lib/utils"
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
-import { FieldShell } from "./FieldShell"
-import type { FieldBaseProps } from "./types"
+import { FieldShell } from "./FieldShell";
+import type { FieldBaseProps } from "./types";
 
-type FieldTextareaProps = Omit<React.ComponentProps<typeof Textarea>, "disabled"> &
+type FieldTextareaProps = Omit<
+  React.ComponentProps<typeof Textarea>,
+  "disabled"
+> &
   FieldBaseProps & {
-    textareaClassName?: string
-  }
+    textareaClassName?: string;
+  };
 
 function FieldTextarea({
   className,
@@ -40,8 +43,8 @@ function FieldTextarea({
         {...props}
       />
     </FieldShell>
-  )
+  );
 }
 
-export { FieldTextarea }
-export type { FieldTextareaProps }
+export { FieldTextarea };
+export type { FieldTextareaProps };

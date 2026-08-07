@@ -1,64 +1,43 @@
-import { Link } from '@tanstack/react-router'
-import { Menu, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Link } from "@tanstack/react-router";
+import { LayoutDashboard } from "lucide-react";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/sidebar";
 
 export function AppTitle() {
-  const { setOpenMobile } = useSidebar()
+  const { setOpenMobile } = useSidebar();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton
-          size='lg'
-          className='gap-0 py-0 hover:bg-transparent active:bg-transparent'
+          size="lg"
+          className="h-auto rounded-xl border border-primary/15 bg-gradient-to-br from-primary/14 via-primary/8 to-transparent px-2.5 py-2.5 hover:bg-primary/10 active:bg-primary/12 group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-0"
           asChild
         >
-          <div>
+          <div className="flex min-w-0 items-center gap-2.5 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0">
             <Link
-              to='/'
+              to="/admin"
               onClick={() => setOpenMobile(false)}
-              className='grid flex-1 text-start text-sm leading-tight'
+              className="flex min-w-0 flex-1 items-center gap-2.5 text-start group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:justify-center"
             >
-              <span className='truncate font-bold'>Shadcn-Admin</span>
-              <span className='truncate text-xs'>Vite + ShadcnUI</span>
+              <div className="flex size-8.5 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/30">
+                <LayoutDashboard className="size-4.5" />
+              </div>
+              <div className="grid min-w-0 flex-1 text-start leading-tight group-data-[collapsible=icon]:hidden">
+                <span className="truncate text-[0.82rem] font-bold tracking-[0.1em] text-sidebar-foreground uppercase">
+                  Jagoan Gadget
+                </span>
+                <span className="truncate text-[11px] text-sidebar-foreground/60">
+                  Admin Dashboard
+                </span>
+              </div>
             </Link>
-            <ToggleSidebar />
           </div>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
-}
-
-function ToggleSidebar({
-  className,
-  onClick,
-  ...props
-}: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar()
-
-  return (
-    <Button
-      data-sidebar='trigger'
-      data-slot='sidebar-trigger'
-      variant='ghost'
-      size='icon'
-      className={cn('aspect-square size-8 max-md:scale-125', className)}
-      onClick={(event) => {
-        onClick?.(event)
-        toggleSidebar()
-      }}
-      {...props}
-    >
-      <X className='md:hidden' />
-      <Menu className='max-md:hidden' />
-      <span className='sr-only'>Toggle Sidebar</span>
-    </Button>
-  )
+  );
 }

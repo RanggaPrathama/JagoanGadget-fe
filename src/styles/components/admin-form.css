@@ -1,0 +1,88 @@
+@layer components {
+.admin-form-shell {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+    border-radius: 1.25rem; /* Kurangi dari 2rem agar tidak terlalu membulat */
+    background: linear-gradient(
+      180deg,
+      var(--card) 0%,
+      color-mix(in oklab, var(--background) 95%, var(--card)) 100%
+    );
+    box-shadow: 0 10px 30px -10px color-mix(in oklab, black 10%, transparent);
+  }
+
+  .admin-form-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 20% 0%, color-mix(in oklab, var(--primary) 12%, transparent), transparent 28%),
+      radial-gradient(circle at 90% 100%, color-mix(in oklab, var(--foreground) 4%, transparent), transparent 22%);
+    opacity: 0.45;
+  }
+
+.dark .admin-form-shell {
+    border-color: color-mix(in oklab, var(--border) 40%, transparent);
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--card) 98%, white) 0%,
+      var(--background) 100%
+    );
+    box-shadow: 0 10px 30px -10px color-mix(in oklab, black 50%, transparent);
+  }
+
+
+  .admin-form-panel {
+    border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+    border-radius: 1.75rem;
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--card) 96%, white) 0%,
+        color-mix(in oklab, var(--background) 98%, var(--card)) 100%
+      );
+    box-shadow: 0 20px 60px -42px color-mix(in oklab, black 34%, transparent);
+  }
+
+  .dark .admin-form-panel {
+    border-color: color-mix(in oklab, var(--border) 78%, black);
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--card) 94%, black) 0%,
+        color-mix(in oklab, var(--background) 95%, black) 100%
+      );
+  }
+
+  .admin-form-panel-soft {
+    border: 1px solid color-mix(in oklab, var(--border) 66%, transparent);
+    border-radius: 1.5rem;
+    background: color-mix(in oklab, var(--muted) 24%, var(--card));
+  }
+
+  .dark .admin-form-panel-soft {
+    background: color-mix(in oklab, var(--muted) 18%, var(--card));
+  }
+
+.admin-form-actions {
+    background: color-mix(in oklab, var(--card) 85%, transparent);
+    border: 1px solid var(--border);
+    box-shadow: 0 -10px 40px -10px color-mix(in oklab, black 12%, transparent);
+    backdrop-filter: blur(16px);
+  }
+
+  .dark .admin-form-actions {
+    background: color-mix(in oklab, var(--card) 80%, transparent);
+    border: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+    box-shadow: 0 -10px 50px -10px color-mix(in oklab, black 80%, transparent);
+  }
+
+  .admin-form-badge {
+    border: 1px solid color-mix(in oklab, var(--primary) 28%, var(--border));
+    background: color-mix(in oklab, var(--primary) 8%, var(--background));
+    color: color-mix(in oklab, var(--primary) 82%, var(--foreground));
+    box-shadow: 0 10px 28px -22px color-mix(in oklab, var(--primary) 60%, transparent);
+  }
+}
