@@ -1,11 +1,6 @@
 import type { ComponentProps, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useHasPermission } from "@/hooks/useHasPermission";
 
 export interface ActionButtonProps
@@ -56,14 +51,14 @@ export function ActionButton({
   );
 
   // Tooltip only on permission-denied; hidden while loading to avoid flashing.
+  // Relies on an ancestor TooltipProvider (mounted in AdminLayout) — does not
+  // mount its own, so it works inside the admin tree without redundant nesting.
   if (!denied) return button;
 
   return (
-    <TooltipProvider delayDuration={0}>
-      <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent>{deniedTooltip}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent>{deniedTooltip}</TooltipContent>
+    </Tooltip>
   );
 }

@@ -1,4 +1,4 @@
-import { ActionButton } from "./ActionButton";
+import { ActionButton } from "../button/ActionButton";
 import { Link } from "@tanstack/react-router";
 import { Save } from "lucide-react";
 

@@ -1,6 +1,6 @@
 import { Eye, PencilLine, Trash2 } from "lucide-react";
 
-import { ActionButton } from "./ActionButton";
+import { ActionButton } from "../button/ActionButton";
 import { cn } from "@/lib/utils";
 
 export interface RowActionsProps {

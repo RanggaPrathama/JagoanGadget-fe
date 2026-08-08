@@ -17,7 +17,7 @@ function useAuthSession() {
     user,
     isPending: sessionQuery.isLoading,
     isAuthenticated: Boolean(session),
-  }
+  } 
 }
 
 function useAuth() {
