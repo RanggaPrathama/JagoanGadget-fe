@@ -1,4 +1,4 @@
-import { useRouter } from '@tanstack/react-router'
+import { useRouterState } from '@tanstack/react-router'
 import { type BreadcrumbLinkItem } from '@/components/layouts/admin/TopNav'
 
 // Route to breadcrumb mapping
@@ -16,8 +16,7 @@ const routeBreadcrumbs: Record<string, { title: string; href?: string }> = {
 }
 
 export function useAutoBreadcrumbs(): BreadcrumbLinkItem[] {
-  const router = useRouter()
-  const pathname = router.state.location.pathname
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
 
   // Build breadcrumbs from route hierarchy
   const segments = pathname.split('/').filter(Boolean)
