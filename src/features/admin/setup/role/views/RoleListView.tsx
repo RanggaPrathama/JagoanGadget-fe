@@ -10,7 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
-import { RowActions } from "@/components/admin";
+import { RowActions, ActionButton } from "@/components/admin";
 import { ConfirmDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/card/StatCard";
@@ -137,14 +137,15 @@ export function RoleListView() {
               />
             </Button>
 
-            <Button
+            <ActionButton
+              permission="setup.role.create"
               size="sm"
               className="w-full rounded-lg sm:w-auto"
               onClick={() => navigate({ to: "/admin/setup/role/create" })}
+              icon={<Plus data-icon="inline-start" />}
             >
-              <Plus data-icon="inline-start" />
               Create Role
-            </Button>
+            </ActionButton>
           </div>
 
           <div className="h-[min(72vh,44rem)] min-h-[28rem] overflow-hidden">

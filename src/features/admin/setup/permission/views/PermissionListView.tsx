@@ -3,13 +3,12 @@ import { useNavigate } from "@tanstack/react-router";
 import { Plus, RefreshCw, Search } from "lucide-react";
 
 import { DataTable } from "@/components/data-table/data-table";
-import { RowActions } from "@/components/admin";
+import { RowActions, ActionButton } from "@/components/admin";
 import { ConfirmDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useHasPermission } from "@/hooks/useHasPermission";
 import { getPermissionColumns } from "../components/permission-columns";
 import { usePermissionList } from "../hooks/usePermissionList";
 
@@ -18,7 +17,6 @@ export function PermissionListView() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search, 400);
-  const canCreate = useHasPermission("setup.permission.create");
   const {
     permissions,
     totalPermissions,
@@ -112,18 +110,17 @@ export function PermissionListView() {
                   className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
                 />
               </Button>
-              {canCreate.has && (
-                <Button
-                  size="sm"
-                  className="rounded-lg"
-                  onClick={() =>
-                    navigate({ to: "/admin/setup/permission/create" })
-                  }
-                >
-                  <Plus className="h-4 w-4" />
-                  Tambah Permission
-                </Button>
-              )}
+              <ActionButton
+                permission="setup.permission.create"
+                size="sm"
+                className="rounded-lg"
+                onClick={() =>
+                  navigate({ to: "/admin/setup/permission/create" })
+                }
+                icon={<Plus className="h-4 w-4" />}
+              >
+                Tambah Permission
+              </ActionButton>
             </div>
           </div>
 

@@ -9,7 +9,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
-import { RowActions } from "@/components/admin";
+import { RowActions, ActionButton } from "@/components/admin";
 import { ConfirmDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -132,14 +132,15 @@ export function UserListView() {
               />
             </Button>
 
-            <Button
+            <ActionButton
+              permission="user.create"
               size="sm"
               className="w-full rounded-lg sm:w-auto"
               onClick={() => navigate({ to: "/admin/user/create" })}
+              icon={<Plus data-icon="inline-start" />}
             >
-              <Plus data-icon="inline-start" />
               Create User
-            </Button>
+            </ActionButton>
           </div>
 
           <div className="h-[min(72vh,44rem)] min-h-[28rem] overflow-hidden">

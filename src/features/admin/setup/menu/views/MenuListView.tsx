@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Plus, RefreshCw, Search } from "lucide-react";
 
 import { DataTable } from "@/components/data-table/data-table";
-import { RowActions } from "@/components/admin";
+import { RowActions, ActionButton } from "@/components/admin";
 import { ConfirmDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -136,14 +136,15 @@ export function MenuListView() {
                   className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
                 />
               </Button>
-              <Button
+              <ActionButton
+                permission="setup.menu.create"
                 size="sm"
                 className="rounded-lg"
                 onClick={() => navigate({ to: "/admin/setup/menu/create" })}
+                icon={<Plus className="h-4 w-4" />}
               >
-                <Plus className="h-4 w-4" />
                 Tambah Menu
-              </Button>
+              </ActionButton>
             </div>
           </div>
 
