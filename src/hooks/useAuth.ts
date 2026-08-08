@@ -41,7 +41,10 @@ export function useAuth() {
 
   return {
     isAuthenticated: sessionState.isAuthenticated,
-    isLoading: sessionState.isPending || meQuery.isLoading,
+    // `/me` is gated off when not authenticated; a disabled query keeps
+    // `isLoading` true in react-query v4 (status 'pending'), so only count it
+    // when `/me` is actually relevant (authenticated). For guests, loading = session only.
+    isLoading: sessionState.isPending || (sessionState.isAuthenticated && meQuery.isLoading),
     user: (meQuery.data?.user ?? sessionState.user) as MeUser | null,
     accessControl: meQuery.data?.accessControl ?? null,
     handleSignOut: signOutMutation.mutateAsync,
