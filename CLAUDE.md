@@ -120,6 +120,5 @@ See `.env.example`:
 ```
 VITE_APP_TITLE=Jagoan Gadget
 VITE_API_BASE_URL=http://localhost:2000/api   # default, used by Better Auth client
-VITE_MOCK_BACKEND=true   # default ON; set 'false' when real API is wired (only affects settings + upload services)
 NODE_ENV=development
 ```
