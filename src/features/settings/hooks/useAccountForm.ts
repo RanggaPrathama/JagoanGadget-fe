@@ -3,7 +3,6 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
-import type { MeData } from "@/features/auth/types/me";
 import { meQueryKey } from "@/features/auth/service/me.service";
 import { useMe } from "@/hooks/useMe";
 import { getErrorMessage } from "@/utils/error";
@@ -66,12 +65,9 @@ export function useAccountForm(options?: { onSuccess?: () => void }) {
       if (!me) throw new Error("Data pengguna belum tersedia.");
       return updateMyProfile(toPayload(values), me.user);
     },
-    onSuccess: (updatedUser) => {
+    onSuccess: async () => {
       toast.success("Profil berhasil diperbarui.");
-      // Mirror update ke cache ["me"] lokal — tanpa refetch (endpoint mock mati).
-      queryClient.setQueryData<MeData>(meQueryKey, (old) =>
-        old ? { ...old, user: updatedUser } : old,
-      );
+      await queryClient.invalidateQueries({ queryKey: meQueryKey });
       options?.onSuccess?.();
     },
     onError: (error) => {

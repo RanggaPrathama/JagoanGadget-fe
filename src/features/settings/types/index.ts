@@ -10,7 +10,7 @@ export type NotificationPreferences = {
 /**
  * Payload untuk update profil diri sendiri.
  * Email TIDAK diizinkan berubah dari halaman ini.
- * Real API: PATCH /me → { name, phoneNumber, avatarTempKey }
+ * Real API: PUT /me/update-profile → { name, phoneNumber, avatarTempKey }
  */
 export type UpdateMyProfilePayload = {
   name: string;
