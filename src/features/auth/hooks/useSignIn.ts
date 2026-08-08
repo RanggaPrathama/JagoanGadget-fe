@@ -9,6 +9,8 @@ import {
   signInWithEmail,
   type SignInCredentials,
 } from "../service/auth.service";
+import { meQueryKey } from "../service/me.service";
+import { getErrorMessage } from "@/utils/error";
 import { useAuth } from "@/hooks/useAuth";
 
 interface UseSignInFormOptions {
