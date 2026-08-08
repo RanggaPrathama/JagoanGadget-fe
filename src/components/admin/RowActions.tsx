@@ -1,7 +1,6 @@
 import { Eye, PencilLine, Trash2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { useHasPermission } from "@/hooks/useHasPermission";
+import { ActionButton } from "./ActionButton";
 import { cn } from "@/lib/utils";
 
 export interface RowActionsProps {
@@ -28,66 +27,64 @@ export function RowActions({
   className,
   iconOnly = false,
 }: RowActionsProps) {
-  const canView = useHasPermission(`${basePermissionCode}.view`);
-  const canUpdate = useHasPermission(`${basePermissionCode}.update`);
-  const canDelete = useHasPermission(`${basePermissionCode}.delete`);
-
   return (
     <div className={cn("flex flex-wrap items-center gap-2", className)}>
-      {onView && canView.has ? (
-        <Button
-          type="button"
+      {onView ? (
+        <ActionButton
+          permission={`${basePermissionCode}.view`}
           variant="outline"
           size={iconOnly ? "icon-sm" : "sm"}
+          onClick={onView}
+          disabled={disabled}
+          aria-label="Lihat"
+          title="Lihat"
+          icon={<Eye className="h-4 w-4" />}
           className={cn(
             "border-border/70",
             iconOnly
               ? "rounded-lg bg-primary text-primary-foreground   hover:bg-primary/10"
               : "h-9 rounded-full px-3 text-xs gap-2",
           )}
-          onClick={onView}
-          disabled={disabled}
-          aria-label="Lihat"
-          title="Lihat"
         >
-          <Eye className="h-4 w-4" />
           {!iconOnly ? <span>Lihat</span> : null}
-        </Button>
+        </ActionButton>
       ) : null}
-      {onEdit && canUpdate.has ? (
-        <Button
-          type="button"
+
+      {onEdit ? (
+        <ActionButton
+          permission={`${basePermissionCode}.update`}
           variant="outline"
           size={iconOnly ? "icon-sm" : "sm"}
-          className={cn(
-            "border-border/70",
-            iconOnly ? "rounded-lg " : "h-9 rounded-full px-3 text-xs gap-2",
-          )}
           onClick={onEdit}
           disabled={disabled}
           aria-label="Edit"
           title="Edit"
+          icon={<PencilLine className="h-4 w-4" />}
+          className={cn(
+            "border-border/70",
+            iconOnly ? "rounded-lg " : "h-9 rounded-full px-3 text-xs gap-2",
+          )}
         >
-          <PencilLine className="h-4 w-4" />
           {!iconOnly ? <span>Edit</span> : null}
-        </Button>
+        </ActionButton>
       ) : null}
-      {onDelete && canDelete.has ? (
-        <Button
-          type="button"
+
+      {onDelete ? (
+        <ActionButton
+          permission={`${basePermissionCode}.delete`}
           variant="destructive"
           size={iconOnly ? "icon-sm" : "sm"}
-          className={cn(
-            iconOnly ? "rounded-lg" : "h-9 rounded-full px-3 text-xs gap-2",
-          )}
           onClick={onDelete}
           disabled={disabled}
           aria-label="Hapus"
           title="Hapus"
+          icon={<Trash2 className="h-4 w-4" />}
+          className={cn(
+            iconOnly ? "rounded-lg" : "h-9 rounded-full px-3 text-xs gap-2",
+          )}
         >
-          <Trash2 className="h-4 w-4" />
           {!iconOnly ? <span>Hapus</span> : null}
-        </Button>
+        </ActionButton>
       ) : null}
     </div>
   );
