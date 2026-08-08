@@ -9,6 +9,13 @@ export async function resetAuth(
   router: AnyRouter,
   opts?: { redirectTo?: string },
 ): Promise<void> {
+  // @ts-expect-error — defensive guard for non-React callers; params are
+  // non-nullable but this function is now public and may be invoked without hooks.
+  if (!queryClient || !router) {
+    toast.error("Autentikasi belum dikonfigurasi.");
+    return;
+  }
+
   const redirectTo = opts?.redirectTo ?? router.state.location.href;
 
   try {
