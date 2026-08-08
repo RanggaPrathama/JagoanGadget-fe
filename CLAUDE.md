@@ -49,7 +49,7 @@ No test framework configured (no vitest/jest/cypress/playwright in deps).
 - `user/cart/` — shopping cart page
 - `errors/` — GeneralError, NotFoundError, Unauthorized, and a custom 403 page
 
-**Shared UI:** `src/components/ui/` = shadcn primitives. `src/components/` = app-specific (Search, CommandMenu, ThemeSwitch, ProfileDropdown, NavigationProgress). Layouts in `src/components/layouts/{admin,auth,user}/`. Data-display components in `src/components/{data-table,table,dialog,field}/`.
+**Shared UI:** `src/components/ui/` = shadcn primitives. `src/components/` = app-specific (Search, CommandMenu, ThemeSwitch, NavigationProgress). Layouts in `src/components/layouts/{admin,auth,user}/`. Data-display components in `src/components/{data-table,table,dialog,field}/`.
 
 **State:** React Context for UI-only. **Auth is react-query based — there is no AuthProvider/AuthContext.** Auth state lives in the `["auth-session"]` query (better-auth); the current user's access control lives in the `["me"]` query (see Auth section). Providers (in `src/context/`):
 - `ThemeProvider` — custom cookie-based provider (cookies `vite-ui-theme` / `vite-ui-theme-preset`, sets `data-theme` + `light`/`dark` class + `colorScheme`) with 8 theme presets
