@@ -1,12 +1,10 @@
 import { api } from "@/lib/axios";
 import { unwrapData } from "@/lib/api-response";
-import { config } from "@/config/config";
 import type {
   PresignResponse,
   UploadPurpose,
   UploadTempResult,
 } from "../types";
-import { registerMockUploadUrl } from "./upload.mock";
 
 /**
  * request a presigned upload URL for a purpose.
@@ -68,19 +66,6 @@ export async function uploadTempFile(
   file: File,
   purpose: UploadPurpose,
 ): Promise<UploadTempResult> {
-  // Mock: no backend, so hand out a tempKey backed by an object URL instead of
-  // the presign → PUT round-trip. Removed when config.mockBackend=false.
-  if (config.mockBackend) {
-    const tempKey = `mock/${purpose}/${Date.now()}-${file.name}`;
-    registerMockUploadUrl(tempKey, URL.createObjectURL(file));
-    return {
-      tempKey,
-      filename: file.name,
-      mimeType: file.type,
-      size: file.size,
-    };
-  }
-
   const presign = await presignUpload(purpose);
   return putTempFile(presign.uploadUrl, file);
 }
