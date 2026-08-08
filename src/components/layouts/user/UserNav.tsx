@@ -26,7 +26,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-import { useMe } from "@/hooks/useMe";
 const navItems = [
   { label: "Home", to: "/" },
   { label: "Products", to: "/products" },
@@ -44,12 +43,11 @@ function getUserInitials(name?: string | null, email?: string | null) {
 }
 
 export function UserNav() {
-  const { isAuthenticated, isPending, user, handleSignOut } = useAuth();
-  const { data } = useMe();
+  const { isAuthenticated, isLoading, user, accessControl, handleSignOut } = useAuth();
 
   const initials = getUserInitials(user?.name, user?.email);
   const accountLabel = user?.name || user?.email || "Account";
-  const canAccessAdmin = Boolean(data?.accessControl.canAccessAdmin);
+  const canAccessAdmin = Boolean(accessControl?.canAccessAdmin);
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 md:px-6 md:pt-5">
@@ -153,7 +151,7 @@ export function UserNav() {
             </Link>
           </Button>
 
-          {!isPending && !isAuthenticated ? (
+          {!isLoading && !isAuthenticated ? (
             <div className="hidden items-center gap-2 sm:flex">
               <Button
                 asChild
@@ -169,7 +167,7 @@ export function UserNav() {
             </div>
           ) : null}
 
-          {!isPending && isAuthenticated ? (
+          {!isLoading && isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
