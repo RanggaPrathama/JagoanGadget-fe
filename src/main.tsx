@@ -9,7 +9,6 @@ import {
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { handleServerError } from "@/lib/handle-server-error";
-import { configureAuthStore } from "@/stores/auth-store";
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -71,8 +70,6 @@ const router = createRouter({
   defaultPreloadStaleTime: 0,
   defaultPendingMs: 200,
 });
-
-configureAuthStore({ queryClient, router });
 
 declare module "@tanstack/react-router" {
   interface Register {

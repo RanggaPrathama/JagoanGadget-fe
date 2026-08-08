@@ -1,5 +1,7 @@
-import { useAuthStore } from '@/stores/auth-store'
-import { ConfirmDialog } from '@/components/dialog/ConfirmDialog'
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
+import { ConfirmDialog } from "@/components/dialog/ConfirmDialog";
+import { resetAuth } from "@/features/auth/service/logout";
 
 interface SignOutDialogProps {
   open: boolean
@@ -7,7 +9,8 @@ interface SignOutDialogProps {
 }
 
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
-  const { auth } = useAuthStore()
+  const queryClient = useQueryClient()
+  const router = useRouter()
 
   return (
     <ConfirmDialog
@@ -17,7 +20,7 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
       desc='Are you sure you want to sign out? You will need to sign in again to access your account.'
       confirmText='Sign out'
       destructive
-      handleConfirm={() => auth.reset()}
+      handleConfirm={() => void resetAuth(queryClient, router)}
       className='sm:max-w-sm'
     />
   )

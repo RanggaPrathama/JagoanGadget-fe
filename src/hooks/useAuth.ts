@@ -1,6 +1,7 @@
 import { authSessionQueryOptions } from '@/features/auth/service/auth.service'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { useAuthStore } from '@/stores/auth-store'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
+import { resetAuth } from '@/features/auth/service/logout'
 
 function useAuthSession() {
   const sessionQuery = useQuery(authSessionQueryOptions())
@@ -22,11 +23,12 @@ function useAuthSession() {
 
 function useAuth() {
   const { isAuthenticated, ...sessionState } = useAuthSession()
-  const { auth } = useAuthStore()
+  const queryClient = useQueryClient()
+  const router = useRouter()
 
   const signOutMutation = useMutation({
     mutationFn: async () => {
-      await auth.reset()
+      await resetAuth(queryClient, router)
     },
   })
 
