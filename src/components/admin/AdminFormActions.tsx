@@ -23,7 +23,6 @@ type AdminFormActionsProps = {
    * the menu service).
    */
   basePermissionCode: string;
-  onSubmit: () => void;
 };
 
 export function AdminFormActions({
@@ -36,7 +35,6 @@ export function AdminFormActions({
   entityLabels,
   disabled,
   basePermissionCode,
-  onSubmit,
 }: AdminFormActionsProps) {
   const labels = { create: "Simpan", update: "Update", ...entityLabels };
 
@@ -73,7 +71,6 @@ export function AdminFormActions({
             type="submit"
             form={formId}
             disabled={isSubmitting || disabled}
-            onClick={() => onSubmit()}
             className="rounded-full"
             icon={<Save className="size-4" />}
           >

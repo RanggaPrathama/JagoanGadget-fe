@@ -283,7 +283,6 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
           hint="Pastikan nama menu, code, route, dan status sudah sesuai sebelum disimpan."
           disabled={parentOptionsLoading}
           basePermissionCode="setup.menu"
-          onSubmit={() => void form.handleSubmit()}
         />
       </form>
     </div>

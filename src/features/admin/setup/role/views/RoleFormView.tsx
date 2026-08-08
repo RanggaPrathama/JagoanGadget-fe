@@ -456,7 +456,6 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
           hint="Pastikan nama, code, dan status role sudah sesuai sebelum disimpan."
           entityLabels={{ create: "Simpan Role", update: "Update Role" }}
           basePermissionCode="setup.role"
-          onSubmit={() => void submitForm()}
         />
       </form>
     </div>

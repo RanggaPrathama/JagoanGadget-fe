@@ -178,7 +178,6 @@ export function PermissionFormView({
           backTo="/admin/setup/permission"
           hint="Pastikan nama dan kode permission sudah sesuai sebelum disimpan."
           basePermissionCode="setup.permission"
-          onSubmit={() => void form.handleSubmit()}
         />
       </form>
     </div>

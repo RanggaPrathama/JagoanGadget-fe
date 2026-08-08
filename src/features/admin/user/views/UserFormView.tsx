@@ -317,7 +317,6 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
           hint="Pastikan nama, email, dan status sudah sesuai sebelum disimpan."
           entityLabels={{ create: "Simpan User", update: "Update User" }}
           basePermissionCode="user"
-          onSubmit={() => void form.handleSubmit()}
         />
       </form>
     </div>
