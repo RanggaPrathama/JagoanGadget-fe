@@ -10,7 +10,7 @@ import {
   signUpWithEmail,
   type SignUpCredentials,
 } from "../service/auth.service";
-import { useAuthSession } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UseSignUpFormOptions {
   redirectTo?: string | null;
@@ -92,7 +92,7 @@ function redirectToTarget(
 export function useSignUpForm({ redirectTo }: UseSignUpFormOptions = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const session = useAuthSession();
+  const { isAuthenticated, isLoading: isSessionPending } = useAuth();
 
   const mutation = useMutation({
     mutationFn: async (credentials: SignUpCredentials) => {
@@ -130,15 +130,15 @@ export function useSignUpForm({ redirectTo }: UseSignUpFormOptions = {}) {
   });
 
   useEffect(() => {
-    if (!session.isPending && session.isAuthenticated) {
+    if (!isSessionPending && isAuthenticated) {
       redirectToTarget(router, redirectTo);
     }
-  }, [redirectTo, router, session.isAuthenticated, session.isPending]);
+  }, [redirectTo, router, isAuthenticated, isSessionPending]);
 
   return {
     form,
     isLoading: mutation.isPending,
-    isSessionReady: !session.isPending,
-    isAuthenticated: session.isAuthenticated,
+    isSessionReady: !isSessionPending,
+    isAuthenticated,
   };
 }

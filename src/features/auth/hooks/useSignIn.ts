@@ -9,9 +9,7 @@ import {
   signInWithEmail,
   type SignInCredentials,
 } from "../service/auth.service";
-import { meQueryKey } from "../service/me.service";
-import { getErrorMessage } from "@/utils/error";
-import { useAuthSession } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UseSignInFormOptions {
   redirectTo?: string | null;
@@ -53,7 +51,7 @@ function redirectToTarget(
 export function useSignInForm({ redirectTo }: UseSignInFormOptions = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const session = useAuthSession();
+  const { isAuthenticated, isLoading: isSessionPending } = useAuth();
 
   const mutation = useMutation({
     mutationFn: async (credentials: SignInCredentials) => {
@@ -92,15 +90,15 @@ export function useSignInForm({ redirectTo }: UseSignInFormOptions = {}) {
   });
 
   useEffect(() => {
-    if (!session.isPending && session.isAuthenticated) {
+    if (!isSessionPending && isAuthenticated) {
       redirectToTarget(router, redirectTo);
     }
-  }, [redirectTo, router, session.isAuthenticated, session.isPending]);
+  }, [redirectTo, router, isAuthenticated, isSessionPending]);
 
   return {
     form,
     isLoading: mutation.isPending,
-    isSessionReady: !session.isPending,
-    isAuthenticated: session.isAuthenticated,
+    isSessionReady: !isSessionPending,
+    isAuthenticated,
   };
 }
