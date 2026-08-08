@@ -1,8 +1,8 @@
+import { ActionButton } from "./ActionButton";
 import { Link } from "@tanstack/react-router";
 import { Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useHasPermission } from "@/hooks/useHasPermission";
 
 type AdminFormActionsProps = {
   formId: string;
@@ -39,9 +39,6 @@ export function AdminFormActions({
   onSubmit,
 }: AdminFormActionsProps) {
   const labels = { create: "Simpan", update: "Update", ...entityLabels };
-  const canSubmit = useHasPermission(
-    `${basePermissionCode}.${isEditMode ? "update" : "create"}`,
-  );
 
   return (
     <div className="admin-form-actions sticky bottom-4 z-20 flex flex-col-reverse gap-4 rounded-[1.75rem] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
@@ -70,21 +67,22 @@ export function AdminFormActions({
         <Button variant="outline" asChild className="rounded-full">
           <Link to={backTo}>{readonly ? "Kembali" : "Batal"}</Link>
         </Button>
-        {!readonly && canSubmit.has && (
-          <Button
+        {!readonly && (
+          <ActionButton
+            permission={`${basePermissionCode}.${isEditMode ? "update" : "create"}`}
             type="submit"
             form={formId}
             disabled={isSubmitting || disabled}
             onClick={() => onSubmit()}
             className="rounded-full"
+            icon={<Save className="size-4" />}
           >
-            <Save className="size-4" />
             {isSubmitting
               ? "Menyimpan..."
               : isEditMode
                 ? labels.update
                 : labels.create}
-          </Button>
+          </ActionButton>
         )}
       </div>
     </div>
