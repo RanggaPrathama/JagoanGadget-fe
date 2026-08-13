@@ -1,21 +1,22 @@
 import { useEffect, useRef } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useStore } from "@tanstack/react-store";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
 import type { FieldOption } from "@/components/field/types";
 import { getErrorMessage } from "@/utils/error";
+import { createMenu, generateMenuCode, updateMenu } from "../service/menu.service";
+import type { MenuPayload } from "../types";
+import type { ApiFnReturnType } from "@/lib/react-query";
 import {
-  createMenu,
-  generateMenuCode,
-  getMenuById,
-  getMenusList,
-  updateMenu,
-  type MenuPayload,
+  menuListQueryKey,
+  useGetMenusListQuery,
+  useGetMenuByIdQuery,
+  generateMenuCodeMutationOptions,
+  invalidateMenuQueries,
 } from "../service/menu.service";
-import { menuListQueryKey } from "./useMenuList";
 import { invalidateMe } from "@/features/auth/service/me.service";
 
 const nullableTrimmedString = (maxLength: number) =>
@@ -104,18 +105,13 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
   const generateRequestIdRef = useRef(0);
   const lastGeneratedSignatureRef = useRef("");
 
-  const menusQuery = useQuery({
-    queryKey: menuListQueryKey,
-    queryFn: () => getMenusList(),
+  const menusQuery = useGetMenusListQuery();
+
+  const menuDetailQuery = useGetMenuByIdQuery(menuId as string, {
+    queryConfig: { enabled: isEditMode },
   });
 
-  const menuDetailQuery = useQuery({
-    queryKey: [...menuListQueryKey, menuId],
-    queryFn: () => getMenuById(menuId as string),
-    enabled: isEditMode,
-  });
-
-  const mutation = useMutation({
+  const mutation = useMutation<ApiFnReturnType<typeof createMenu>, Error, MenuFormValues>({
     mutationFn: async (values: MenuFormValues) => {
       const trimmedName = values.name.trim();
       const normalizedParentId = values.parentId || null;
@@ -154,7 +150,7 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
       toast.success(
         isEditMode ? "Menu berhasil diperbarui." : "Menu berhasil ditambahkan.",
       );
-      await queryClient.invalidateQueries({ queryKey: menuListQueryKey });
+      await invalidateMenuQueries(queryClient);
 
       if (menuId) {
         await queryClient.invalidateQueries({
@@ -174,16 +170,7 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
     },
   });
 
-  const generateCodeMutation = useMutation({
-    mutationFn: generateMenuCode,
-    onError: (error) => {
-      const msg = getErrorMessage(
-        error,
-        "Gagal membuat kode menu secara otomatis.",
-      );
-      toast.error(msg, { id: msg });
-    },
-  });
+  const generateCodeMutation = useMutation(generateMenuCodeMutationOptions(queryClient));
 
   const form = useForm({
     defaultValues,
@@ -212,7 +199,9 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
     form.setFieldValue("sortOrder", data.sortOrder ?? 0);
     form.setFieldValue("isActive", data.isActive ?? true);
     const resolvedType =
-      data.type === "menu" || data.type === "group" ? data.type : ("menu" as const);
+      data.type === "menu" || data.type === "group"
+        ? data.type
+        : ("menu" as const);
     form.setFieldValue("type", resolvedType);
     form.setFieldValue("parentId", data.parentId ?? "");
 
@@ -281,7 +270,6 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
         value: menu.id,
       })),
   ];
-
 
   return {
     form,
