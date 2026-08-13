@@ -1,50 +1,20 @@
 import { api } from "@/lib/axios";
 import { unwrapData, unwrapPaginated } from "@/lib/api-response";
 import type { ApiResponse, PaginatedResponse } from "@/lib/api-response";
+import type {
+  MenuItem,
+  MenuPayload,
+  GenerateMenuCodePayload,
+  GenerateMenuCodeData,
+} from "../types";
+export type { MenuItem, MenuPayload } from "../types";
+import { queryOptions, useQuery, type QueryClient } from "@tanstack/react-query";
+import { mutationOptions, type QueryConfig } from "@/lib/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/utils/error";
+import { invalidateMe } from "@/features/auth/service/me.service";
 
-export type MenuItem = {
-  id: string;
-  name: string;
-  code: string;
-  route?: string | null;
-  iconName?: string | null;
-  sortOrder?: number;
-  isActive?: boolean;
-  parentId?: string | null;
-  parent?: {
-    id: string;
-    name: string;
-  } | null;
-  parentName?: string | null;
-  type?: string;
-};
-
-export type MenuPayload = {
-  name: string;
-  code: string;
-  route?: string | null;
-  iconName?: string | null;
-  sortOrder?: number;
-  isActive?: boolean;
-  type: string;
-  parentId?: string | null;
-};
-
-export type GenerateMenuCodePayload = {
-  name: string;
-  parentId?: string | null;
-};
-
-export type GenerateMenuCodeData = {
-  code: string;
-  fullPath: string[];
-};
-
-export type GenerateMenuCodeResult = {
-  code: string;
-  route: string;
-  fullPath: string[];
-};
+export const menuListQueryKey = ["menus"] as const;
 
 export async function getMenusList(params?: {
   search?: string;
@@ -110,3 +80,88 @@ export async function generateMenuCode(payload: GenerateMenuCodePayload) {
     fullPath: data?.fullPath ?? [],
   };
 }
+
+export type MenuListParams = {
+  search?: string;
+  show?: "active" | "inactive" | "all";
+  page?: number;
+  limit?: number;
+};
+
+export const getMenusListQueryKey = (params?: MenuListParams): unknown[] => [
+  ...menuListQueryKey,
+  params?.search ?? "",
+  params?.show ?? "all",
+  params?.page ?? 1,
+  params?.limit ?? 25,
+];
+
+export const getMenusListQueryOptions = (params?: MenuListParams) =>
+  queryOptions({
+    queryKey: getMenusListQueryKey(params),
+    queryFn: () => getMenusList(params),
+  });
+
+export const getMenuByIdQueryOptions = (menuId: string) => {
+  return queryOptions({
+    queryKey: [...menuListQueryKey, menuId],
+    queryFn: () => getMenuById(menuId),
+  });
+};
+
+type UseMenusQueryOptions = { queryConfig?: QueryConfig<typeof getMenusListQueryOptions> };
+
+export const useGetMenusListQuery = (
+  params?: MenuListParams,
+  { queryConfig }: UseMenusQueryOptions = {},
+) => useQuery({ ...getMenusListQueryOptions(params), ...queryConfig });
+
+export const useGetMenuByIdQuery = (
+  menuId: string,
+  { queryConfig }: { queryConfig?: QueryConfig<typeof getMenuByIdQueryOptions> } = {},
+) => useQuery({ ...getMenuByIdQueryOptions(menuId), ...queryConfig });
+
+export function invalidateMenuQueries(queryClient: QueryClient) {
+  return queryClient.invalidateQueries({ queryKey: menuListQueryKey });
+}
+
+export const deleteMenuMutationOptions = (queryClient: QueryClient) =>
+  mutationOptions({
+    mutationFn: deleteMenu,
+    onSuccess: async () => {
+      toast.success("Menu berhasil dihapus.");
+      await invalidateMenuQueries(queryClient);
+      await invalidateMe(queryClient);
+    },
+    onError: (error) => toast.error(getErrorMessage(error, "Gagal menghapus menu.")),
+  });
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const generateMenuCodeMutationOptions = (_queryClient: QueryClient) =>
+  mutationOptions({
+    mutationFn: generateMenuCode,
+    onError: (error) =>
+      toast.error(getErrorMessage(error, "Gagal membuat kode menu secara otomatis.")),
+  });
+
+export const createMenuMutationOptions = (queryClient: QueryClient) =>
+  mutationOptions({
+    mutationFn: createMenu,
+    onSuccess: async () => {
+      toast.success("Menu berhasil ditambahkan.");
+      await invalidateMenuQueries(queryClient);
+      await invalidateMe(queryClient);
+    },
+    onError: (error) => toast.error(getErrorMessage(error, "Gagal menambahkan menu.")),
+  });
+
+export const updateMenuMutationOptions = (queryClient: QueryClient, menuId: string) =>
+  mutationOptions({
+    mutationFn: (payload: MenuPayload) => updateMenu(menuId, payload),
+    onSuccess: async () => {
+      toast.success("Menu berhasil diperbarui.");
+      await invalidateMenuQueries(queryClient);
+      await invalidateMe(queryClient);
+    },
+    onError: (error) => toast.error(getErrorMessage(error, "Gagal memperbarui menu.")),
+  });
