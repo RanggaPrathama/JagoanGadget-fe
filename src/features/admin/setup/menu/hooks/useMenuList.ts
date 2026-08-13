@@ -1,11 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/utils/error";
-import { deleteMenu, getMenusList, type MenuItem } from "../service/menu.service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useGetMenusListQuery, deleteMenuMutationOptions } from "../service/menu.service";
+import type { MenuItem } from "../types";
 import type { UnwrappedPaginated } from "@/lib/api-response";
-import { invalidateMe } from "@/features/auth/service/me.service";
 
-export const menuListQueryKey = ["menus"];
+export { menuListQueryKey } from "../service/menu.service";
 
 export type MenuTableRow = MenuItem & {
   parentLabel: string;
@@ -35,34 +33,12 @@ export function useMenuList(
   limit = 25,
 ) {
   const queryClient = useQueryClient();
-  const menuQuery = useQuery({
-    queryKey: [
-      ...menuListQueryKey,
-      ...(search ? [search] : []),
-      ...(show && show !== "all" ? [show] : []),
-      page,
-      limit,
-    ],
-    queryFn: () =>
-      getMenusList({
-        search,
-        isActive: show === "active" ? true : show === "inactive" ? false : undefined,
-        page,
-        limit,
-      }),
-  });
+  const menuQuery = useGetMenusListQuery(
+    { search, show, page, limit },
+    { queryConfig: { enabled: true } },
+  );
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteMenu,
-    onSuccess: async () => {
-      toast.success("Menu berhasil dihapus.");
-      await queryClient.invalidateQueries({ queryKey: menuListQueryKey });
-      await invalidateMe(queryClient);
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error, "Gagal menghapus menu."));
-    },
-  });
+  const deleteMutation = useMutation(deleteMenuMutationOptions(queryClient));
 
   const data = menuQuery.data as UnwrappedPaginated<MenuItem> | undefined;
   const rawMenus = data?.items ?? [];
