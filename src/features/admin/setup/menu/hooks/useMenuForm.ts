@@ -14,8 +14,7 @@ import {
   menuListQueryKey,
   useGetMenusListQuery,
   useGetMenuByIdQuery,
-  generateMenuCodeMutationOptions,
-  invalidateMenuQueries,
+  useGenerateMenuCode,
 } from "../service/menu.service";
 import { invalidateMe } from "@/features/auth/service/me.service";
 
@@ -150,7 +149,7 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
       toast.success(
         isEditMode ? "Menu berhasil diperbarui." : "Menu berhasil ditambahkan.",
       );
-      await invalidateMenuQueries(queryClient);
+      await queryClient.invalidateQueries({ queryKey: menuListQueryKey });
 
       if (menuId) {
         await queryClient.invalidateQueries({
@@ -170,7 +169,7 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
     },
   });
 
-  const generateCodeMutation = useMutation(generateMenuCodeMutationOptions(queryClient));
+  const generateCodeMutation = useGenerateMenuCode();
 
   const form = useForm({
     defaultValues,

@@ -1,5 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGetMenusListQuery, deleteMenuMutationOptions } from "../service/menu.service";
+import { useGetMenusListQuery, useDeleteMenu } from "../service/menu.service";
 import type { MenuItem } from "../types";
 import type { UnwrappedPaginated } from "@/lib/api-response";
 
@@ -32,13 +31,12 @@ export function useMenuList(
   page = 1,
   limit = 25,
 ) {
-  const queryClient = useQueryClient();
   const menuQuery = useGetMenusListQuery(
     { search, show, page, limit },
     { queryConfig: { enabled: true } },
   );
 
-  const deleteMutation = useMutation(deleteMenuMutationOptions(queryClient));
+  const deleteMutation = useDeleteMenu();
 
   const data = menuQuery.data as UnwrappedPaginated<MenuItem> | undefined;
   const rawMenus = data?.items ?? [];

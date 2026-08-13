@@ -8,8 +8,8 @@ import type {
   GenerateMenuCodeData,
 } from "../types";
 export type { MenuItem, MenuPayload } from "../types";
-import { queryOptions, useQuery, type QueryClient } from "@tanstack/react-query";
-import { mutationOptions, type QueryConfig } from "@/lib/react-query";
+import { queryOptions, useQuery, useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
+import { type QueryConfig } from "@/lib/react-query";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/error";
 import { invalidateMe } from "@/features/auth/service/me.service";
@@ -125,43 +125,49 @@ export function invalidateMenuQueries(queryClient: QueryClient) {
   return queryClient.invalidateQueries({ queryKey: menuListQueryKey });
 }
 
-export const deleteMenuMutationOptions = (queryClient: QueryClient) =>
-  mutationOptions({
+export const useDeleteMenu = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteMenu,
     onSuccess: async () => {
       toast.success("Menu berhasil dihapus.");
       await invalidateMenuQueries(queryClient);
       await invalidateMe(queryClient);
     },
-    onError: (error) => toast.error(getErrorMessage(error, "Gagal menghapus menu.")),
+    onError: (error: Error) => toast.error(getErrorMessage(error, "Gagal menghapus menu.")),
   });
+};
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const generateMenuCodeMutationOptions = (_queryClient: QueryClient) =>
-  mutationOptions({
+export const useGenerateMenuCode = () => {
+  return useMutation({
     mutationFn: generateMenuCode,
-    onError: (error) =>
+    onError: (error: Error) =>
       toast.error(getErrorMessage(error, "Gagal membuat kode menu secara otomatis.")),
   });
+};
 
-export const createMenuMutationOptions = (queryClient: QueryClient) =>
-  mutationOptions({
+export const useCreateMenu = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: createMenu,
     onSuccess: async () => {
       toast.success("Menu berhasil ditambahkan.");
       await invalidateMenuQueries(queryClient);
       await invalidateMe(queryClient);
     },
-    onError: (error) => toast.error(getErrorMessage(error, "Gagal menambahkan menu.")),
+    onError: (error: Error) => toast.error(getErrorMessage(error, "Gagal menambahkan menu.")),
   });
+};
 
-export const updateMenuMutationOptions = (queryClient: QueryClient, menuId: string) =>
-  mutationOptions({
+export const useUpdateMenu = (menuId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: (payload: MenuPayload) => updateMenu(menuId, payload),
     onSuccess: async () => {
       toast.success("Menu berhasil diperbarui.");
       await invalidateMenuQueries(queryClient);
       await invalidateMe(queryClient);
     },
-    onError: (error) => toast.error(getErrorMessage(error, "Gagal memperbarui menu.")),
+    onError: (error: Error) => toast.error(getErrorMessage(error, "Gagal memperbarui menu.")),
   });
+};
