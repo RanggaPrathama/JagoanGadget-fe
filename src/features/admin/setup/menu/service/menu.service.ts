@@ -8,11 +8,6 @@ import type {
   GenerateMenuCodeData,
 } from "../types";
 export type { MenuItem, MenuPayload } from "../types";
-import { queryOptions, useQuery, useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
-import { type MutationConfig, type QueryConfig } from "@/lib/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/utils/error";
-import { invalidateMe } from "@/features/auth/service/me.service";
 
 export const menuListQueryKey = ["menus"] as const;
 
@@ -81,127 +76,17 @@ export async function generateMenuCode(payload: GenerateMenuCodePayload) {
   };
 }
 
-export type MenuListParams = {
-  search?: string;
-  show?: "active" | "inactive" | "all";
-  page?: number;
-  limit?: number;
-};
-
-export const getMenusListQueryKey = (params?: MenuListParams): unknown[] => [
-  ...menuListQueryKey,
-  params?.search ?? "",
-  params?.show ?? "all",
-  params?.page ?? 1,
-  params?.limit ?? 25,
-];
-
-export const getMenusListQueryOptions = (params?: MenuListParams) =>
-  queryOptions({
-    queryKey: getMenusListQueryKey(params),
-    queryFn: () => getMenusList(params),
-  });
-
-export const getMenuByIdQueryOptions = (menuId: string) => {
-  return queryOptions({
-    queryKey: [...menuListQueryKey, menuId],
-    queryFn: () => getMenuById(menuId),
-  });
-};
-
-type UseMenusQueryOptions = { queryConfig?: QueryConfig<typeof getMenusListQueryOptions> };
-
-export const useGetMenusListQuery = (
-  params?: MenuListParams,
-  { queryConfig }: UseMenusQueryOptions = {},
-) => useQuery({ ...getMenusListQueryOptions(params), ...queryConfig });
-
-export const useGetMenuByIdQuery = (
-  menuId: string,
-  { queryConfig }: { queryConfig?: QueryConfig<typeof getMenuByIdQueryOptions> } = {},
-) => useQuery({ ...getMenuByIdQueryOptions(menuId), ...queryConfig });
-
-export function invalidateMenuQueries(queryClient: QueryClient) {
-  return queryClient.invalidateQueries({ queryKey: menuListQueryKey });
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyMutationFn = (...args: any) => Promise<any>;
-
-type SuccessParams<Fn extends AnyMutationFn> = Parameters<
-  NonNullable<MutationConfig<Fn>["onSuccess"]>
->;
-
-type UseDeleteMenuOptions = { mutationConfig?: MutationConfig<typeof deleteMenu> };
-
-export const useDeleteMenu = ({ mutationConfig }: UseDeleteMenuOptions = {}) => {
-  const queryClient = useQueryClient();
-  const { onSuccess, ...restConfig } = mutationConfig || {};
-  return useMutation({
-    ...restConfig,
-    mutationFn: deleteMenu,
-    onSuccess: (...args: SuccessParams<typeof deleteMenu>) => {
-      toast.success("Menu berhasil dihapus.");
-      void invalidateMenuQueries(queryClient);
-      void invalidateMe(queryClient);
-      onSuccess?.(...args);
-    },
-    onError: (error: Error) => toast.error(getErrorMessage(error, "Gagal menghapus menu.")),
-  });
-};
-
-type UseGenerateMenuCodeOptions = {
-  mutationConfig?: MutationConfig<typeof generateMenuCode>;
-};
-
-export const useGenerateMenuCode = ({
-  mutationConfig,
-}: UseGenerateMenuCodeOptions = {}) => {
-  return useMutation({
-    ...mutationConfig,
-    mutationFn: generateMenuCode,
-    onError: (error: Error) =>
-      toast.error(getErrorMessage(error, "Gagal membuat kode menu secara otomatis.")),
-  });
-};
-
-type UseCreateMenuOptions = { mutationConfig?: MutationConfig<typeof createMenu> };
-
-export const useCreateMenu = ({ mutationConfig }: UseCreateMenuOptions = {}) => {
-  const queryClient = useQueryClient();
-  const { onSuccess, ...restConfig } = mutationConfig || {};
-  return useMutation({
-    ...restConfig,
-    mutationFn: createMenu,
-    onSuccess: (...args: SuccessParams<typeof createMenu>) => {
-      toast.success("Menu berhasil ditambahkan.");
-      void invalidateMenuQueries(queryClient);
-      void invalidateMe(queryClient);
-      onSuccess?.(...args);
-    },
-    onError: (error: Error) => toast.error(getErrorMessage(error, "Gagal menambahkan menu.")),
-  });
-};
-
-type UseUpdateMenuOptions = {
-  menuId: string;
-  mutationConfig?: MutationConfig<UpdateMenuFn>;
-};
-
-type UpdateMenuFn = (payload: MenuPayload) => Promise<Awaited<ReturnType<typeof updateMenu>>>;
-
-export const useUpdateMenu = ({ menuId, mutationConfig }: UseUpdateMenuOptions) => {
-  const queryClient = useQueryClient();
-  const { onSuccess, ...restConfig } = mutationConfig || {};
-  return useMutation({
-    ...restConfig,
-    mutationFn: (payload: MenuPayload) => updateMenu(menuId, payload),
-    onSuccess: (...args: SuccessParams<UpdateMenuFn>) => {
-      toast.success("Menu berhasil diperbarui.");
-      void invalidateMenuQueries(queryClient);
-      void invalidateMe(queryClient);
-      onSuccess?.(...args);
-    },
-    onError: (error: Error) => toast.error(getErrorMessage(error, "Gagal memperbarui menu.")),
-  });
-};
+export {
+  getMenusListQueryKey,
+  getMenusListQueryOptions,
+  getMenuByIdQueryOptions,
+  useGetMenusListQuery,
+  useGetMenuByIdQuery,
+  invalidateMenuQueries,
+} from "./menu.queries";
+export {
+  useDeleteMenu,
+  useGenerateMenuCode,
+  useCreateMenu,
+  useUpdateMenu,
+} from "./menu.mutations";
