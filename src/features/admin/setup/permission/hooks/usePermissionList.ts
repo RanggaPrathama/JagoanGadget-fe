@@ -1,51 +1,34 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getErrorMessage } from "@/utils/error";
-import {
-  deletePermission,
-  getPermissions,
-} from "../service/permission.service";
-import type { PermissionItem } from "../service/permission.service";
+import { useGetPermissionsListQuery, permissionListQueryKey } from "../service/permission.queries";
+import { useDeletePermission } from "../service/permission.mutations";
+import type { PermissionItem } from "../types";
 import type { UnwrappedPaginated } from "@/lib/api-response";
-import { invalidateMe } from "@/features/auth/service/me.service";
 
-export const permissionListQueryKey = ["permissions"] as const;
+// Re-export the query key so existing consumers (e.g. usePermissionForm) keep working.
+export { permissionListQueryKey };
 
+// Loads the paginated permission list and exposes delete + refetch helpers.
 export function usePermissionList(search?: string, page = 1, limit = 10) {
-  const queryClient = useQueryClient();
-  const permissionQuery = useQuery({
-    queryKey: [...permissionListQueryKey, search ?? "", page, limit],
-    queryFn: () => getPermissions({ search, page, limit }),
-  });
+  // Fetch the permission list via the shared query hook.
+  const query = useGetPermissionsListQuery({ search, page, limit });
+  const data = query.data as UnwrappedPaginated<PermissionItem> | undefined;
 
-  const data = permissionQuery.data as UnwrappedPaginated<PermissionItem> | undefined;
+  // Derive the rows/pagination the view needs from the query result.
   const permissions = data?.items ?? [];
   const pagination = data?.pagination;
   const totalPermissions = pagination?.totalItems ?? 0;
 
-  const deleteMutation = useMutation({
-    mutationFn: deletePermission,
-    onSuccess: async () => {
-      toast.success("Permission berhasil dihapus.");
-      await queryClient.invalidateQueries({
-        queryKey: permissionListQueryKey,
-      });
-      await invalidateMe(queryClient);
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error, "Gagal menghapus permission."));
-    },
-  });
+  // Delete mutation (toast + cache invalidation handled inside the hook).
+  const deleteMutation = useDeletePermission();
 
   return {
     permissions,
     totalPermissions,
     pagination,
-    isLoading: permissionQuery.isLoading,
-    isRefreshing: permissionQuery.isFetching,
+    isLoading: query.isLoading,
+    isRefreshing: query.isFetching,
     isDeleting: deleteMutation.isPending,
     refetchPermissions: async () => {
-      await permissionQuery.refetch();
+      await query.refetch();
     },
     deletePermission: async (permissionId: string) => {
       await deleteMutation.mutateAsync(permissionId);
