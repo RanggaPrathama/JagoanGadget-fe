@@ -8,7 +8,7 @@ import type { UserFormInput } from "../types";
 import { getErrorMessage } from "@/utils/error";
 import type { RoleItem } from "../../setup/role/service/role.service";
 import { createUser, getUser, updateUser } from "../service/user.service";
-import { userListQueryKey } from "./useUserList";
+import { userListQueryKey } from "../service/user.queries";
 import { invalidateMe } from "@/features/auth/service/me.service";
 
 const nullableTrimmedString = (maxLength: number) =>
