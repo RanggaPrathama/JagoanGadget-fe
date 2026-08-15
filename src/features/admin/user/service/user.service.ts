@@ -2,6 +2,8 @@ import { api } from "@/lib/axios";
 import { unwrapData, unwrapPaginated } from "@/lib/api-response";
 import type { ApiResponse, PaginatedResponse } from "@/lib/api-response";
 import type { UserEntity, UserFormInput } from "../types";
+// Re-export domain types so callers importing from this file keep working.
+export type { UserEntity, UserFormInput, UserRoleEntity } from "../types";
 
 export async function getUsers(params?: {
   search?: string;
