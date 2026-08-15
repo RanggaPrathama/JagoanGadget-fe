@@ -31,7 +31,7 @@ import {
   AdminFormHeader,
   FormSkeleton,
 } from "@/components/admin";
-import { cn } from "@/utils/cn";
+import { cn } from "@/lib/utils";
 import { getMenusList } from "@/features/admin/setup/menu/service/menu.service";
 import type { MenuItem } from "@/features/admin/setup/menu/service/menu.service";
 import { RoleSummary } from "../components/RoleSummary";

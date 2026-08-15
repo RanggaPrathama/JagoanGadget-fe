@@ -17,7 +17,7 @@ import { StatCard } from "@/components/card/StatCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
-import { cn } from "@/utils/cn";
+import { cn } from "@/lib/utils";
 import { getRoleColumns } from "../components/role-columns";
 import { useRoleList } from "../hooks/useRoleList";
 
