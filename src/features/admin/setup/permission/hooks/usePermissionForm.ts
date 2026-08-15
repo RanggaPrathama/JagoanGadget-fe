@@ -1,20 +1,22 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useStore } from "@tanstack/react-store";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/error";
 import type { FieldOption } from "@/components/field/types";
-import { getMenusList } from "@/features/admin/setup/menu/service/menu.service";
 import {
   createPermission,
-  getPermissionById,
   updatePermission,
   type PermissionPayload,
 } from "../service/permission.service";
-import { permissionListQueryKey } from "./usePermissionList";
+import {
+  useGetPermissionByIdQuery,
+  invalidatePermissionQueries,
+} from "../service/permission.queries";
+import { useGetMenusListQuery } from "@/features/admin/setup/menu/service/menu.queries";
 import { invalidateMe } from "@/features/auth/service/me.service";
 
 const permissionFormSchema = z.object({
@@ -59,6 +61,7 @@ type UsePermissionFormOptions = {
   permissionId?: string;
 };
 
+// Converts a permission name to a URL-safe slug (lowercase, underscores).
 function slugifyPermissionName(name: string): string {
   return name
     .trim()
@@ -69,6 +72,7 @@ function slugifyPermissionName(name: string): string {
     .replace(/^_|_$/g, "");
 }
 
+// Builds a permission code by combining the menu base code with the slugified name.
 function generatePermissionCode(
   menuCode: string,
   permissionName: string,
@@ -80,6 +84,7 @@ function generatePermissionCode(
   return `${base}.${slug}`;
 }
 
+// Maps form values to the API payload expected by create/update endpoints.
 function toPayload(values: PermissionFormValues): PermissionPayload {
   const parsed = permissionFormSchema.parse(values);
   return {
@@ -90,23 +95,20 @@ function toPayload(values: PermissionFormValues): PermissionPayload {
   };
 }
 
+// Hook: manages form state, auto-generated code, and submit mutation for permissions.
 export function usePermissionForm({ permissionId }: UsePermissionFormOptions) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEditMode = Boolean(permissionId);
   const skipNextGenerateRef = useRef(isEditMode);
 
-  const permissionDetailQuery = useQuery({
-    queryKey: [...permissionListQueryKey, permissionId],
-    queryFn: () => getPermissionById(permissionId as string),
-    enabled: isEditMode,
+  // Load the permission being edited (disabled in create mode).
+  const permissionDetailQuery = useGetPermissionByIdQuery(permissionId as string, {
+    queryConfig: { enabled: isEditMode },
   });
 
-  // Reuse menu service to populate Menu dropdown
-  const menusQuery = useQuery({
-    queryKey: ["menus"],
-    queryFn: () => getMenusList({ limit: 30 }),
-  });
+  // Reuse the menu query to populate the "Menu" dropdown.
+  const menusQuery = useGetMenusListQuery({ limit: 30 });
 
   // Build menu lookup map
   const rawMenus = useMemo(() => menusQuery.data?.items ?? [], [menusQuery.data?.items]);
@@ -131,16 +133,7 @@ export function usePermissionForm({ permissionId }: UsePermissionFormOptions) {
           ? "Permission berhasil diperbarui."
           : "Permission berhasil ditambahkan.",
       );
-      await queryClient.invalidateQueries({
-        queryKey: permissionListQueryKey,
-      });
-
-      if (permissionId) {
-        await queryClient.invalidateQueries({
-          queryKey: [...permissionListQueryKey, permissionId],
-        });
-      }
-
+      await invalidatePermissionQueries(queryClient);
       await invalidateMe(queryClient);
       void navigate({ to: "/admin/setup/permission" });
     },
