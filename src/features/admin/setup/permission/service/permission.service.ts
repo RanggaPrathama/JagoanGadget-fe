@@ -1,28 +1,11 @@
 import { api } from "@/lib/axios";
 import { unwrapPaginated, unwrapData } from "@/lib/api-response";
 import type { PaginatedResponse, ApiResponse } from "@/lib/api-response";
-import type { MenuItem } from "@/features/admin/setup/menu/service/menu.service";
+import type { PermissionItem, PermissionPayload } from "../types";
+// Re-export domain types so callers importing from this file keep working.
+export type { PermissionItem, PermissionPayload } from "../types";
 
-export type PermissionItem = {
-  id: string;
-  name: string;
-  code: string;
-  description?: string | null;
-  menuId?: string | null;
-  menuName?: string | null;
-  isActive?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  menu: MenuItem;
-};
-
-export type PermissionPayload = {
-  name: string;
-  code: string;
-  description?: string | null;
-  menuId?: string | null;
-};
-
+// Fetch a paginated permission list, optionally filtered by search/menu.
 export async function getPermissions(params?: {
   search?: string;
   menuId?: string;
@@ -43,6 +26,7 @@ export async function getPermissions(params?: {
   return unwrapPaginated<PermissionItem>(response.data);
 }
 
+// Fetch a single permission by id.
 export async function getPermissionById(permissionId: string) {
   const response = await api.get<ApiResponse<PermissionItem>>(
     `admin/permissions/${permissionId}`,
@@ -50,6 +34,7 @@ export async function getPermissionById(permissionId: string) {
   return unwrapData<PermissionItem>(response.data);
 }
 
+// Create a new permission.
 export async function createPermission(payload: PermissionPayload) {
   const response = await api.post<ApiResponse<PermissionItem>>(
     "admin/permissions",
@@ -58,6 +43,7 @@ export async function createPermission(payload: PermissionPayload) {
   return unwrapData<PermissionItem>(response.data);
 }
 
+// Update an existing permission.
 export async function updatePermission(
   permissionId: string,
   payload: PermissionPayload,
@@ -69,6 +55,7 @@ export async function updatePermission(
   return unwrapData<PermissionItem>(response.data);
 }
 
+// Delete a permission by id.
 export async function deletePermission(permissionId: string) {
   const response = await api.delete<ApiResponse<{ success?: boolean }>>(
     `admin/permissions/${permissionId}`,
