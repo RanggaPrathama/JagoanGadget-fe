@@ -1,14 +1,11 @@
+import type { PermissionItem } from "../../permission/types";
+
 // A permission entry attached to a role (join-row shape from the API).
 export type RolePermissionEntry = {
   id: string;
   roleId: string;
   permissionId: string;
-  permission: {
-    id: string;
-    name: string;
-    code: string;
-    description?: string | null;
-  };
+  permission: PermissionItem;
 };
 
 // A permission row inside a role's menu grouping (edit-mode checkbox state).
