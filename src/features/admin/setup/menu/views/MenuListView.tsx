@@ -20,6 +20,7 @@ const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
   { value: "inactive", label: "Non-Aktif" },
 ];
 
+// View: menu list page with search, status filter, toolbar actions (view/edit/delete/refresh/add), AG Grid table, and delete confirmation dialog.
 export function MenuListView() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -41,6 +42,7 @@ export function MenuListView() {
 
   const selectedMenu = menus.find((m) => m.id === selectedId) ?? null;
 
+  // Reset to first page when search text changes to avoid stale page numbers.
   const handleSearch = (value: string) => {
     setSearch(value);
     setPage(1);
@@ -80,7 +82,7 @@ export function MenuListView() {
             ))}
           </div>
 
-          {/* Toolbar */}
+          {/* Toolbar: search input + row actions (view/edit/delete) + refresh + create button. */}
           <div className="flex flex-col gap-2.5 border-b border-border/60 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
               <div className="relative w-full max-w-xs">
@@ -174,6 +176,7 @@ export function MenuListView() {
         </CardContent>
       </Card>
 
+      {/* Delete confirmation dialog — calls deleteMenu mutation and clears the selected ID on confirm/close. */}
       <ConfirmDialog
         open={!!confirmDeleteId}
         onOpenChange={(open) => !open && setConfirmDeleteId(null)}

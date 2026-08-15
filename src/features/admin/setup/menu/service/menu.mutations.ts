@@ -21,6 +21,7 @@ type SuccessParams<Fn extends AnyMutationFn> = Parameters<
 
 type UseDeleteMenuOptions = { mutationConfig?: MutationConfig<typeof deleteMenu> };
 
+// Hook: delete a menu by ID. Invalidates menu list queries and the current-user access-control cache on success.
 export const useDeleteMenu = ({ mutationConfig }: UseDeleteMenuOptions = {}) => {
   const queryClient = useQueryClient();
   const { onSuccess, ...restConfig } = mutationConfig || {};
@@ -37,6 +38,7 @@ export const useDeleteMenu = ({ mutationConfig }: UseDeleteMenuOptions = {}) => 
   });
 };
 
+// Hook: request auto-generated menu code from the server (name + parentId → code slug + route). No cache invalidation needed.
 type UseGenerateMenuCodeOptions = {
   mutationConfig?: MutationConfig<typeof generateMenuCode>;
 };
@@ -52,6 +54,7 @@ export const useGenerateMenuCode = ({
   });
 };
 
+// Hook: create a new menu. Invalidates menu list queries and the current-user access-control cache on success.
 type UseCreateMenuOptions = { mutationConfig?: MutationConfig<typeof createMenu> };
 
 export const useCreateMenu = ({ mutationConfig }: UseCreateMenuOptions = {}) => {
@@ -70,6 +73,7 @@ export const useCreateMenu = ({ mutationConfig }: UseCreateMenuOptions = {}) => 
   });
 };
 
+// Hook: update an existing menu by ID. Invalidates menu list + detail queries and the current-user access-control cache on success.
 type UseUpdateMenuOptions = {
   menuId: string;
   mutationConfig?: MutationConfig<UpdateMenuFn>;

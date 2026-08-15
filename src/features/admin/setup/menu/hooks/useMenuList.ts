@@ -1,14 +1,14 @@
-import { useGetMenusListQuery, useDeleteMenu } from "../service/menu.service";
+import { useDeleteMenu } from "../service/menu.mutations";
+import { useGetMenusListQuery } from "../service/menu.queries";
 import type { MenuItem } from "../types";
 import type { UnwrappedPaginated } from "@/lib/api-response";
-
-export { menuListQueryKey } from "../service/menu.service";
 
 export type MenuTableRow = MenuItem & {
   parentLabel: string;
   icon: string | null;
 };
 
+// Resolve the parent menu label for a row: prefers the embedded parent object, then parentName, then a lookup by parentId.
 function resolveParentLabel(menu: MenuItem, menuMap: Map<string, MenuItem>) {
   if (menu.parent?.name) {
     return menu.parent.name;
@@ -25,12 +25,15 @@ function resolveParentLabel(menu: MenuItem, menuMap: Map<string, MenuItem>) {
   return "-";
 }
 
+// Hook: fetch, shape, and manage the menu list table data. Maps raw API rows to MenuTableRow with resolved parent label, icon, sortOrder, and isActive defaults.
 export function useMenuList(
   search?: string,
   show?: "active" | "inactive" | "all",
   page = 1,
   limit = 25,
 ) {
+
+
   const menuQuery = useGetMenusListQuery(
     { search, show, page, limit },
     { queryConfig: { enabled: true } },
@@ -42,7 +45,9 @@ export function useMenuList(
   const rawMenus = data?.items ?? [];
   const pagination = data?.pagination;
   const totalMenus = pagination?.totalItems ?? 0;
+  // Build a lookup map so resolveParentLabel can find parent names by ID without extra queries.
   const menuMap = new Map(rawMenus.map((menu) => [menu.id, menu]));
+  // Map API rows to table rows: normalize nulls, resolve parent label, and keep all original fields.
   const menus: MenuTableRow[] = rawMenus.map((menu) => ({
     ...menu,
     icon: menu.iconName ?? null,

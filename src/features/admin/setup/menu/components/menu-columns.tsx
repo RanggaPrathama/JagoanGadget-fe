@@ -3,6 +3,7 @@ import type { ColDef, ICellRendererParams } from "ag-grid-community";
 import { StatusBadge } from "@/components/data-table";
 import type { MenuTableRow } from "../hooks/useMenuList";
 
+// Define AG Grid column config for the menu table: name, code, route, type, status (with StatusBadge), plus commented-out icon/sortOrder/parent columns.
 export function getMenuColumns(): ColDef<MenuTableRow>[] {
   return [
     {
@@ -41,10 +42,10 @@ export function getMenuColumns(): ColDef<MenuTableRow>[] {
     {
       headerName: "Type",
       field: "type",
-      filter: "agSetColumnFilter",
+      filter: "agTextColumnFilter",
       floatingFilter: true,
       filterParams: {
-        suppressMiniFilter: true,
+        debounceMs: 250,
       },
       minWidth: 140,
       width: 140,

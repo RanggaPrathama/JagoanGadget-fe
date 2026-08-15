@@ -47,6 +47,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
       ? "Perbarui struktur navigasi admin dengan tampilan yang lebih tenang dan konsisten."
       : "Tambahkan menu baru dengan layout yang bersih, adaptif, dan selaras dengan tema.";
 
+  // Normalize TanStack Form error (string or { message }) to a displayable string or undefined.
   const getErrorMessage = (
     error: string | { message?: string } | undefined,
   ) => {
@@ -72,6 +73,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
           void form.handleSubmit();
         }}
       >
+        {/* Header section: back button, badge, title, description, and edit/readonly indicators. */}
         <AdminFormHeader
           backTo="/admin/setup/menu"
           badge="Menu Setup"
@@ -81,6 +83,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
           isEditMode={isEditMode}
         />
 
+        {/* Form card: "Informasi Menu" section with type, parent, name, icon, code, sortOrder, route, and status fields. */}
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <CardTitle className="text-base">Informasi Menu</CardTitle>

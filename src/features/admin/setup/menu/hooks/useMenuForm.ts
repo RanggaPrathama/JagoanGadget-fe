@@ -7,17 +7,22 @@ import { z } from "zod";
 import { toast } from "sonner";
 import type { FieldOption } from "@/components/field/types";
 import { getErrorMessage } from "@/utils/error";
-import { createMenu, generateMenuCode, updateMenu } from "../service/menu.service";
+import {
+  createMenu,
+  generateMenuCode,
+  updateMenu,
+} from "../service/menu.service";
 import type { MenuPayload } from "../types";
 import type { ApiFnReturnType } from "@/lib/react-query";
 import {
   menuListQueryKey,
   useGetMenusListQuery,
   useGetMenuByIdQuery,
-  useGenerateMenuCode,
-} from "../service/menu.service";
+} from "../service/menu.queries";
+import { useGenerateMenuCode } from "../service/menu.mutations";
 import { invalidateMe } from "@/features/auth/service/me.service";
 
+// Zod schema helper: trim a string, convert empty string to null, enforce optional max length.
 const nullableTrimmedString = (maxLength: number) =>
   z
     .string()
@@ -77,6 +82,7 @@ type UseMenuFormOptions = {
   menuId?: string;
 };
 
+// Convert validated form values to the API payload shape expected by createMenu/updateMenu.
 function toPayload(values: MenuFormValues): MenuPayload {
   const parsed = menuFormSchema.parse(values);
 
@@ -92,10 +98,12 @@ function toPayload(values: MenuFormValues): MenuPayload {
   };
 }
 
+// Build a change-detection signature from name + parentId so we can skip redundant code-generation requests.
 function buildSignature(name: string, parentId: string | null | undefined) {
   return `${name.trim()}::${parentId ?? ""}`;
 }
 
+// Hook: manage menu form state, code generation, create/update mutation, and parent options for the menu form view.
 export function useMenuForm({ menuId }: UseMenuFormOptions) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -110,7 +118,11 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
     queryConfig: { enabled: isEditMode },
   });
 
-  const mutation = useMutation<ApiFnReturnType<typeof createMenu>, Error, MenuFormValues>({
+  const mutation = useMutation<
+    ApiFnReturnType<typeof createMenu>,
+    Error,
+    MenuFormValues
+  >({
     mutationFn: async (values: MenuFormValues) => {
       const trimmedName = values.name.trim();
       const normalizedParentId = values.parentId || null;
@@ -185,6 +197,7 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
       buildSignature(state.values.name ?? "", state.values.parentId ?? null),
   );
 
+  // Populate form fields from the fetched menu detail when editing; skip the next code-generation cycle so it doesn't overwrite the loaded code.
   useEffect(() => {
     if (!menuDetailQuery.data) {
       return;
@@ -211,6 +224,7 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
     skipNextGenerateRef.current = true;
   }, [form, menuDetailQuery.data]);
 
+  // Debounced auto-code generation: watch name + parentId changes, wait 500ms, then request a generated code/route from the server (skips if signature unchanged).
   useEffect(() => {
     if (skipNextGenerateRef.current) {
       skipNextGenerateRef.current = false;

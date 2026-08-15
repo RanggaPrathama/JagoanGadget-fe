@@ -9,8 +9,9 @@ import type {
 } from "../types";
 export type { MenuItem, MenuPayload } from "../types";
 
-export const menuListQueryKey = ["menus"] as const;
 
+
+// GET admin/menus — fetch paginated menu list with optional search, active status, permission, and pagination params.
 export async function getMenusList(params?: {
   search?: string;
   isActive?: boolean;
@@ -24,6 +25,7 @@ export async function getMenusList(params?: {
   return unwrapPaginated<MenuItem>(response.data);
 }
 
+// GET admin/menus/:menuId — fetch single menu detail by ID.
 export async function getMenuById(menuId: string) {
   const response = await api.get<ApiResponse<MenuItem>>(
     `admin/menus/${menuId}`,
@@ -31,6 +33,7 @@ export async function getMenuById(menuId: string) {
   return unwrapData<MenuItem>(response.data);
 }
 
+// POST admin/menus — create a new menu entry.
 export async function createMenu(payload: MenuPayload) {
   const response = await api.post<ApiResponse<MenuItem>>(
     "admin/menus",
@@ -39,6 +42,7 @@ export async function createMenu(payload: MenuPayload) {
   return unwrapData<MenuItem>(response.data);
 }
 
+// PUT admin/menus/:menuId — update an existing menu entry.
 export async function updateMenu(menuId: string, payload: MenuPayload) {
   const response = await api.put<ApiResponse<MenuItem>>(
     `admin/menus/${menuId}`,
@@ -47,6 +51,7 @@ export async function updateMenu(menuId: string, payload: MenuPayload) {
   return unwrapData<MenuItem>(response.data);
 }
 
+// DELETE admin/menus/:menuId — delete a menu entry by ID.
 export async function deleteMenu(menuId: string) {
   const response = await api.delete<ApiResponse<{ success?: boolean }>>(
     `admin/menus/${menuId}`,
@@ -54,6 +59,7 @@ export async function deleteMenu(menuId: string) {
   return unwrapData<{ success?: boolean }>(response.data);
 }
 
+// GET admin/menus/generate-code — generate a menu code slug and derived route path from a name + optional parentId.
 export async function generateMenuCode(payload: GenerateMenuCodePayload) {
   const response = await api.get<ApiResponse<GenerateMenuCodeData>>(
     "admin/menus/generate-code",
@@ -76,17 +82,4 @@ export async function generateMenuCode(payload: GenerateMenuCodePayload) {
   };
 }
 
-export {
-  getMenusListQueryKey,
-  getMenusListQueryOptions,
-  getMenuByIdQueryOptions,
-  useGetMenusListQuery,
-  useGetMenuByIdQuery,
-  invalidateMenuQueries,
-} from "./menu.queries";
-export {
-  useDeleteMenu,
-  useGenerateMenuCode,
-  useCreateMenu,
-  useUpdateMenu,
-} from "./menu.mutations";
+
