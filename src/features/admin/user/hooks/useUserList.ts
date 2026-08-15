@@ -1,7 +1,9 @@
-import { useGetUserListQuery } from "../service/user.queries";
+import { useGetUserListQuery, userListQueryKey } from "../service/user.queries";
 import { useDeleteUser } from "../service/user.mutations";
 import type { UserEntity } from "../types";
 import type { UnwrappedPaginated } from "@/lib/api-response";
+
+export { userListQueryKey };
 
 // Loads the paginated user list and exposes stats, delete + refetch helpers.
 export function useUserList(search?: string, page = 1, limit = 25) {
