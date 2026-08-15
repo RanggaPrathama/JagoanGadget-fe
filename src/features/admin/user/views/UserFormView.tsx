@@ -51,6 +51,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
       ? "Perbarui data user dengan tampilan yang lebih tenang dan konsisten."
       : "Tambahkan user baru dengan layout yang bersih, adaptif, dan selaras dengan tema.";
 
+  // Normalizes validation error (string or object) into a displayable message.
   const getErrorMessage = (
     error: string | { message?: string } | undefined,
   ) => {
@@ -85,6 +86,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
           isEditMode={isEditMode}
         />
 
+        {/* Card: user identity and contact fields. */}
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <CardTitle className="text-base">Informasi User</CardTitle>
@@ -206,6 +208,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
           </CardContent>
         </Card>
 
+        {/* Card: role assignment via multi-select and removable role rows. */}
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <div className="flex justify-between items-center gap-4">

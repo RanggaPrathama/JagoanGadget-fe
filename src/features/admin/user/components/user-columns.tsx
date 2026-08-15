@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import type { UserEntity } from "../types";
 
+// Returns column definitions for the AG Grid user table.
 export function getUserColumns(): ColDef<UserEntity>[] {
   return [
     {
@@ -14,8 +15,9 @@ export function getUserColumns(): ColDef<UserEntity>[] {
       floatingFilterComponentParams: {
         suppressFilterButton: true,
       },
-      cellRenderer: ({ data }: ICellRendererParams<UserEntity>) =>
-        data ? (
+      // Renders avatar + name + email for each row.
+      cellRenderer: ({ data }: ICellRendererParams<UserEntity>) => {
+        return data ? (
           <div className="flex h-full w-full items-center gap-2">
             {data.avatarUrl ? (
               <img
@@ -33,7 +35,8 @@ export function getUserColumns(): ColDef<UserEntity>[] {
               <p className="text-xs text-muted-foreground">{data.email}</p>
             </div>
           </div>
-        ) : null,
+        ) : null;
+      },
     },
     {
       field: "phoneNumber",
@@ -63,7 +66,10 @@ export function getUserColumns(): ColDef<UserEntity>[] {
       headerName: "Role",
       cellRenderer: ({ value }: ICellRendererParams<UserEntity, boolean>) =>
         value ? (
-          <Badge variant="default" className="rounded-full px-2 py-0.5 text-[10px]">
+          <Badge
+            variant="default"
+            className="rounded-full px-2 py-0.5 text-[10px]"
+          >
             Superadmin
           </Badge>
         ) : null,

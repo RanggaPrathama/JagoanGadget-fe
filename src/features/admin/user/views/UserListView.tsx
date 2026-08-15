@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import { getUserColumns } from "../components/user-columns";
 import { useUserList } from "../hooks/useUserList";
 import { StatCard } from "@/components/card/StatCard";
@@ -60,6 +60,7 @@ export function UserListView() {
         </div>
       </div>
 
+      {/* Summary stat cards: total users, active users, and superadmin count. */}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard icon={Users} title="Total Users" value={stats.totalUsers} />
         <StatCard
@@ -75,8 +76,10 @@ export function UserListView() {
         />
       </div>
 
+      {/* Card wrapping the search toolbar and the data table. */}
       <Card className="overflow-hidden border-border/60 bg-card/90 shadow-sm">
         <CardContent className="px-0 pb-0 pt-0">
+          {/* Toolbar: search input, row actions, refresh button, and create button. */}
           <div className="flex flex-col gap-2.5 border-b border-border/60 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
               <div className="relative w-full max-w-xs">
@@ -174,6 +177,7 @@ export function UserListView() {
         </CardContent>
       </Card>
 
+          {/* Confirmation dialog for user deletion. */}
       <ConfirmDialog
         open={!!confirmDeleteId}
         onOpenChange={(open) => !open && setConfirmDeleteId(null)}
