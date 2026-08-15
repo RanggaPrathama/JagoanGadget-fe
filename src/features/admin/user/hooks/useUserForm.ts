@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
 import type { UserFormInput } from "../types";
 import { getErrorMessage } from "@/utils/error";
 import type { RoleItem } from "../../setup/role/service/role.service";
-import { createUser, getUser, updateUser } from "../service/user.service";
-import { userListQueryKey } from "../service/user.queries";
+import { createUser, updateUser } from "../service/user.service";
+import { useGetUserByIdQuery, invalidateUserQueries } from "../service/user.queries";
 import { invalidateMe } from "@/features/auth/service/me.service";
 
+// Convert an empty string to null and enforce max length.
 const nullableTrimmedString = (maxLength: number) =>
   z
     .string()
@@ -56,6 +57,7 @@ export const formValidators = {
   avatarTempKey: userFormSchema.shape.avatarTempKey,
 };
 
+// Map raw form values to the API payload shape.
 function toPayload(values: UserFormValues): UserFormInput {
   const parsed = userFormSchema.parse(values);
 
@@ -74,15 +76,14 @@ type UseUserFormOptions = {
   userId?: string;
 };
 
+// Form hook for admin user create/edit with role selection and avatar upload.
 export function useUserForm({ userId }: UseUserFormOptions) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEditMode = Boolean(userId);
 
-  const userDetailQuery = useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => getUser(userId!),
-    enabled: isEditMode,
+  const userDetailQuery = useGetUserByIdQuery(userId!, {
+    queryConfig: { enabled: isEditMode },
   });
 
   const mutation = useMutation({
@@ -99,14 +100,7 @@ export function useUserForm({ userId }: UseUserFormOptions) {
       toast.success(
         isEditMode ? "User berhasil diperbarui." : "User berhasil ditambahkan.",
       );
-      await queryClient.invalidateQueries({ queryKey: userListQueryKey });
-
-      if (userId) {
-        await queryClient.invalidateQueries({
-          queryKey: ["user", userId],
-        });
-      }
-
+      await invalidateUserQueries(queryClient);
       await invalidateMe(queryClient);
       void navigate({ to: "/admin/user" });
     },
@@ -126,6 +120,7 @@ export function useUserForm({ userId }: UseUserFormOptions) {
     },
   });
 
+  // Populate form fields from the loaded user detail (edit mode).
   useEffect(() => {
     if (!userDetailQuery.data) {
       return;
@@ -141,22 +136,24 @@ export function useUserForm({ userId }: UseUserFormOptions) {
     form.setFieldValue("roleIds", data.userRoles?.map((ur) => ur.roleId) ?? []);
   }, [form, userDetailQuery.data]);
 
-  const userRoles = userDetailQuery.data?.userRoles ?? [];
-
-  const initialRoleItems = userRoles
-    .map((ur) => ur.role)
-    .filter(Boolean) as RoleItem[];
-
   const [selectedRoleItems, setSelectedRoleItems] =
-    useState<RoleItem[]>(initialRoleItems);
+    useState<RoleItem[]>([]);
 
-  if (
-    initialRoleItems.length > 0 &&
-    selectedRoleItems.length === 0 &&
-    selectedRoleItems !== initialRoleItems
-  ) {
-    setSelectedRoleItems(initialRoleItems);
-  }
+  // Seed the role picker from the loaded user's assigned roles (edit mode only).
+  useEffect(() => {
+    if (isEditMode && userDetailQuery.data) {
+      const userRoles = userDetailQuery.data.userRoles ?? [];
+      const initialRoleItems = userRoles
+        .map((ur) => ur.role)
+        .filter(Boolean) as RoleItem[];
+
+      if (initialRoleItems.length > 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSelectedRoleItems(initialRoleItems);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userDetailQuery.data]);
 
   return {
     form,
