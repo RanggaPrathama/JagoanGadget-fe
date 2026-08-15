@@ -99,6 +99,7 @@ export function MenuListView() {
                 iconOnly
                 className="shrink-0"
                 disabled={!selectedMenu || isDeleting}
+                // Open the selected menu in read-only detail view.
                 onView={() => {
                   if (!selectedMenu) return;
                   navigate({
@@ -107,6 +108,7 @@ export function MenuListView() {
                     search: { mode: "readonly" as const },
                   });
                 }}
+                // Open the selected menu in the edit form.
                 onEdit={() => {
                   if (!selectedMenu) return;
                   navigate({
@@ -115,6 +117,7 @@ export function MenuListView() {
                     search: { mode: "edit" as const },
                   });
                 }}
+                // Stage the selected menu for deletion via the confirm dialog.
                 onDelete={() => {
                   if (!selectedMenu) return;
                   setConfirmDeleteId(selectedMenu.id);
@@ -128,6 +131,7 @@ export function MenuListView() {
                 size="icon-sm"
                 className="rounded-lg border-border/70"
                 onClick={() => {
+                  // Re-fetch the menu list from the server.
                   void refetchMenus();
                 }}
                 disabled={isRefreshing}

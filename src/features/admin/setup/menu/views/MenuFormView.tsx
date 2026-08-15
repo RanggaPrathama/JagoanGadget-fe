@@ -94,6 +94,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
           </CardHeader>
 
           <CardContent className="grid gap-4 px-5 py-5 sm:px-7 sm:py-7 mb-5 md:grid-cols-3">
+            {/* Menu type: "menu" is a leaf, "group" is a parent container (clears parentId/route). */}
             <form.Field
               name="type"
               validators={{ onChange: formValidators.type }}
@@ -124,6 +125,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
               )}
             </form.Field>
 
+            {/* Parent menu: required for "menu" type; disabled for "group" type. */}
             <form.Field
               name="parentId"
               // validators={{
@@ -158,6 +160,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
               }}
             </form.Field>
 
+            {/* Menu display name — shown in the sidebar and used for code generation. */}
             <form.Field
               name="name"
               validators={{ onChange: formValidators.name }}
@@ -176,6 +179,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
               )}
             </form.Field>
 
+            {/* Icon name (hugeicons) shown next to the menu in the sidebar. */}
             <form.Field
               name="iconName"
               validators={{ onChange: formValidators.iconName }}
@@ -192,6 +196,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
               )}
             </form.Field>
 
+            {/* Menu code — auto-generated from name + parent, but editable. */}
             <form.Field name="code">
               {(field) => (
                 <FieldInput
@@ -211,6 +216,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
               )}
             </form.Field>
 
+            {/* Sort order — controls menu position within its sibling group. */}
             <form.Field
               name="sortOrder"
               validators={{ onChange: formValidators.sortOrder }}
@@ -232,6 +238,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
             </form.Field>
 
             <div className="md:col-span-3">
+              {/* Route — derived from code for "menu" type; empty for "group" type. */}
               <form.Field
                 name="route"
                 validators={{ onChange: formValidators.route }}
@@ -259,6 +266,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
               </form.Field>
             </div>
 
+            {/* Status — whether the menu is visible/active in the sidebar. */}
             <form.Field
               name="isActive"
               validators={{ onChange: formValidators.isActive }}
