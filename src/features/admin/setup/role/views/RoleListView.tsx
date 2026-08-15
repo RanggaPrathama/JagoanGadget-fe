@@ -17,7 +17,7 @@ import { StatCard } from "@/components/card/StatCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import { getRoleColumns } from "../components/role-columns";
 import { useRoleList } from "../hooks/useRoleList";
 
@@ -60,6 +60,7 @@ export function RoleListView() {
         </div>
       </div>
 
+      {/* Stat cards — quick overview of role counts by category */}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={Users} title="Total Roles" value={stats.totalRoles} />
         <StatCard
@@ -82,6 +83,7 @@ export function RoleListView() {
 
       <Card className="overflow-hidden border-border/60 bg-card/90 shadow-sm">
         <CardContent className="px-0 pb-0 pt-0">
+          {/* Toolbar — search input, row actions, refresh, and create button */}
           <div className="flex flex-col gap-2.5 border-b border-border/60 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
               <div className="relative w-full max-w-xs">
@@ -179,6 +181,7 @@ export function RoleListView() {
         </CardContent>
       </Card>
 
+      {/* Delete confirmation dialog — asks user to confirm before permanently removing a role */}
       <ConfirmDialog
         open={!!confirmDeleteId}
         onOpenChange={(open) => !open && setConfirmDeleteId(null)}

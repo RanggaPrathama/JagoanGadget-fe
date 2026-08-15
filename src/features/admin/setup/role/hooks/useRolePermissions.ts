@@ -37,12 +37,13 @@ export function useRolePermissions({
     enabled: menuIdsKey !== "",
   });
 
+  // Convert permission IDs array to a Set for fast O(1) membership checks.
   const selectedPermissionSet = useMemo(
     () => new Set(selectedPermissionIds),
     [selectedPermissionIds],
   );
 
-  // Group permissions by menuId
+  // Group fetched permissions by their menuId so the UI can render one card per menu.
   const menuPermissionsMap = useMemo(() => {
     const map = new Map<
       string,
@@ -65,7 +66,7 @@ export function useRolePermissions({
     return map;
   }, [permissionsQuery.data]);
 
-  // Filtered menu IDs based on menu search
+  // Filter selected menu IDs by the user's search query so only matching menus render.
   const filteredMenuIds = useMemo(() => {
     if (!menuSearch.trim()) return effectiveMenuIds;
 
@@ -87,6 +88,7 @@ export function useRolePermissions({
     return names;
   }, [menuPermissionsMap, selectedPermissionSet]);
 
+  // Add or remove a single permission ID from the form's permissionIds array.
   const togglePermission = (permissionId: string, checked: boolean) => {
     if (checked) {
       setPermissionIds(
@@ -97,6 +99,7 @@ export function useRolePermissions({
     setPermissionIds(selectedPermissionIds.filter((id) => id !== permissionId));
   };
 
+  // Add or remove all permissions from a selected menu at once (select-all per menu).
   const toggleMenuPermissions = (
     menuPermissions: PermissionItem[],
     checked: boolean,
@@ -116,6 +119,7 @@ export function useRolePermissions({
     setPermissionIds(selectedPermissionIds.filter((id) => !ids.has(id)));
   };
 
+  // Replaces the selected menu IDs when the user picks menus from the selector.
   const handleMenusChange = (ids: string[]) => {
     setSelectedMenuIds(ids);
   };

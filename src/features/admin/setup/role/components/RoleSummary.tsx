@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
+// Props for RoleSummary: whether the role is active, selected permission IDs, and selected module names.
 type RoleSummaryProps = {
   isActive: boolean;
   selectedPermissionIds: string[];
@@ -20,6 +21,7 @@ export const RoleSummary = ({
   selectedPermissionIds,
   selectedModules,
 }: RoleSummaryProps) => {
+  // Take only the first 3 modules for the preview list; show overflow count if there are more.
   const modulePreview = selectedModules.slice(0, 3);
 
   return (
@@ -31,6 +33,7 @@ export const RoleSummary = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        {/* Status badge row — shows active/inactive state */}
         <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-background/70 px-3 py-2">
           <span className="text-sm text-muted-foreground">Status</span>
           <Badge variant={isActive ? "default" : "secondary"}>
@@ -38,6 +41,7 @@ export const RoleSummary = ({
           </Badge>
         </div>
 
+        {/* Permission count + progress bar */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Total Selected</span>
@@ -57,6 +61,7 @@ export const RoleSummary = ({
 
         <Separator />
 
+        {/* Selected modules preview — shows up to 3 modules + overflow count */}
         <div className="flex flex-col gap-2">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Selected Modules
