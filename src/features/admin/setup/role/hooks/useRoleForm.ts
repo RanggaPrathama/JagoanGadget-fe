@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useStore } from "@tanstack/react-store";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -9,11 +9,13 @@ import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/error";
 import {
   createRole,
-  getRoleById,
   updateRole,
   type RolePayload,
 } from "../service/role.service";
-import { roleListQueryKey } from "./useRoleList";
+import {
+  useGetRoleByIdQuery,
+  invalidateRoleQueries,
+} from "../service/role.queries";
 import { invalidateMe } from "@/features/auth/service/me.service";
 
 const nullableTrimmedString = (maxLength: number) =>
@@ -63,6 +65,7 @@ type UseRoleFormOptions = {
   roleId?: string;
 };
 
+// Generate a normalized role code from a human-readable name (e.g. "Super Admin" → "SUPER_ADMIN").
 function generateRoleCode(name: string) {
   return name
     .trim()
@@ -73,6 +76,7 @@ function generateRoleCode(name: string) {
     .replace(/^_|_$/g, "");
 }
 
+// Convert raw form values into the API payload shape (validation + field selection).
 function toPayload(values: RoleFormValues): RolePayload {
   const parsed = roleFormSchema.parse(values);
 
@@ -85,6 +89,7 @@ function toPayload(values: RoleFormValues): RolePayload {
   };
 }
 
+// Hook: manage role create/edit form state, detail fetching, and submission.
 export function useRoleForm({ roleId }: UseRoleFormOptions) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -93,10 +98,9 @@ export function useRoleForm({ roleId }: UseRoleFormOptions) {
   const skipNextGenerateRef = useRef(isEditMode);
   const formValuesRef = useRef<RoleFormValues>(defaultValues);
 
-  const roleDetailQuery = useQuery({
-    queryKey: [...roleListQueryKey, roleId],
-    queryFn: () => getRoleById(roleId as string),
-    enabled: isEditMode,
+  // Fetch role detail when in edit mode to pre-populate the form.
+  const roleDetailQuery = useGetRoleByIdQuery(roleId as string, {
+    queryConfig: { enabled: isEditMode },
   });
 
   const mutation = useMutation({
@@ -113,7 +117,9 @@ export function useRoleForm({ roleId }: UseRoleFormOptions) {
       toast.success(
         isEditMode ? "Role berhasil diperbarui." : "Role berhasil ditambahkan.",
       );
-      await queryClient.invalidateQueries({ queryKey: roleListQueryKey });
+      // Invalidate role list/detail queries so any open observers refetch.
+      await invalidateRoleQueries(queryClient);
+      // Invalidate current-user access control so sidebar/permissions refresh.
       await invalidateMe(queryClient);
       void navigate({ to: "/admin/setup/role" });
     },
@@ -134,6 +140,7 @@ export function useRoleForm({ roleId }: UseRoleFormOptions) {
     },
   });
 
+  // Populate form fields from role detail once the query resolves (edit mode only).
   useEffect(() => {
     if (!roleDetailQuery.data) return;
 
@@ -174,6 +181,7 @@ export function useRoleForm({ roleId }: UseRoleFormOptions) {
       `${state.values.name ?? ""}::${state.values.code ?? ""}`,
   );
 
+  // Auto-generate role code from name field, skipping on initial edit load.
   useEffect(() => {
     if (skipNextGenerateRef.current) {
       skipNextGenerateRef.current = false;
