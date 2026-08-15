@@ -33,7 +33,8 @@ export function PermissionListView() {
   const selectedPermission =
     permissions.find((p) => p.id === selectedPermissionId) ?? null;
 
-  // Reset page when search changes
+  // Reset page to 1 whenever the search query changes so the table always
+  // starts from the first page with the new filter applied.
   const handleSearch = (value: string) => {
     setSearch(value);
     setPage(1);
@@ -66,6 +67,8 @@ export function PermissionListView() {
                   className="h-9 rounded-xl pl-9 pr-3 text-sm"
                 />
               </div>
+              {/* RowActions: view/edit navigate to the same detail page with the
+                  appropriate mode; delete opens the confirm dialog. */}
               <RowActions
                 basePermissionCode="setup.permission"
                 iconOnly
@@ -152,6 +155,8 @@ export function PermissionListView() {
         </CardContent>
       </Card>
 
+      {/* ConfirmDialog: confirms deletion of a permission row and calls the
+          delete mutation; closes on cancel or after mutation completes. */}
       <ConfirmDialog
         open={!!confirmDeleteId}
         onOpenChange={(open) => !open && setConfirmDeleteId(null)}

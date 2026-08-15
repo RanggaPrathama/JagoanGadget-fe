@@ -45,6 +45,7 @@ export function PermissionFormView({
       ? "Perbarui informasi permission yang sudah ada."
       : "Tambahkan permission baru dengan kode unik (dot notation).";
 
+  // Normalizes a field error (string or {message}) into a displayable string.
   const getErrorMessage = (
     error: string | { message?: string } | undefined,
   ) => {
@@ -76,6 +77,7 @@ export function PermissionFormView({
           isEditMode={isEditMode}
         />
 
+        {/* Form panel: permission metadata fields (menu, name, code, description). */}
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <CardTitle className="text-base">Informasi Permission</CardTitle>
@@ -84,6 +86,7 @@ export function PermissionFormView({
             </CardDescription>
           </CardHeader>
 
+          {/* Permission fields grid: menu selector, name, auto-generated code, description. */}
           <CardContent className="grid gap-4 px-5 py-5 sm:px-7 sm:py-7 mb-5">
             <div className="grid gap-4 md:grid-cols-2">
               <form.Field

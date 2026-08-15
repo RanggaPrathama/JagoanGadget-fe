@@ -1,6 +1,9 @@
 import type { ColDef } from "ag-grid-community";
 import type { PermissionItem } from "../service/permission.service";
 
+// Column definitions for the permission data table: Menu (dot-notated path),
+// Nama Permission (display name), Code (unique dot-notation key), and Deskripsi.
+// All text columns are text-filterable with debounced floating filters.
 export function getPermissionColumns(): ColDef<PermissionItem>[] {
   return [
     {
