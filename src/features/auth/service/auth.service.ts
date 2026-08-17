@@ -1,6 +1,8 @@
 import { queryOptions, type QueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth";
 import { getErrorMessage } from "@/utils/error";
+import type { AnyRouter } from "@tanstack/react-router";
+import { toast } from "sonner";
 export interface SignInCredentials {
   email: string;
   password: string;
@@ -50,19 +52,31 @@ export async function signUpWithEmail(credentials: SignUpCredentials) {
   return result;
 }
 
-export async function signOutAuth() {
-  const result = await authClient.signOut();
-
-  if (
-    typeof result === "object" &&
-    result !== null &&
-    "error" in result &&
-    result.error
-  ) {
-    throw new Error(getErrorMessage(result, "Gagal keluar dari akun."));
+export async function signOutAuth(
+  queryClient: QueryClient,
+  router: AnyRouter,
+  opts?: { redirectTo?: string },
+): Promise<void> {
+  if (!queryClient || !router) {
+    toast.error("Autentikasi belum dikonfigurasi.");
+    return;
   }
 
-  return result;
+  const redirectTo = opts?.redirectTo ?? router.state.location.href;
+
+  try {
+    await authClient.signOut();
+    clearAuthCache(queryClient);
+    await router.invalidate();
+    toast.success("Berhasil keluar dari akun.");
+    await router.navigate({
+      to: "/",
+      search: { redirect: redirectTo },
+      replace: true,
+    });
+  } catch (error) {
+    toast.error(getErrorMessage(error, "Gagal keluar dari akun."));
+  }
 }
 
 export async function getAuthSession() {

@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
-import type {
-  ColDef,
-  RowClickedEvent,
-} from "ag-grid-community";
+import type { ColDef, RowClickedEvent } from "ag-grid-community";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 const PAGE_SIZE_OPTIONS = [25, 50, 100] as const;
 
@@ -173,7 +170,9 @@ export function DataTable<TData>({
           }}
           onGridReady={handleGridReady}
           rowSelection={
-            rowSelection === "multiple" ? { mode: "multiRow" } : undefined
+            rowSelection === "multiple"
+              ? { mode: "multiRow", enableClickSelection: true }
+              : { mode: "singleRow", enableClickSelection: false }
           }
           onRowClicked={(event: RowClickedEvent<TData>) => {
             if (event.data) {
@@ -181,7 +180,11 @@ export function DataTable<TData>({
             }
           }}
           onSelectionChanged={(event) => {
-            if (rowSelection === "multiple" && getRowId && onSelectedIdsChange) {
+            if (
+              rowSelection === "multiple" &&
+              getRowId &&
+              onSelectedIdsChange
+            ) {
               const ids = event.api
                 .getSelectedRows()
                 .map((row) => getRowId(row));
@@ -192,7 +195,6 @@ export function DataTable<TData>({
           onPaginationChanged={handlePaginationChanged}
           domLayout="normal"
           suppressCellFocus
-          suppressRowClickSelection
           animateRows={false}
           headerHeight={46}
           floatingFiltersHeight={42}

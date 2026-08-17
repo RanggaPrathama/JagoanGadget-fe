@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { FileText, Loader2, UploadCloud, X, Eye } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import {
   DOCUMENT_MIME_TYPES,
   getFileKindFromUrl,

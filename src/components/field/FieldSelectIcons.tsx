@@ -7,7 +7,7 @@ import { Check, Search, X } from "lucide-react";
 
 import { FieldShell } from "@/components/field/FieldShell";
 import type { FieldBaseProps } from "@/components/field/types";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 import { lucideIconEntries } from "./lucide-icon-registry";
 
@@ -23,8 +23,12 @@ type FieldSelectIconsProps = FieldBaseProps & {
 const getIconComponent = (name?: string | null) => {
   if (!name) return Search;
   return (
-    (LucideIcons as unknown as Record<string, ComponentType<{ className?: string }>>)[name] ??
-    Search
+    (
+      LucideIcons as unknown as Record<
+        string,
+        ComponentType<{ className?: string }>
+      >
+    )[name] ?? Search
   );
 };
 
@@ -55,7 +59,9 @@ export function FieldSelectIcons({
     const normalizedQuery = query.trim().toLowerCase();
     const icons = normalizedQuery
       ? lucideIconEntries.filter((entry) =>
-          `${entry.label} ${entry.name}`.toLowerCase().includes(normalizedQuery),
+          `${entry.label} ${entry.name}`
+            .toLowerCase()
+            .includes(normalizedQuery),
         )
       : lucideIconEntries.slice(0, 180);
 
@@ -137,7 +143,9 @@ export function FieldSelectIcons({
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-background/80 text-foreground ring-1 ring-border/80">
             {selectedIcon ? (
-              React.createElement(getIconComponent(selectedIcon.name), { className: "h-4 w-4" })
+              React.createElement(getIconComponent(selectedIcon.name), {
+                className: "h-4 w-4",
+              })
             ) : (
               <Search className="h-4 w-4" />
             )}
@@ -238,7 +246,9 @@ export function FieldSelectIcons({
                           </span>
                         </span>
 
-                        {active ? <Check className="h-4 w-4 shrink-0 text-foreground" /> : null}
+                        {active ? (
+                          <Check className="h-4 w-4 shrink-0 text-foreground" />
+                        ) : null}
                       </button>
                     );
                   })}

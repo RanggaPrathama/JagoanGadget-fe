@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useDebounce } from "@/hooks/useDebounce";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import type { PaginationMeta } from "@/lib/api-response";
 
 // ---------------------------------------------------------------------------
@@ -95,22 +95,17 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
   const [tempSelected, setTempSelected] = React.useState<string[]>([]);
 
   // Infinite query
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = useInfiniteQuery({
-    queryKey: [...queryKey, "picker", debouncedSearch],
-    queryFn: ({ pageParam = 1 }) =>
-      queryFn({ search: debouncedSearch, page: pageParam, limit }),
-    getNextPageParam: (lastPage) =>
-      lastPage.pagination.hasNextPage
-        ? lastPage.pagination.page + 1
-        : undefined,
-    enabled: open,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: [...queryKey, "picker", debouncedSearch],
+      queryFn: ({ pageParam = 1 }) =>
+        queryFn({ search: debouncedSearch, page: pageParam, limit }),
+      getNextPageParam: (lastPage) =>
+        lastPage.pagination.hasNextPage
+          ? lastPage.pagination.page + 1
+          : undefined,
+      enabled: open,
+    });
 
   const allItems = React.useMemo(
     () => data?.pages.flatMap((p) => p.items) ?? [],
@@ -264,82 +259,80 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoading
-                  ? Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={`skeleton-${i}`}>
-                        <TableCell>
-                          <Skeleton className="h-4 w-4" />
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={`skeleton-${i}`}>
+                      <TableCell>
+                        <Skeleton className="h-4 w-4" />
+                      </TableCell>
+                      {columns.map((col) => (
+                        <TableCell key={String(col.accessorKey)}>
+                          <Skeleton className="h-4 w-full" />
                         </TableCell>
-                        {columns.map((col) => (
-                          <TableCell key={String(col.accessorKey)}>
-                            <Skeleton className="h-4 w-full" />
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  : allItems.length === 0
-                    ? (
-                        <TableRow>
-                          <TableCell
-                            colSpan={columns.length + 1}
-                            className="h-40 text-center"
-                          >
-                            <p className="text-sm text-muted-foreground">
-                              {emptyMessage}
-                            </p>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    : (
-                        <>
-                          {allItems.map((row) => {
-                            const rowId = getRowId(row);
-                            const isSelected = tempSet.has(rowId);
+                      ))}
+                    </TableRow>
+                  ))
+                ) : allItems.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length + 1}
+                      className="h-40 text-center"
+                    >
+                      <p className="text-sm text-muted-foreground">
+                        {emptyMessage}
+                      </p>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  <>
+                    {allItems.map((row) => {
+                      const rowId = getRowId(row);
+                      const isSelected = tempSet.has(rowId);
 
-                            return (
-                              <TableRow
-                                key={rowId}
-                                data-state={isSelected ? "selected" : undefined}
-                                className={cn(
-                                  "cursor-pointer",
-                                  isSelected && "bg-primary/5",
-                                )}
-                                onClick={() =>
-                                  handleRowToggle(rowId, !isSelected)}
-                              >
-                                <TableCell>
-                                  <Checkbox
-                                    checked={isSelected}
-                                    onCheckedChange={(checked) =>
-                                      handleRowToggle(rowId, checked === true)}
-                                    onClick={(e) => e.stopPropagation()}
-                                    aria-label={`Select row ${rowId}`}
-                                  />
-                                </TableCell>
-                                {columns.map((col) => (
-                                  <TableCell key={String(col.accessorKey)}>
-                                    {col.cell
-                                      ? col.cell(row)
-                                      : String(row[col.accessorKey] ?? "")}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            );
-                          })}
-
-                          {isFetchingNextPage && (
-                            <TableRow>
-                              <TableCell colSpan={columns.length + 1}>
-                                <div className="flex items-center justify-center py-3">
-                                  <Skeleton className="h-4 w-32" />
-                                </div>
-                              </TableCell>
-                            </TableRow>
+                      return (
+                        <TableRow
+                          key={rowId}
+                          data-state={isSelected ? "selected" : undefined}
+                          className={cn(
+                            "cursor-pointer",
+                            isSelected && "bg-primary/5",
                           )}
+                          onClick={() => handleRowToggle(rowId, !isSelected)}
+                        >
+                          <TableCell>
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={(checked) =>
+                                handleRowToggle(rowId, checked === true)
+                              }
+                              onClick={(e) => e.stopPropagation()}
+                              aria-label={`Select row ${rowId}`}
+                            />
+                          </TableCell>
+                          {columns.map((col) => (
+                            <TableCell key={String(col.accessorKey)}>
+                              {col.cell
+                                ? col.cell(row)
+                                : String(row[col.accessorKey] ?? "")}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      );
+                    })}
 
-                          {canLoadMore && <div ref={sentinelRef} className="h-1" />}
-                        </>
-                      )}
+                    {isFetchingNextPage && (
+                      <TableRow>
+                        <TableCell colSpan={columns.length + 1}>
+                          <div className="flex items-center justify-center py-3">
+                            <Skeleton className="h-4 w-32" />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+
+                    {canLoadMore && <div ref={sentinelRef} className="h-1" />}
+                  </>
+                )}
               </TableBody>
             </Table>
           </div>
@@ -348,7 +341,9 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
               {totalItems > 0 && (
-                <>{allItems.length} / {totalItems} item</>
+                <>
+                  {allItems.length} / {totalItems} item
+                </>
               )}
             </span>
             <div className="flex items-center gap-2">

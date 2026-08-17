@@ -1,14 +1,14 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/utils/cn";
 
-import type { FieldBaseProps } from "./types"
+import type { FieldBaseProps } from "./types";
 
 type FieldShellProps = React.PropsWithChildren<
   FieldBaseProps & {
-    htmlFor?: string
+    htmlFor?: string;
   }
->
+>;
 
 function FieldShell({
   children,
@@ -25,7 +25,7 @@ function FieldShell({
     error ? `${htmlFor ?? "field"}-error` : null,
   ]
     .filter(Boolean)
-    .join(" ")
+    .join(" ");
 
   return (
     <div
@@ -47,18 +47,24 @@ function FieldShell({
       <div aria-describedby={describedBy || undefined}>{children}</div>
 
       {hint && !error ? (
-        <p id={`${htmlFor ?? "field"}-hint`} className="text-sm text-muted-foreground">
+        <p
+          id={`${htmlFor ?? "field"}-hint`}
+          className="text-sm text-muted-foreground"
+        >
           {hint}
         </p>
       ) : null}
 
       {error ? (
-        <p id={`${htmlFor ?? "field"}-error`} className="text-sm text-destructive">
+        <p
+          id={`${htmlFor ?? "field"}-error`}
+          className="text-sm text-destructive"
+        >
           {error}
         </p>
       ) : null}
     </div>
-  )
+  );
 }
 
-export { FieldShell }
+export { FieldShell };

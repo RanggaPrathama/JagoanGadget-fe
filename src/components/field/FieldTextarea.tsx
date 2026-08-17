@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 import { FieldShell } from "./FieldShell";
 import type { FieldBaseProps } from "./types";

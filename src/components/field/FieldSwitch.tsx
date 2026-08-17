@@ -1,18 +1,18 @@
-import { useId } from "react"
+import { useId } from "react";
 
-import { Switch } from "@/components/ui/switch"
-import { cn } from "@/lib/utils"
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/utils/cn";
 
-import { FieldShell } from "./FieldShell"
-import type { FieldBaseProps } from "./types"
+import { FieldShell } from "./FieldShell";
+import type { FieldBaseProps } from "./types";
 
 type FieldSwitchProps = FieldBaseProps & {
-  checked: boolean
-  onCheckedChange: (checked: boolean) => void
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
   /** Label shown next to the switch (default: "Active") */
-  switchLabel?: string
-  id?: string
-}
+  switchLabel?: string;
+  id?: string;
+};
 
 function FieldSwitch({
   className,
@@ -26,8 +26,8 @@ function FieldSwitch({
   required = false,
   switchLabel = "Active",
 }: FieldSwitchProps) {
-  const autoId = useId()
-  const id = idProp ?? autoId
+  const autoId = useId();
+  const id = idProp ?? autoId;
 
   return (
     <FieldShell
@@ -59,8 +59,8 @@ function FieldSwitch({
         </label>
       </div>
     </FieldShell>
-  )
+  );
 }
 
-export { FieldSwitch }
-export type { FieldSwitchProps }
+export { FieldSwitch };
+export type { FieldSwitchProps };

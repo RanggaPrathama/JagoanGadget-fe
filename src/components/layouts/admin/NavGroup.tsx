@@ -31,7 +31,7 @@ import {
   type NavGroup as NavGroupProps,
 } from "@/types/sidebar";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 /**
  * Class for a leaf nav item (no children). Solid primary fill when active, so it
@@ -151,9 +151,7 @@ export function NavGroup({
                     <Link
                       to={child.url}
                       preload={false}
-                      className={
-                        checkIsActive(href, child) ? "bg-primary" : ""
-                      }
+                      className={checkIsActive(href, child) ? "bg-primary" : ""}
                     >
                       {child.icon && <child.icon />}
                       <span className="max-w-52 text-wrap">{child.title}</span>

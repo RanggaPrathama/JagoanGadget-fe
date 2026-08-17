@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useMe } from "@/hooks/useMe";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 const decorativeItems = [
   { label: "Metode Pembayaran", icon: CreditCard },
@@ -29,7 +29,9 @@ type SettingsLayoutProps = {
   basePath?: SettingsBasePath;
 };
 
-export function SettingsLayout({ basePath = "/settings" }: SettingsLayoutProps) {
+export function SettingsLayout({
+  basePath = "/settings",
+}: SettingsLayoutProps) {
   const { pathname } = useLocation();
   const { data: me } = useMe();
 
@@ -52,7 +54,9 @@ export function SettingsLayout({ basePath = "/settings" }: SettingsLayoutProps) 
     <div className="mx-auto w-full max-w-6xl px-4 py-6 md:flex md:flex-row md:gap-8 md:py-10">
       {/* Mobile Header and Navigation */}
       <div className="md:hidden mb-6">
-        <h1 className="text-xl font-bold tracking-tight text-foreground">Pengaturan</h1>
+        <h1 className="text-xl font-bold tracking-tight text-foreground">
+          Pengaturan
+        </h1>
         <p className="mt-0.5 text-xs text-muted-foreground">
           Kelola pengaturan akun dan preferensi sistem Anda.
         </p>
@@ -69,7 +73,7 @@ export function SettingsLayout({ basePath = "/settings" }: SettingsLayoutProps) 
                   "flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all shrink-0 border border-transparent",
                   isActive
                     ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
+                    : "bg-muted text-muted-foreground hover:text-foreground",
                 )}
               >
                 <item.icon className="size-3.5" />
@@ -97,7 +101,11 @@ export function SettingsLayout({ basePath = "/settings" }: SettingsLayoutProps) 
           <div className="flex items-center gap-3">
             <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 font-bold overflow-hidden border border-blue-100 dark:border-slate-700">
               {avatarUrl ? (
-                <img src={avatarUrl} alt={me?.user?.name ?? "Avatar"} className="h-full w-full object-cover" />
+                <img
+                  src={avatarUrl}
+                  alt={me?.user?.name ?? "Avatar"}
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <span className="text-sm">{initials}</span>
               )}
@@ -136,7 +144,9 @@ export function SettingsLayout({ basePath = "/settings" }: SettingsLayoutProps) 
           <div className="flex items-center justify-between border-t border-border/50 pt-3">
             <div className="flex items-center gap-1.5">
               <Coins className="size-4 text-blue-500 fill-blue-500/20" />
-              <span className="text-xs text-muted-foreground font-medium">Gadget Poin</span>
+              <span className="text-xs text-muted-foreground font-medium">
+                Gadget Poin
+              </span>
             </div>
             <span className="text-xs font-bold text-foreground">0 Poin</span>
           </div>
@@ -149,10 +159,12 @@ export function SettingsLayout({ basePath = "/settings" }: SettingsLayoutProps) 
               key={item.to}
               to={item.to}
               activeProps={{
-                className: "bg-blue-50/80 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400 font-semibold shadow-2xs border border-blue-500/10",
+                className:
+                  "bg-blue-50/80 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400 font-semibold shadow-2xs border border-blue-500/10",
               }}
               inactiveProps={{
-                className: "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent",
+                className:
+                  "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent",
               }}
               activeOptions={{ exact: true }}
               className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all"
@@ -161,7 +173,7 @@ export function SettingsLayout({ basePath = "/settings" }: SettingsLayoutProps) 
               {item.label}
             </Link>
           ))}
-          
+
           {/* Decorative Menu Items */}
           {decorativeItems.map((item) => (
             <button
@@ -182,7 +194,9 @@ export function SettingsLayout({ basePath = "/settings" }: SettingsLayoutProps) 
       {/* Main Content Area */}
       <main className="min-w-0 flex-1">
         <header className="mb-6 hidden md:block">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Pengaturan</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Pengaturan
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Kelola pengaturan akun dan preferensi sistem Anda.
           </p>

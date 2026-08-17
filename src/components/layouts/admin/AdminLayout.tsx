@@ -1,7 +1,7 @@
 import { Outlet } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { getCookie } from "@/lib/cookies";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import { LayoutProvider } from "@/context/LayoutProvider";
 import { SearchProvider } from "@/context/SearchProvider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";

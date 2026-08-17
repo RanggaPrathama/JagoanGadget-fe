@@ -27,3 +27,8 @@ dist-ssr
 
 # TanStack Router cache
 .tanstack/
+
+CLAUDE.md
+.agents
+.claude
+.superpowers

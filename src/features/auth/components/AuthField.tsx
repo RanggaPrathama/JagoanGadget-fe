@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 interface AuthFieldProps extends ComponentProps<typeof Input> {
   label: string;
@@ -27,7 +27,7 @@ export function AuthField({
       <Input
         className={cn(
           "h-10 rounded-[1rem] border-border/70 bg-background/85 px-4 text-sm shadow-none placeholder:text-muted-foreground/70",
-          className
+          className,
         )}
         {...props}
       />

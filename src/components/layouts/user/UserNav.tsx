@@ -8,12 +8,10 @@ import {
   LogOut,
   Search,
   Shield,
-  ShoppingBag,
   ShoppingCart,
-  Sparkles,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +23,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
+
 const navItems = [
   { label: "Home", to: "/" },
   { label: "Products", to: "/products" },
@@ -42,12 +42,97 @@ function getUserInitials(name?: string | null, email?: string | null) {
   return `${parts[0]?.[0] ?? ""}${parts[1]?.[0] ?? ""}`.toUpperCase();
 }
 
-export function UserNav() {
-  const { isAuthenticated, isLoading, user, accessControl, handleSignOut } = useAuth();
+function GuestButtons() {
+  return (
+    <div className="hidden items-center gap-2 sm:flex">
+      <Button asChild variant="ghost" className="rounded-2xl px-5 font-bold">
+        <Link to="/sign-up">Sign Up</Link>
+      </Button>
 
+      <Button asChild className="rounded-2xl px-4">
+        <Link to="/sign-in">Sign In</Link>
+      </Button>
+    </div>
+  );
+}
+
+function AccountMenu() {
+  const { user, accessControl, handleSignOut, isSigningOut } = useAuth();
   const initials = getUserInitials(user?.name, user?.email);
   const accountLabel = user?.name || user?.email || "Account";
   const canAccessAdmin = Boolean(accessControl?.canAccessAdmin);
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="h-12 rounded-2xl px-2 pr-3 hover:bg-muted"
+          aria-label={accountLabel}
+        >
+          <Avatar size="lg" className="rounded-2xl">
+            <AvatarImage src={user.avatarUrl ?? ""} alt={user.name} />
+            <AvatarFallback className="rounded-2xl bg-primary text-primary-foreground">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <span className="hidden max-w-28 truncate text-sm font-semibold md:inline">
+            {accountLabel}
+          </span>
+          <ChevronDown className="hidden text-muted-foreground md:block" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-64">
+        <DropdownMenuLabel className="p-2">
+          <div className="flex items-center gap-3 rounded-xl bg-muted/60 p-2">
+            <Avatar size="lg" className="rounded-2xl">
+              <AvatarImage src={user.avatarUrl ?? ""} alt={user.name} />
+              <AvatarFallback className="rounded-2xl bg-primary text-primary-foreground">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-foreground">
+                {accountLabel}
+              </p>
+              <p className="truncate text-xs text-muted-foreground">
+                {user?.email || "Member account"}
+              </p>
+            </div>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <Link to="/settings/account">
+              <CircleUserRound />
+              Account
+            </Link>
+          </DropdownMenuItem>
+          {canAccessAdmin ? (
+            <DropdownMenuItem asChild>
+              <Link to="/admin">
+                <Shield />
+                Admin Dashboard
+              </Link>
+            </DropdownMenuItem>
+          ) : null}
+          <DropdownMenuItem
+            onClick={() => handleSignOut()}
+            disabled={isSigningOut}
+            className="cursor-pointer"
+          >
+            <LogOut />
+            Sign Out
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export function UserNav() {
+  const { isLoading, isAuthenticated } = useAuth();
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 md:px-6 md:pt-5">
@@ -151,98 +236,16 @@ export function UserNav() {
             </Link>
           </Button>
 
-          {!isLoading && !isAuthenticated ? (
+          {isLoading ? (
             <div className="hidden items-center gap-2 sm:flex">
-              <Button
-                asChild
-                variant="ghost"
-                className="rounded-2xl px-5 font-bold"
-              >
-                <Link to="/sign-up">Sign Up</Link>
-              </Button>
-
-              <Button asChild className="rounded-2xl px-4">
-                <Link to="/sign-in">Sign In</Link>
-              </Button>
+              <Skeleton className="size-12 rounded-2xl" />
+              <Skeleton className="h-10 w-28 rounded-2xl" />
             </div>
-          ) : null}
-
-          {!isLoading && isAuthenticated ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-12 rounded-2xl px-2 pr-3 hover:bg-muted"
-                  aria-label={accountLabel}
-                >
-                  <Avatar size="lg" className="rounded-2xl">
-                    <AvatarFallback className="rounded-2xl bg-primary text-primary-foreground">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="hidden max-w-28 truncate text-sm font-semibold md:inline">
-                    {accountLabel}
-                  </span>
-                  <ChevronDown className="hidden text-muted-foreground md:block" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-64">
-                <DropdownMenuLabel className="p-2">
-                  <div className="flex items-center gap-3 rounded-xl bg-muted/60 p-2">
-                    <Avatar size="lg" className="rounded-2xl">
-                      <AvatarFallback className="rounded-2xl bg-primary text-primary-foreground">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-foreground">
-                        {accountLabel}
-                      </p>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {user?.email || "Member account"}
-                      </p>
-                    </div>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem asChild>
-                    <Link to="/settings/account">
-                      <CircleUserRound />
-                      Account
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/products">
-                      <Sparkles />
-                      Explore Products
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/cart">
-                      <ShoppingBag />
-                      Shopping Cart
-                    </Link>
-                  </DropdownMenuItem>
-                  {canAccessAdmin ? (
-                    <DropdownMenuItem asChild>
-                      <Link to="/admin">
-                        <Shield />
-                        Admin Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                  ) : null}
-                  <DropdownMenuItem
-                    onClick={() => handleSignOut()}
-                    className="cursor-pointer"
-                  >
-                    <LogOut />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : null}
+          ) : isAuthenticated ? (
+            <AccountMenu />
+          ) : (
+            <GuestButtons />
+          )}
         </div>
       </nav>
     </header>

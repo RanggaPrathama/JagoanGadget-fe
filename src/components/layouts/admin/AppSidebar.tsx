@@ -11,17 +11,43 @@ import {
 import { Search } from "@/components/Search";
 import { useMe } from "@/hooks/useMe";
 import { buildSidebarDataFromMe } from "@/utils/access-control";
+import { Skeleton } from "@/components/ui/skeleton";
 import { AppTitle } from "./AppTitle";
 import { NavGroup } from "./NavGroup";
 import { FooterNav } from "./FooterNav";
+
+/** Placeholder rows mirroring NavGroup's row height (h-9) + icon (size-4). */
+function SidebarNavSkeleton() {
+  return (
+    <div className="flex flex-col gap-1.5 px-1.5 py-0.5">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="flex h-9 items-center gap-2.5 rounded-lg px-3">
+          <Skeleton className="size-4 rounded-md" />
+          <Skeleton className="h-4 w-40 rounded-md" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SidebarFooterSkeleton() {
+  return (
+    <div className="flex h-11 items-center gap-2.5 rounded-xl px-2.5">
+      <Skeleton className="size-8 rounded-xl ring-1 ring-sidebar-border/60" />
+      <div className="grid flex-1 gap-1.5">
+        <Skeleton className="h-3.5 w-28 rounded-md" />
+        <Skeleton className="h-3 w-40 rounded-md" />
+      </div>
+    </div>
+  );
+}
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout();
   const { state, isMobile } = useSidebar();
   const isCollapsed = state === "collapsed" && !isMobile;
-  const { data } = useMe();
+  const { data, isLoading } = useMe();
   const sidebarData = data ? buildSidebarDataFromMe(data) : null;
-
   return (
     <Sidebar
       collapsible={collapsible}
@@ -38,12 +64,20 @@ export function AppSidebar() {
         <SidebarSeparator className="mx-0 bg-sidebar-border/60" />
       </SidebarHeader>
       <SidebarContent className="admin-scrollbar sidebar-scroll min-h-0 px-2.5 pb-3 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:pb-2">
-        {(sidebarData?.navGroups ?? []).map((props, index) => (
-          <NavGroup key={`${props.title}-${index}`} {...props} />
-        ))}
+        {isLoading || !sidebarData ? (
+          <SidebarNavSkeleton />
+        ) : (
+          sidebarData.navGroups.map((props, index) => (
+            <NavGroup key={`${props.title}-${index}`} {...props} />
+          ))
+        )}
       </SidebarContent>
       <SidebarFooter className="shrink-0 px-2.5 pt-2 pb-3 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:pb-2.5">
-        {sidebarData ? <FooterNav user={sidebarData.user} /> : null}
+        {sidebarData ? (
+          <FooterNav user={sidebarData.user} />
+        ) : (
+          <SidebarFooterSkeleton />
+        )}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
