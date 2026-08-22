@@ -1,7 +1,7 @@
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
 
 import { StatusBadge } from "@/components/data-table";
-import type { RoleItem } from "../service/role.service";
+import type { RoleItem } from "../types";
 
 // Defines the AG Grid column configuration for the role list table.
 // Columns: name, code, permissions count, status badge, and description.

@@ -7,6 +7,8 @@ import {
   SidebarSeparator,
   SidebarRail,
   useSidebar,
+  SidebarGroup,
+  SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import { Search } from "@/components/Search";
 import { useMe } from "@/hooks/useMe";
@@ -55,7 +57,11 @@ export function AppSidebar() {
       className="border-sidebar-border/60 bg-sidebar"
     >
       <SidebarHeader className="gap-3 px-2.5 pt-3 pb-3">
-        <AppTitle />
+        <AppTitle
+          roles={data?.accessControl.roles ?? []}
+          isSuperadmin={data?.user.isSuperadmin ?? false}
+          isLoading={isLoading}
+        />
         <Search
           iconOnly={isCollapsed}
           placeholder="Search menu..."
@@ -64,13 +70,18 @@ export function AppSidebar() {
         <SidebarSeparator className="mx-0 bg-sidebar-border/60" />
       </SidebarHeader>
       <SidebarContent className="admin-scrollbar sidebar-scroll min-h-0 px-2.5 pb-3 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:pb-2">
-        {isLoading || !sidebarData ? (
-          <SidebarNavSkeleton />
-        ) : (
-          sidebarData.navGroups.map((props, index) => (
-            <NavGroup key={`${props.title}-${index}`} {...props} />
-          ))
-        )}
+        <SidebarGroup className="gap-1 px-1  py-0.5 group-data-[collapsible=icon]:px-0.5 group-data-[collapsible=icon]:py-0.5">
+          <SidebarGroupLabel className="px-1.5 text-sm  tracking-tight text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">
+            Menu
+          </SidebarGroupLabel>
+          {isLoading || !sidebarData ? (
+            <SidebarNavSkeleton />
+          ) : (
+            sidebarData.navGroups.map((props, index) => (
+              <NavGroup key={`${props.title}-${index}`} {...props} />
+            ))
+          )}
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="shrink-0 px-2.5 pt-2 pb-3 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:pb-2.5">
         {sidebarData ? (

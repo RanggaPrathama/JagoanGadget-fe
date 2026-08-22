@@ -1,6 +1,4 @@
-import { FieldInput } from "@/components/field/FieldInput";
-import { FieldSelect } from "@/components/field/FieldSelect";
-import { FieldTextarea } from "@/components/field/FieldTextarea";
+import { FieldInput, FieldSelect, FieldTextarea, getFieldError } from "@/components/field";
 import {
   Card,
   CardContent,
@@ -45,14 +43,6 @@ export function PermissionFormView({
       ? "Perbarui informasi permission yang sudah ada."
       : "Tambahkan permission baru dengan kode unik (dot notation).";
 
-  // Normalizes a field error (string or {message}) into a displayable string.
-  const getErrorMessage = (
-    error: string | { message?: string } | undefined,
-  ) => {
-    if (!error) return undefined;
-    return typeof error === "string" ? error : error.message;
-  };
-
   if (isEditMode && isLoadingDetail) {
     return <FormSkeleton />;
   }
@@ -91,7 +81,7 @@ export function PermissionFormView({
             <div className="grid gap-4 md:grid-cols-2">
               <form.Field
                 name="menuId"
-                validators={{ onChange: formValidators.menuId }}
+                validators={{ onBlur: formValidators.menuId, onSubmit: formValidators.menuId }}
               >
                 {(field) => (
                   <FieldSelect
@@ -99,7 +89,7 @@ export function PermissionFormView({
                     required
                     value={field.state.value ?? ""}
                     onValueChange={(value) => field.handleChange(value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     loading={menuOptionsLoading}
                     searchable
                     disabled={readonly}
@@ -111,7 +101,7 @@ export function PermissionFormView({
 
               <form.Field
                 name="name"
-                validators={{ onChange: formValidators.name }}
+                validators={{ onBlur: formValidators.name, onSubmit: formValidators.name }}
               >
                 {(field) => (
                   <FieldInput
@@ -120,7 +110,7 @@ export function PermissionFormView({
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder="Create Menu"
                     disabled={readonly}
                   />
@@ -129,7 +119,7 @@ export function PermissionFormView({
 
               <form.Field
                 name="code"
-                validators={{ onChange: formValidators.code }}
+                validators={{ onBlur: formValidators.code, onSubmit: formValidators.code }}
               >
                 {(field) => (
                   <FieldInput
@@ -137,7 +127,7 @@ export function PermissionFormView({
                     required
                     hint="Dihasilkan otomatis berdasarkan menu dan nama permission."
                     value={field.state.value}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder={
                       menuOptionsLoading
                         ? "Menghasilkan code..."
@@ -151,7 +141,7 @@ export function PermissionFormView({
               <div className="md:col-span-2">
                 <form.Field
                   name="description"
-                  validators={{ onChange: formValidators.description }}
+                  validators={{ onBlur: formValidators.description, onSubmit: formValidators.description }}
                 >
                   {(field) => (
                     <FieldTextarea
@@ -162,7 +152,7 @@ export function PermissionFormView({
                       onChange={(event) =>
                         field.handleChange(event.target.value)
                       }
-                      error={getErrorMessage(field.state.meta.errors[0])}
+                      error={getFieldError(field.state.meta)}
                       placeholder="Ability to create new menus"
                       disabled={readonly}
                     />

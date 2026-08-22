@@ -1,15 +1,8 @@
 import type { ColDef } from "ag-grid-community";
-import type { CategoryItem } from "../types";
-
-function resolveParentLabel(category: CategoryItem, map: Map<string, CategoryItem>): string {
-  if (category.parent?.name) return category.parent.name;
-  if (category.parentName) return category.parentName;
-  if (category.parentId) return map.get(category.parentId)?.name ?? "-";
-  return "-";
-}
+import type { CategoryTableRow } from "../hooks/useCategoryList";
 
 // AG Grid column config for the category table: name, slug, parent.
-export function getCategoryColumns(): ColDef<CategoryItem>[] {
+export function getCategoryColumns(): ColDef<CategoryTableRow>[] {
   return [
     {
       headerName: "Nama Kategori",
@@ -31,13 +24,7 @@ export function getCategoryColumns(): ColDef<CategoryItem>[] {
     },
     {
       headerName: "Parent",
-      colId: "parentLabel",
-      valueGetter: (params) => {
-        const data = params.data as CategoryItem | undefined;
-        if (!data) return "-";
-        const map = new Map<string, CategoryItem>();
-        return resolveParentLabel(data, map);
-      },
+      field: "parentLabel",
       filter: "agTextColumnFilter",
       floatingFilter: true,
       filterParams: { debounceMs: 250 },

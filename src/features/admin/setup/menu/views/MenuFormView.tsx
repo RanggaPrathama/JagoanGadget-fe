@@ -1,7 +1,4 @@
-import { FieldInput } from "@/components/field/FieldInput";
-import { FieldSelect } from "@/components/field/FieldSelect";
-import { FieldSelectIcons } from "@/components/field/FieldSelectIcons";
-import { FieldSwitch } from "@/components/field/FieldSwitch";
+import { FieldInput, FieldSelect, FieldSelectIcons, FieldSwitch, getFieldError } from "@/components/field";
 import {
   Card,
   CardContent,
@@ -47,17 +44,6 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
       ? "Perbarui struktur navigasi admin dengan tampilan yang lebih tenang dan konsisten."
       : "Tambahkan menu baru dengan layout yang bersih, adaptif, dan selaras dengan tema.";
 
-  // Normalize TanStack Form error (string or { message }) to a displayable string or undefined.
-  const getErrorMessage = (
-    error: string | { message?: string } | undefined,
-  ) => {
-    if (!error) {
-      return undefined;
-    }
-
-    return typeof error === "string" ? error : error.message;
-  };
-
   if (isEditMode && isLoadingDetail) {
     return <FormSkeleton />;
   }
@@ -97,7 +83,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
             {/* Menu type: "menu" is a leaf, "group" is a parent container (clears parentId/route). */}
             <form.Field
               name="type"
-              validators={{ onChange: formValidators.type }}
+              validators={{ onBlur: formValidators.type, onSubmit: formValidators.type }}
             >
               {(field) => (
                 <FieldSelect
@@ -115,7 +101,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
                       void form.validateField("parentId", "change");
                     }
                   }}
-                  error={getErrorMessage(field.state.meta.errors[0])}
+                  error={getFieldError(field.state.meta)}
                   disabled={readonly}
                   options={[
                     { label: "Menu", value: "menu" },
@@ -145,7 +131,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
                     label="Parent Menu"
                     value={field.state.value ?? ""}
                     onValueChange={(value) => field.handleChange(value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     loading={parentOptionsLoading}
                     searchable
                     disabled={readonly || isGroup}
@@ -163,7 +149,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
             {/* Menu display name — shown in the sidebar and used for code generation. */}
             <form.Field
               name="name"
-              validators={{ onChange: formValidators.name }}
+              validators={{ onBlur: formValidators.name, onSubmit: formValidators.name }}
             >
               {(field) => (
                 <FieldInput
@@ -172,7 +158,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(event) => field.handleChange(event.target.value)}
-                  error={getErrorMessage(field.state.meta.errors[0])}
+                  error={getFieldError(field.state.meta)}
                   placeholder="Dashboard"
                   disabled={readonly}
                 />
@@ -182,14 +168,14 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
             {/* Icon name (hugeicons) shown next to the menu in the sidebar. */}
             <form.Field
               name="iconName"
-              validators={{ onChange: formValidators.iconName }}
+              validators={{ onBlur: formValidators.iconName, onSubmit: formValidators.iconName }}
             >
               {(field) => (
                 <FieldSelectIcons
                   label="Icon Name"
                   value={field.state.value ?? ""}
                   onValueChange={(value) => field.handleChange(value)}
-                  error={getErrorMessage(field.state.meta.errors[0])}
+                  error={getFieldError(field.state.meta)}
                   placeholder="LayoutDashboard"
                   disabled={readonly}
                 />
@@ -205,7 +191,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(event) => field.handleChange(event.target.value)}
-                  error={getErrorMessage(field.state.meta.errors[0])}
+                  error={getFieldError(field.state.meta)}
                   placeholder={
                     isGeneratingCode
                       ? "Menghasilkan code..."
@@ -219,7 +205,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
             {/* Sort order — controls menu position within its sibling group. */}
             <form.Field
               name="sortOrder"
-              validators={{ onChange: formValidators.sortOrder }}
+              validators={{ onBlur: formValidators.sortOrder, onSubmit: formValidators.sortOrder }}
             >
               {(field) => (
                 <FieldInput
@@ -231,7 +217,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
                   onChange={(event) =>
                     field.handleChange(Number(event.target.value || 0))
                   }
-                  error={getErrorMessage(field.state.meta.errors[0])}
+                  error={getFieldError(field.state.meta)}
                   disabled={readonly}
                 />
               )}
@@ -241,7 +227,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
               {/* Route — derived from code for "menu" type; empty for "group" type. */}
               <form.Field
                 name="route"
-                validators={{ onChange: formValidators.route }}
+                validators={{ onBlur: formValidators.route, onSubmit: formValidators.route }}
               >
                 {(field) => (
                   <FieldInput
@@ -254,7 +240,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
                     value={field.state.value ?? ""}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder={
                       typeValue === "group"
                         ? "Tipe group tidak memiliki route"
@@ -269,14 +255,14 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
             {/* Status — whether the menu is visible/active in the sidebar. */}
             <form.Field
               name="isActive"
-              validators={{ onChange: formValidators.isActive }}
+              validators={{ onBlur: formValidators.isActive, onSubmit: formValidators.isActive }}
             >
               {(field) => (
                 <FieldSwitch
                   label="Status"
                   checked={field.state.value ?? false}
                   onCheckedChange={(value) => field.handleChange(value)}
-                  error={getErrorMessage(field.state.meta.errors[0])}
+                  error={getFieldError(field.state.meta)}
                   disabled={readonly}
                   switchLabel={field.state.value ? "Aktif" : "Non-Aktif"}
                 />

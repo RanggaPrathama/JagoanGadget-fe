@@ -24,8 +24,7 @@ export function UserListView() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [limit, setLimit] = useState(25);
   const debouncedSearch = useDebounce(search, 400);
 
   const {
@@ -36,11 +35,14 @@ export function UserListView() {
     isDeleting,
     isLoading,
     isRefreshing,
+    selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    selectedUser,
     refetchUsers,
     deleteUser,
-  } = useUserList(debouncedSearch, page);
-
-  const selectedUser = users.find((u) => u.id === selectedUserId) ?? null;
+  } = useUserList(debouncedSearch, page, limit);
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -157,6 +159,11 @@ export function UserListView() {
               totalPagesOverride={pagination?.totalPages}
               hasNextPage={pagination?.hasNextPage}
               hasPreviousPage={pagination?.hasPreviousPage}
+              pageSize={limit}
+              onPageSizeChange={(size) => {
+                setLimit(size);
+                setPage(1);
+              }}
               onPrevPage={() =>
                 setPage((currentPage) => Math.max(1, currentPage - 1))
               }
@@ -165,10 +172,10 @@ export function UserListView() {
                   setPage((currentPage) => currentPage + 1);
                 }
               }}
-              selectedRowId={selectedUserId}
+              selectedRowId={selectedId}
               getRowId={(user) => user.id}
               onRowClick={(user) =>
-                setSelectedUserId((currentId) =>
+                setSelectedId((currentId) =>
                   currentId === user.id ? null : user.id,
                 )
               }

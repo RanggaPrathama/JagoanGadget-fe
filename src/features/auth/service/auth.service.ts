@@ -70,7 +70,7 @@ export async function signOutAuth(
     await router.invalidate();
     toast.success("Berhasil keluar dari akun.");
     await router.navigate({
-      to: "/",
+      to: "/sign-in",
       search: { redirect: redirectTo },
       replace: true,
     });

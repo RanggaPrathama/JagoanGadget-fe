@@ -1,5 +1,5 @@
 import type { ColDef } from "ag-grid-community";
-import type { PermissionItem } from "../service/permission.service";
+import type { PermissionItem } from "../types";
 
 // Column definitions for the permission data table: Menu (dot-notated path),
 // Nama Permission (display name), Code (unique dot-notation key), and Deskripsi.

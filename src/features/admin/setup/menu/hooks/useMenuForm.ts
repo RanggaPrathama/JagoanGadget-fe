@@ -11,15 +11,14 @@ import {
   createMenu,
   generateMenuCode,
   updateMenu,
-} from "../service/menu.service";
-import type { MenuPayload } from "../types";
-import type { ApiFnReturnType } from "@/lib/react-query";
-import {
   menuListQueryKey,
   useGetMenusListQuery,
   useGetMenuByIdQuery,
-} from "../service/menu.queries";
-import { useGenerateMenuCode } from "../service/menu.mutations";
+  useGenerateMenuCode,
+} from "../service/index";
+import type { MenuPayload } from "../types";
+import type { ApiFnReturnType } from "@/lib/react-query";
+
 import { invalidateMe } from "@/features/auth/service/me.service";
 
 // Zod schema helper: trim a string, convert empty string to null, enforce optional max length.

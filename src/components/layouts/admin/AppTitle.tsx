@@ -6,9 +6,27 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { MeRole } from "@/features/auth/types/me";
+import { Badge } from "@/components/ui/badge";
 
-export function AppTitle() {
+type AppTitleProps = {
+  roles: MeRole[];
+  isSuperadmin: boolean;
+  isLoading?: boolean;
+};
+
+export function AppTitle({ roles, isSuperadmin, isLoading }: AppTitleProps) {
   const { setOpenMobile } = useSidebar();
+  const roleNames = Array.from(
+    new Set([
+      ...(isSuperadmin ? ["Superadmin"] : []),
+      ...roles.map((r) => r.name),
+    ]),
+  );
+  const visible = roleNames.slice(0, 2);
+  const overflow = roleNames.length - visible.length;
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -30,9 +48,28 @@ export function AppTitle() {
                 <span className="truncate text-[0.82rem] font-bold tracking-[0.1em] text-sidebar-foreground uppercase">
                   Jagoan Gadget
                 </span>
-                <span className="truncate text-[11px] text-sidebar-foreground/60">
-                  Admin Dashboard
-                </span>
+                {isLoading ? (
+                  <Skeleton className="mt-1 h-3.5 w-24 rounded-full" />
+                ) : (
+                  <div className="mt-1 flex flex-wrap items-center gap-1">
+                    {visible.map((name) => (
+                      <Badge
+                        key={name}
+                        variant={
+                          name === "Superadmin" ? "default" : "secondary"
+                        }
+                        className="rounded-full px-1.5 py-px text-[10px] font-medium leading-tight"
+                      >
+                        {name}
+                      </Badge>
+                    ))}
+                    {overflow > 0 && (
+                      <span className="rounded-full bg-sidebar-border/40 px-1.5 py-px text-[10px] font-medium leading-tight text-sidebar-foreground/70">
+                        +{overflow}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </Link>
           </div>

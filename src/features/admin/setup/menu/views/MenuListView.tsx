@@ -1,20 +1,19 @@
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Plus, RefreshCw, Search } from "lucide-react";
-
 import { DataTable } from "@/components/data-table/data-table";
 import { RowActions, ActionButton } from "@/components/admin";
 import { ConfirmDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/hooks/useDebounce";
 import { getMenuColumns } from "../components/menu-columns";
 import { useMenuList } from "../hooks/useMenuList";
+import { useTableFilter } from "@/hooks/useTableFilter";
 
-type StatusFilter = "all" | "active" | "inactive";
-
-const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
+type MenuFilters = {
+  status: "all" | "active" | "inactive";
+};
+const STATUS_OPTIONS: { value: MenuFilters["status"]; label: string }[] = [
   { value: "all", label: "Semua" },
   { value: "active", label: "Aktif" },
   { value: "inactive", label: "Non-Aktif" },
@@ -23,10 +22,9 @@ const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
 // View: menu list page with search, status filter, toolbar actions (view/edit/delete/refresh/add), AG Grid table, and delete confirmation dialog.
 export function MenuListView() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const [page, setPage] = useState(1);
-  const debouncedSearch = useDebounce(search, 400);
+  const { search, filters, page, limit, handleSearch, updateFilter, setPage, setLimit } =
+    useTableFilter<MenuFilters>({ status: "all" });
+
   const {
     menus,
     totalMenus,
@@ -36,17 +34,12 @@ export function MenuListView() {
     isRefreshing,
     refetchMenus,
     deleteMenu,
-  } = useMenuList(debouncedSearch, statusFilter, page);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-
-  const selectedMenu = menus.find((m) => m.id === selectedId) ?? null;
-
-  // Reset to first page when search text changes to avoid stale page numbers.
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    setPage(1);
-  };
+    selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    selectedMenu,
+  } = useMenuList(search, filters.status, page, limit);
 
   return (
     <div className="space-y-5">
@@ -69,13 +62,10 @@ export function MenuListView() {
               <Button
                 key={opt.value}
                 type="button"
-                variant={statusFilter === opt.value ? "default" : "outline"}
+                variant={filters.status === opt.value ? "default" : "outline"}
                 size="sm"
                 className="rounded-lg"
-                onClick={() => {
-                  setStatusFilter(opt.value);
-                  setPage(1);
-                }}
+                onClick={() => updateFilter("status", opt.value)}
               >
                 {opt.label}
               </Button>
@@ -165,7 +155,12 @@ export function MenuListView() {
               currentPage={pagination?.page}
               totalPagesOverride={pagination?.totalPages}
               hasNextPage={pagination?.hasNextPage}
+              pageSize={pagination?.limit}
               hasPreviousPage={pagination?.hasPreviousPage}
+              onPageSizeChange={(size) => {
+                setLimit(size);
+                setPage(1);
+              }}
               onPrevPage={() => setPage((p) => Math.max(1, p - 1))}
               onNextPage={() => {
                 if (pagination?.hasNextPage) setPage((p) => p + 1);

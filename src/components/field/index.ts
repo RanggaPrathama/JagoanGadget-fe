@@ -1,4 +1,5 @@
 export * from "./types"
+export * from "./getFieldError"
 export * from "./FieldShell"
 export * from "./FieldInput"
 export * from "./FieldTextarea"

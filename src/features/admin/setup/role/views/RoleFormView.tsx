@@ -8,9 +8,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { FieldInput } from "@/components/field/FieldInput";
-import { FieldSwitch } from "@/components/field/FieldSwitch";
-import { FieldTextarea } from "@/components/field/FieldTextarea";
+import { FieldInput, FieldSwitch, FieldTextarea, getFieldError } from "@/components/field";
 import { ButtonSelect } from "@/components/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -46,11 +44,6 @@ type RoleFormViewProps = {
   roleId?: string;
   mode?: "edit" | "readonly";
 };
-
-function getErrorMessage(error: string | { message?: string } | undefined) {
-  if (!error) return undefined;
-  return typeof error === "string" ? error : error.message;
-}
 
 export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
   const readonly = mode === "readonly";
@@ -147,7 +140,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
             <CardContent className="grid gap-4 px-5 py-5 sm:px-7 sm:py-7 md:grid-cols-2">
               <form.Field
                 name="name"
-                validators={{ onChange: formValidators.name }}
+                validators={{ onBlur: formValidators.name, onSubmit: formValidators.name }}
               >
                 {(field) => (
                   <FieldInput
@@ -156,7 +149,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder="Inventory Manager"
                     disabled={readonly}
                   />
@@ -165,7 +158,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
 
               <form.Field
                 name="code"
-                validators={{ onChange: formValidators.code }}
+                validators={{ onBlur: formValidators.code, onSubmit: formValidators.code }}
               >
                 {(field) => (
                   <FieldInput
@@ -174,7 +167,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder="INV_MGR"
                     disabled={readonly}
                   />
@@ -184,7 +177,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
               <div className="md:col-span-2">
                 <form.Field
                   name="description"
-                  validators={{ onChange: formValidators.description }}
+                  validators={{ onBlur: formValidators.description, onSubmit: formValidators.description }}
                 >
                   {(field) => (
                     <FieldTextarea
@@ -195,7 +188,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
                       onChange={(event) =>
                         field.handleChange(event.target.value)
                       }
-                      error={getErrorMessage(field.state.meta.errors[0])}
+                      error={getFieldError(field.state.meta)}
                       placeholder="Briefly describe the responsibilities and scope of this role..."
                       disabled={readonly}
                     />
@@ -206,7 +199,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
               <div className="md:col-span-2">
                 <form.Field
                   name="isActive"
-                  validators={{ onChange: formValidators.isActive }}
+                  validators={{ onBlur: formValidators.isActive, onSubmit: formValidators.isActive }}
                 >
                   {(field) => (
                     <FieldSwitch
@@ -214,7 +207,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
                       hint="Active roles can be assigned to users immediately."
                       checked={field.state.value ?? false}
                       onCheckedChange={(value) => field.handleChange(value)}
-                      error={getErrorMessage(field.state.meta.errors[0])}
+                      error={getFieldError(field.state.meta)}
                       disabled={readonly}
                       switchLabel={field.state.value ? "Active" : "Inactive"}
                     />

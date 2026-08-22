@@ -10,12 +10,10 @@ import { getErrorMessage } from "@/utils/error";
 import {
   createRole,
   updateRole,
-  type RolePayload,
-} from "../service/role.service";
-import {
   useGetRoleByIdQuery,
   invalidateRoleQueries,
-} from "../service/role.queries";
+} from "../service";
+import type { RolePayload } from "../types";
 import { invalidateMe } from "@/features/auth/service/me.service";
 
 const nullableTrimmedString = (maxLength: number) =>

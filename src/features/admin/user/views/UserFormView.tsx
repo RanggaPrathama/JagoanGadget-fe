@@ -1,7 +1,5 @@
 import { ShieldCheck } from "lucide-react";
-import { FieldInput } from "@/components/field/FieldInput";
-import { FieldSwitch } from "@/components/field/FieldSwitch";
-import { FieldUpload } from "@/components/field/FieldUpload";
+import { FieldInput, FieldSwitch, FieldUpload, getFieldError } from "@/components/field";
 import { ButtonSelect } from "@/components/button/ButtonSelect";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -51,17 +49,6 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
       ? "Perbarui data user dengan tampilan yang lebih tenang dan konsisten."
       : "Tambahkan user baru dengan layout yang bersih, adaptif, dan selaras dengan tema.";
 
-  // Normalizes validation error (string or object) into a displayable message.
-  const getErrorMessage = (
-    error: string | { message?: string } | undefined,
-  ) => {
-    if (!error) {
-      return undefined;
-    }
-
-    return typeof error === "string" ? error : error.message;
-  };
-
   if (isEditMode && isLoadingDetail) {
     return <FormSkeleton />;
   }
@@ -100,7 +87,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
             <div className="grid gap-4 md:grid-cols-3">
               <form.Field
                 name="name"
-                validators={{ onChange: formValidators.name }}
+                validators={{ onBlur: formValidators.name, onSubmit: formValidators.name }}
               >
                 {(field) => (
                   <FieldInput
@@ -109,7 +96,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder="Masukkan nama"
                     disabled={readonly}
                   />
@@ -118,7 +105,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
 
               <form.Field
                 name="email"
-                validators={{ onChange: formValidators.email }}
+                validators={{ onBlur: formValidators.email, onSubmit: formValidators.email }}
               >
                 {(field) => (
                   <FieldInput
@@ -128,7 +115,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder="email@example.com"
                     disabled={readonly}
                   />
@@ -137,7 +124,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
 
               <form.Field
                 name="phoneNumber"
-                validators={{ onChange: formValidators.phoneNumber }}
+                validators={{ onBlur: formValidators.phoneNumber, onSubmit: formValidators.phoneNumber }}
               >
                 {(field) => (
                   <FieldInput
@@ -145,7 +132,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
                     value={field.state.value ?? ""}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder="Contoh: 081234567890"
                     disabled={readonly}
                   />
@@ -154,7 +141,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
 
               <form.Field
                 name="avatarTempKey"
-                validators={{ onChange: formValidators.avatarTempKey }}
+                validators={{ onBlur: formValidators.avatarTempKey, onSubmit: formValidators.avatarTempKey }}
               >
                 {(field) => (
                   <FieldUpload
@@ -172,14 +159,14 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
               <div className="space-y-4">
                 <form.Field
                   name="isActive"
-                  validators={{ onChange: formValidators.isActive }}
+                  validators={{ onBlur: formValidators.isActive, onSubmit: formValidators.isActive }}
                 >
                   {(field) => (
                     <FieldSwitch
                       label="Status"
                       checked={field.state.value ?? false}
                       onCheckedChange={(value) => field.handleChange(value)}
-                      error={getErrorMessage(field.state.meta.errors[0])}
+                      error={getFieldError(field.state.meta)}
                       disabled={readonly}
                       switchLabel={field.state.value ? "Aktif" : "Non-Aktif"}
                     />
@@ -195,7 +182,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
                     label="Superadmin"
                     checked={field.state.value ?? false}
                     onCheckedChange={(value) => field.handleChange(value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     disabled={readonly}
                     switchLabel={
                       field.state.value ? "Superadmin" : "User Biasa"

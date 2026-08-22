@@ -40,10 +40,10 @@ function toPayload(values: BrandFormValues): BrandPayload {
   return { name: parsed.name, logoUrl: parsed.logoUrl };
 }
 
-type UseBrandFormOptions = { brandId?: string };
+type UseBrandFormOptions = { brandId?: string; open?: boolean };
 
 // Hook: manage brand form state, create/update mutation, and load detail when editing.
-export function useBrandForm({ brandId }: UseBrandFormOptions) {
+export function useBrandForm({ brandId, open = false }: UseBrandFormOptions) {
   const queryClient = useQueryClient();
   const isEditMode = Boolean(brandId);
   const readonly = false;
@@ -84,13 +84,22 @@ export function useBrandForm({ brandId }: UseBrandFormOptions) {
     },
   });
 
-  // Populate form fields from the fetched brand detail when editing.
+  // Reset the form every time the dialog opens so a previous create/edit session
+  // never leaks its values into the next one (also clears validation/touched state).
+  // Create starts from defaults; edit seeds from the fetched detail.
   useEffect(() => {
-    if (!brandDetailQuery.data) return;
-    const data = brandDetailQuery.data;
-    form.setFieldValue("name", data.name ?? "");
-    form.setFieldValue("logoUrl", data.logoUrl ?? null);
-  }, [form, brandDetailQuery.data]);
+    if (!open) return;
+    if (isEditMode) {
+      const data = brandDetailQuery.data;
+      if (!data) return;
+      form.reset({
+        name: data.name ?? "",
+        logoUrl: data.logoUrl ?? null,
+      });
+    } else {
+      form.reset(defaultValues);
+    }
+  }, [open, isEditMode, brandDetailQuery.data, form]);
 
   return {
     form,

@@ -1,5 +1,4 @@
 import { Plus, RefreshCw, Search } from "lucide-react";
-import { useState } from "react";
 
 import { DataTable } from "@/components/data-table/data-table";
 import { RowActions, ActionButton } from "@/components/admin";
@@ -7,16 +6,15 @@ import { ConfirmDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useTableFilter } from "@/hooks/useTableFilter";
 import { getBrandColumns } from "../components/brand-columns";
 import { useBrandList } from "../hooks/useBrandList";
-import { BrandFormDialog } from "./BrandFormDialog";
+import { BrandFormDialog } from "../components/BrandFormDialog";
 
 // View: brand list page with search, toolbar actions, AG Grid table, form dialog, and delete confirmation.
 export function BrandListView() {
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const debouncedSearch = useDebounce(search, 400);
+  const { search, page, limit, handleSearch, setPage, setLimit } =
+    useTableFilter<Record<string, never>>({});
 
   const {
     brands,
@@ -26,24 +24,19 @@ export function BrandListView() {
     isLoading,
     isRefreshing,
     selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
     selectedBrand,
     dialogMode,
     editingId,
-    setSelectedId,
     openCreate,
     openEdit,
     openReadonly,
     closeDialog,
     refetchBrands,
     deleteBrand,
-  } = useBrandList(debouncedSearch, page);
-
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    setPage(1);
-  };
+  } = useBrandList(search, page, limit);
 
   return (
     <div className="space-y-5">
@@ -115,6 +108,11 @@ export function BrandListView() {
               totalPagesOverride={pagination?.totalPages}
               hasNextPage={pagination?.hasNextPage}
               hasPreviousPage={pagination?.hasPreviousPage}
+              pageSize={limit}
+              onPageSizeChange={(size) => {
+                setLimit(size);
+                setPage(1);
+              }}
               onPrevPage={() => setPage((p) => Math.max(1, p - 1))}
               onNextPage={() => {
                 if (pagination?.hasNextPage) setPage((p) => p + 1);

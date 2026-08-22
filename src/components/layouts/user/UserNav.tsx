@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
+import { ThemeSwitch } from "@/components/ThemeSwitch";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -104,14 +105,14 @@ function AccountMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link to="/settings/account">
+            <Link to="/settings/account" preload={false}>
               <CircleUserRound />
               Account
             </Link>
           </DropdownMenuItem>
           {canAccessAdmin ? (
             <DropdownMenuItem asChild>
-              <Link to="/admin">
+              <Link to="/admin" preload={false}>
                 <Shield />
                 Admin Dashboard
               </Link>
@@ -235,6 +236,8 @@ export function UserNav() {
               </Badge>
             </Link>
           </Button>
+
+          <ThemeSwitch compact />
 
           {isLoading ? (
             <div className="hidden items-center gap-2 sm:flex">

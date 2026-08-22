@@ -42,10 +42,10 @@ export function getMenuColumns(): ColDef<MenuTableRow>[] {
     {
       headerName: "Type",
       field: "type",
-      filter: "agSetColumnFilter",
+      filter: "agTextColumnFilter",
       floatingFilter: true,
       filterParams: {
-        suppressMiniFilter: true,
+        debounceMs: 250,
       },
       minWidth: 140,
       width: 140,

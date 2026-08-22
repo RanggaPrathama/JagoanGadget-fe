@@ -10,12 +10,10 @@ import type { FieldOption } from "@/components/field/types";
 import {
   createPermission,
   updatePermission,
-  type PermissionPayload,
-} from "../service/permission.service";
-import {
   useGetPermissionByIdQuery,
   invalidatePermissionQueries,
-} from "../service/permission.queries";
+} from "../service";
+import type { PermissionPayload } from "../types";
 import { useGetMenusListQuery } from "@/features/admin/setup/menu/service/menu.queries";
 import { invalidateMe } from "@/features/auth/service/me.service";
 

@@ -1,7 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import { requireGuestUser } from "@/lib/auth";
+import { SignInPage } from "@/features/auth/views/signInView";
 
-import { requireGuestUser } from '@/lib/auth'
-
-export const Route = createFileRoute('/sign-in')({
+export const Route = createFileRoute("/sign-in")({
   beforeLoad: requireGuestUser,
-})
+  component: SignInPage,
+});

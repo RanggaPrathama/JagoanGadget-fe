@@ -2,6 +2,7 @@ import { useDeleteMenu } from "../service/menu.mutations";
 import { useGetMenusListQuery } from "../service/menu.queries";
 import type { MenuItem } from "../types";
 import type { UnwrappedPaginated } from "@/lib/api-response";
+import { useState } from "react";
 
 export type MenuTableRow = MenuItem & {
   parentLabel: string;
@@ -32,13 +33,18 @@ export function useMenuList(
   page = 1,
   limit = 25,
 ) {
-
+  const showParam = show === "all" ? undefined : show;
 
   const menuQuery = useGetMenusListQuery(
-    { search, show, page, limit },
+    { search, show: showParam, page, limit },
     { queryConfig: { enabled: true } },
   );
 
+  // hooks for selected menu and delete confirmation dialog
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  // handle delete menu mutation
   const deleteMutation = useDeleteMenu();
 
   const data = menuQuery.data as UnwrappedPaginated<MenuItem> | undefined;
@@ -56,6 +62,8 @@ export function useMenuList(
     isActive: menu.isActive ?? true,
   }));
 
+  const selectedMenu = menus.find((m) => m.id === selectedId) ?? null;
+
   return {
     menus,
     totalMenus,
@@ -63,6 +71,11 @@ export function useMenuList(
     isLoading: menuQuery.isLoading,
     isRefreshing: menuQuery.isFetching,
     isDeleting: deleteMutation.isPending,
+    selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    selectedMenu,
     refetchMenus: async () => {
       await menuQuery.refetch();
     },

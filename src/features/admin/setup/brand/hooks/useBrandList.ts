@@ -22,6 +22,7 @@ export function useBrandList(
   const totalBrands = pagination?.totalItems ?? 0;
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [dialogMode, setDialogMode] = useState<"create" | "edit" | "readonly" | "closed">("closed");
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -52,10 +53,12 @@ export function useBrandList(
     isRefreshing: brandQuery.isFetching,
     isDeleting: deleteMutation.isPending,
     selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
     selectedBrand,
     dialogMode,
     editingId,
-    setSelectedId,
     openCreate,
     openEdit,
     openReadonly,

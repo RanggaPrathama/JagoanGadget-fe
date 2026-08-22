@@ -47,13 +47,14 @@ function toPayload(values: CategoryFormValues): CategoryPayload {
   return { name: parsed.name, slug: parsed.slug, parentId: parsed.parentId };
 }
 
-type UseCategoryFormOptions = { categoryId?: string };
+type UseCategoryFormOptions = { categoryId?: string; open?: boolean };
 
 // Hook: manage category form state, auto-slug generation, create/update mutation, and load detail when editing.
-export function useCategoryForm({ categoryId }: UseCategoryFormOptions) {
+export function useCategoryForm({ categoryId, open = false }: UseCategoryFormOptions) {
   const queryClient = useQueryClient();
   const isEditMode = Boolean(categoryId);
   const slugManuallyEditedRef = useRef(false);
+  const seedInProgressRef = useRef(false);
 
   const categoryDetailQuery = useGetCategoryByIdQuery(categoryId as string, {
     queryConfig: { enabled: isEditMode },
@@ -91,23 +92,37 @@ export function useCategoryForm({ categoryId }: UseCategoryFormOptions) {
     },
   });
 
+  // Seed the form every time the dialog opens so a previous create/edit session
+  // never leaks its values into the next one. Create starts from defaults; edit
+  // seeds from the fetched detail. We set each field with setFieldValue (instead
+  // of an atomic form.reset) so the name-subscribed auto-slug effect below does
+  // not race with a batched reset and drop the seeded name.
+  useEffect(() => {
+    if (!open) return;
+    slugManuallyEditedRef.current = false;
+    if (isEditMode) {
+      const data = categoryDetailQuery.data;
+      if (!data) return;
+      seedInProgressRef.current = true;
+      form.setFieldValue("name", data.name ?? "");
+      form.setFieldValue("slug", data.slug ?? "");
+      form.setFieldValue("parentId", data.parentId ?? "");
+      seedInProgressRef.current = false;
+    } else {
+      form.setFieldValue("name", "");
+      form.setFieldValue("slug", "");
+      form.setFieldValue("parentId", "");
+    }
+  }, [open, isEditMode, categoryDetailQuery.data, form]);
+
   // Auto-generate slug from name until the user edits the slug field manually.
+  // Skipped while seeding an edit payload so it does not overwrite the loaded slug.
   const nameValue = useStore(form.store, (state) => state.values.name);
   useEffect(() => {
-    if (slugManuallyEditedRef.current) return;
+    if (slugManuallyEditedRef.current || seedInProgressRef.current) return;
     const next = slugify(nameValue ?? "");
     if (next) form.setFieldValue("slug", next);
   }, [form, nameValue]);
-
-  // Populate form fields from the fetched category detail when editing.
-  useEffect(() => {
-    if (!categoryDetailQuery.data) return;
-    const data = categoryDetailQuery.data;
-    form.setFieldValue("name", data.name ?? "");
-    form.setFieldValue("slug", data.slug ?? "");
-    form.setFieldValue("parentId", data.parentId ?? "");
-    slugManuallyEditedRef.current = true;
-  }, [form, categoryDetailQuery.data]);
 
   return {
     form,

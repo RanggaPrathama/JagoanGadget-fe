@@ -1,5 +1,5 @@
-import { useGetUserListQuery, userListQueryKey } from "../service/user.queries";
-import { useDeleteUser } from "../service/user.mutations";
+import { useState } from "react";
+import { useGetUserListQuery, useDeleteUser, userListQueryKey } from "../service";
 import type { UserEntity } from "../types";
 import type { UnwrappedPaginated } from "@/lib/api-response";
 
@@ -20,6 +20,10 @@ export function useUserList(search?: string, page = 1, limit = 25) {
 
   const deleteMutation = useDeleteUser();
 
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const selectedUser = users.find((u) => u.id === selectedId) ?? null;
+
   return {
     users,
     totalUsers,
@@ -28,6 +32,11 @@ export function useUserList(search?: string, page = 1, limit = 25) {
     isLoading: query.isLoading,
     isRefreshing: query.isFetching,
     isDeleting: deleteMutation.isPending,
+    selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    selectedUser,
     refetchUsers: async () => {
       await query.refetch();
     },

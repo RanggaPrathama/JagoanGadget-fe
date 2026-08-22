@@ -1,10 +1,11 @@
 // Hook: paginated role list using shared queries/mutations.
+import { useState } from "react";
 import type { UnwrappedPaginated } from "@/lib/api-response";
-import { useDeleteRole } from "../service/role.mutations";
 import {
+  useDeleteRole,
   roleListQueryKey,
   useGetRoleListQuery,
-} from "../service/role.queries";
+} from "../service";
 import type { RoleItem } from "../types";
 
 // Re-export so useRoleForm (untouched) keeps working.
@@ -34,6 +35,10 @@ export function useRoleList(search?: string, page = 1, limit = 25) {
 
   const deleteMutation = useDeleteRole();
 
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const selectedRole = roles.find((role) => role.id === selectedId) ?? null;
+
   return {
     roles,
     totalRoles,
@@ -42,6 +47,11 @@ export function useRoleList(search?: string, page = 1, limit = 25) {
     isLoading: query.isLoading,
     isRefreshing: query.isFetching,
     isDeleting: deleteMutation.isPending,
+    selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    selectedRole,
     refetchRoles: async () => {
       await query.refetch();
     },

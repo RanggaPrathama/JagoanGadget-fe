@@ -7,8 +7,7 @@ import { toast } from "sonner";
 import type { UserFormInput } from "../types";
 import { getErrorMessage } from "@/utils/error";
 import type { RoleItem } from "../../setup/role/service/role.service";
-import { createUser, updateUser } from "../service/user.service";
-import { useGetUserByIdQuery, invalidateUserQueries } from "../service/user.queries";
+import { createUser, updateUser, useGetUserByIdQuery, invalidateUserQueries } from "../service";
 import { invalidateMe } from "@/features/auth/service/me.service";
 
 // Convert an empty string to null and enforce max length.

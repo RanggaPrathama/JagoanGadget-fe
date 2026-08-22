@@ -31,6 +31,8 @@ export interface DataTableProps<TData> {
   /** Server-side page & totalPages — override internal display */
   currentPage?: number;
   totalPagesOverride?: number;
+  /** Called when the page-size <select> changes (server-side limit). */
+  onPageSizeChange?: (size: number) => void;
 }
 
 export function DataTable<TData>({
@@ -52,6 +54,7 @@ export function DataTable<TData>({
   onNextPage,
   currentPage: serverPage,
   totalPagesOverride,
+  onPageSizeChange,
 }: DataTableProps<TData>) {
   const gridRef = useRef<AgGridReact<TData> | null>(null);
 
@@ -229,6 +232,7 @@ export function DataTable<TData>({
                   newSize,
                 );
                 gridRef.current?.api?.paginationGoToFirstPage();
+                onPageSizeChange?.(newSize);
               }}
               className="ag-table-page-size-select h-9 rounded-md border border-border/70 bg-background px-3 text-sm text-foreground outline-none transition focus:border-primary/60 focus:ring-2 focus:ring-primary/15"
             >

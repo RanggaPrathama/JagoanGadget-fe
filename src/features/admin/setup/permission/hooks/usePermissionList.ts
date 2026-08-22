@@ -1,5 +1,5 @@
-import { useGetPermissionsListQuery, permissionListQueryKey } from "../service/permission.queries";
-import { useDeletePermission } from "../service/permission.mutations";
+import { useState } from "react";
+import { useGetPermissionsListQuery, useDeletePermission, permissionListQueryKey } from "../service";
 import type { PermissionItem } from "../types";
 import type { UnwrappedPaginated } from "@/lib/api-response";
 
@@ -7,7 +7,7 @@ import type { UnwrappedPaginated } from "@/lib/api-response";
 export { permissionListQueryKey };
 
 // Loads the paginated permission list and exposes delete + refetch helpers.
-export function usePermissionList(search?: string, page = 1, limit = 10) {
+export function usePermissionList(search?: string, page = 1, limit = 25) {
   // Fetch the permission list via the shared query hook.
   const query = useGetPermissionsListQuery({ search, page, limit });
   const data = query.data as UnwrappedPaginated<PermissionItem> | undefined;
@@ -20,6 +20,10 @@ export function usePermissionList(search?: string, page = 1, limit = 10) {
   // Delete mutation (toast + cache invalidation handled inside the hook).
   const deleteMutation = useDeletePermission();
 
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const selectedPermission = permissions.find((p) => p.id === selectedId) ?? null;
+
   return {
     permissions,
     totalPermissions,
@@ -27,6 +31,11 @@ export function usePermissionList(search?: string, page = 1, limit = 10) {
     isLoading: query.isLoading,
     isRefreshing: query.isFetching,
     isDeleting: deleteMutation.isPending,
+    selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    selectedPermission,
     refetchPermissions: async () => {
       await query.refetch();
     },

@@ -16,6 +16,7 @@ export function PermissionListView() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(25);
   const debouncedSearch = useDebounce(search, 400);
   const {
     permissions,
@@ -24,14 +25,14 @@ export function PermissionListView() {
     isDeleting,
     isLoading,
     isRefreshing,
+    selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    selectedPermission,
     refetchPermissions,
     deletePermission,
-  } = usePermissionList(debouncedSearch, page);
-  const [selectedPermissionId, setSelectedPermissionId] = useState<string | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-
-  const selectedPermission =
-    permissions.find((p) => p.id === selectedPermissionId) ?? null;
+  } = usePermissionList(debouncedSearch, page, limit);
 
   // Reset page to 1 whenever the search query changes so the table always
   // starts from the first page with the new filter applied.
@@ -139,14 +140,19 @@ export function PermissionListView() {
               totalPagesOverride={pagination?.totalPages}
               hasNextPage={pagination?.hasNextPage}
               hasPreviousPage={pagination?.hasPreviousPage}
+              pageSize={limit}
+              onPageSizeChange={(size) => {
+                setLimit(size);
+                setPage(1);
+              }}
               onPrevPage={() => setPage((p) => Math.max(1, p - 1))}
               onNextPage={() => {
                 if (pagination?.hasNextPage) setPage((p) => p + 1);
               }}
-              selectedRowId={selectedPermissionId}
+              selectedRowId={selectedId}
               getRowId={(row) => row.id}
               onRowClick={(row) =>
-                setSelectedPermissionId((prev) =>
+                setSelectedId((prev) =>
                   prev === row.id ? null : row.id,
                 )
               }

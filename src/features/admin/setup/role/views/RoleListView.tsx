@@ -25,8 +25,7 @@ export function RoleListView() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [limit, setLimit] = useState(25);
   const debouncedSearch = useDebounce(search, 400);
   const {
     roles,
@@ -36,11 +35,14 @@ export function RoleListView() {
     isDeleting,
     isLoading,
     isRefreshing,
+    selectedId,
+    setSelectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    selectedRole,
     refetchRoles,
     deleteRole,
-  } = useRoleList(debouncedSearch, page);
-
-  const selectedRole = roles.find((r) => r.id === selectedRoleId) ?? null;
+  } = useRoleList(debouncedSearch, page, limit);
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -161,6 +163,11 @@ export function RoleListView() {
               totalPagesOverride={pagination?.totalPages}
               hasNextPage={pagination?.hasNextPage}
               hasPreviousPage={pagination?.hasPreviousPage}
+              pageSize={limit}
+              onPageSizeChange={(size) => {
+                setLimit(size);
+                setPage(1);
+              }}
               onPrevPage={() =>
                 setPage((currentPage) => Math.max(1, currentPage - 1))
               }
@@ -169,10 +176,10 @@ export function RoleListView() {
                   setPage((currentPage) => currentPage + 1);
                 }
               }}
-              selectedRowId={selectedRoleId}
+              selectedRowId={selectedId}
               getRowId={(role) => role.id}
               onRowClick={(role) =>
-                setSelectedRoleId((currentId) =>
+                setSelectedId((currentId) =>
                   currentId === role.id ? null : role.id,
                 )
               }

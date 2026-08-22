@@ -9,23 +9,6 @@ import type {
 } from "../types";
 export type { MenuItem, MenuPayload } from "../types";
 
-export {
-  getMenusListQueryKey,
-  getMenusListQueryOptions,
-  getMenuByIdQueryOptions,
-  useGetMenusListQuery,
-  useGetMenuByIdQuery,
-  invalidateMenuQueries,
-} from "./menu.queries";
-export {
-  useDeleteMenu,
-  useGenerateMenuCode,
-  useCreateMenu,
-  useUpdateMenu,
-} from "./menu.mutations";
-
-
-
 // GET admin/menus — fetch paginated menu list with optional search, active status, permission, and pagination params.
 export async function getMenusList(params?: {
   search?: string;
@@ -96,5 +79,3 @@ export async function generateMenuCode(payload: GenerateMenuCodePayload) {
     fullPath: data?.fullPath ?? [],
   };
 }
-
-

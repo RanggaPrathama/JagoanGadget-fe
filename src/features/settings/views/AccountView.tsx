@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Loader2, Save, Pencil, ArrowLeft } from "lucide-react";
 import { useMe } from "@/hooks/useMe";
-import { FieldInput } from "@/components/field/FieldInput";
-import { FieldUpload } from "@/components/field/FieldUpload";
+import { FieldInput, FieldUpload, getFieldError } from "@/components/field";
 import { FormSkeleton } from "@/components/admin";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,13 +14,6 @@ import {
 } from "@/components/ui/card";
 import { getRoleLabel } from "../lib/role";
 import { formValidators, useAccountForm } from "../hooks/useAccountForm";
-
-const getErrorMessage = (
-  error: string | { message?: string } | undefined,
-) => {
-  if (!error) return undefined;
-  return typeof error === "string" ? error : error.message;
-};
 
 export function AccountView() {
   const { data: me } = useMe();
@@ -150,7 +142,7 @@ export function AccountView() {
             <CardContent className="grid gap-6 px-5 py-5 sm:px-7 sm:py-7 md:grid-cols-[auto,1fr] md:gap-8">
               <form.Field
                 name="avatarTempKey"
-                validators={{ onChange: formValidators.avatarTempKey }}
+                validators={{ onBlur: formValidators.avatarTempKey, onSubmit: formValidators.avatarTempKey }}
               >
                 {(field) => (
                   <div className="[&_img]:size-32">
@@ -196,7 +188,7 @@ export function AccountView() {
             <CardContent className="grid gap-4 px-5 py-5 sm:px-7 sm:py-7 md:grid-cols-2">
               <form.Field
                 name="name"
-                validators={{ onChange: formValidators.name }}
+                validators={{ onBlur: formValidators.name, onSubmit: formValidators.name }}
               >
                 {(field) => (
                   <FieldInput
@@ -205,7 +197,7 @@ export function AccountView() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder="Masukkan nama lengkap"
                   />
                 )}
@@ -213,7 +205,7 @@ export function AccountView() {
 
               <form.Field
                 name="email"
-                validators={{ onChange: formValidators.email }}
+                validators={{ onBlur: formValidators.email, onSubmit: formValidators.email }}
               >
                 {(field) => (
                   <FieldInput
@@ -222,7 +214,7 @@ export function AccountView() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder="email@example.com"
                     disabled
                     hint="Email tidak dapat diubah dari halaman ini."
@@ -232,7 +224,7 @@ export function AccountView() {
 
               <form.Field
                 name="phoneNumber"
-                validators={{ onChange: formValidators.phoneNumber }}
+                validators={{ onBlur: formValidators.phoneNumber, onSubmit: formValidators.phoneNumber }}
               >
                 {(field) => (
                   <FieldInput
@@ -241,7 +233,7 @@ export function AccountView() {
                     value={field.state.value ?? ""}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    error={getErrorMessage(field.state.meta.errors[0])}
+                    error={getFieldError(field.state.meta)}
                     placeholder="Contoh: 081234567890"
                   />
                 )}

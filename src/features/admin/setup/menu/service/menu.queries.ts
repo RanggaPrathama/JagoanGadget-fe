@@ -12,7 +12,7 @@ export const menuListQueryKey = ["menus"] as const;
 // Filter params shape accepted by menu list queries.
 export type MenuListParams = {
   search?: string;
-  show?: "active" | "inactive" | "all";
+  show?: "active" | "inactive";
   page?: number;
   limit?: number;
 };

@@ -22,7 +22,6 @@ import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as UserSettingsRouteImport } from './routes/_user/settings'
 import { Route as AdminUserIndexRouteImport } from './routes/admin/user/index'
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
-import { Route as AdminCategoryIndexRouteImport } from './routes/admin/category/index'
 import { Route as UserSettingsIndexRouteImport } from './routes/_user/settings/index'
 import { Route as AdminUserCreateRouteImport } from './routes/admin/user/create'
 import { Route as AdminSettingsNotificationsRouteImport } from './routes/admin/settings/notifications'
@@ -30,15 +29,18 @@ import { Route as AdminSettingsAccountRouteImport } from './routes/admin/setting
 import { Route as UserSettingsNotificationsRouteImport } from './routes/_user/settings/notifications'
 import { Route as UserSettingsAccountRouteImport } from './routes/_user/settings/account'
 import { Route as AdminSetupRoleIndexRouteImport } from './routes/admin/setup/role/index'
+import { Route as AdminSetupPrefixIndexRouteImport } from './routes/admin/setup/prefix/index'
 import { Route as AdminSetupPermissionIndexRouteImport } from './routes/admin/setup/permission/index'
 import { Route as AdminSetupMenuIndexRouteImport } from './routes/admin/setup/menu/index'
-import { Route as AdminUserUserIdEditRouteImport } from './routes/admin/user/$userId/edit'
+import { Route as AdminMasterCategoryIndexRouteImport } from './routes/admin/master/category/index'
+import { Route as AdminMasterBrandIndexRouteImport } from './routes/admin/master/brand/index'
+import { Route as AdminUserUserIdEditRouteImport } from './routes/admin/user/$userId.edit'
 import { Route as AdminSetupRoleCreateRouteImport } from './routes/admin/setup/role/create'
 import { Route as AdminSetupPermissionCreateRouteImport } from './routes/admin/setup/permission/create'
 import { Route as AdminSetupMenuCreateRouteImport } from './routes/admin/setup/menu/create'
-import { Route as AdminSetupRoleRoleIdEditRouteImport } from './routes/admin/setup/role/$roleId/edit'
-import { Route as AdminSetupPermissionPermissionIdEditRouteImport } from './routes/admin/setup/permission/$permissionId/edit'
-import { Route as AdminSetupMenuMenuIdEditRouteImport } from './routes/admin/setup/menu/$menuId/edit'
+import { Route as AdminSetupRoleRoleIdEditRouteImport } from './routes/admin/setup/role/$roleId.edit'
+import { Route as AdminSetupPermissionPermissionIdEditRouteImport } from './routes/admin/setup/permission/$permissionId.edit'
+import { Route as AdminSetupMenuMenuIdEditRouteImport } from './routes/admin/setup/menu/$menuId.edit'
 
 const UserProductsLazyRouteImport = createFileRoute('/_user/products')()
 const UserCartLazyRouteImport = createFileRoute('/_user/cart')()
@@ -50,12 +52,12 @@ const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/sign-up.lazy').then((d) => d.Route))
+} as any)
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/sign-in.lazy').then((d) => d.Route))
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -112,11 +114,6 @@ const AdminSettingsIndexRoute = AdminSettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminSettingsRoute,
 } as any)
-const AdminCategoryIndexRoute = AdminCategoryIndexRouteImport.update({
-  id: '/category/',
-  path: '/category/',
-  getParentRoute: () => AdminRoute,
-} as any)
 const UserSettingsIndexRoute = UserSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -161,6 +158,11 @@ const AdminSetupRoleIndexRoute = AdminSetupRoleIndexRouteImport.update({
   path: '/setup/role/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSetupPrefixIndexRoute = AdminSetupPrefixIndexRouteImport.update({
+  id: '/setup/prefix/',
+  path: '/setup/prefix/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSetupPermissionIndexRoute =
   AdminSetupPermissionIndexRouteImport.update({
     id: '/setup/permission/',
@@ -170,6 +172,17 @@ const AdminSetupPermissionIndexRoute =
 const AdminSetupMenuIndexRoute = AdminSetupMenuIndexRouteImport.update({
   id: '/setup/menu/',
   path: '/setup/menu/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMasterCategoryIndexRoute =
+  AdminMasterCategoryIndexRouteImport.update({
+    id: '/master/category/',
+    path: '/master/category/',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminMasterBrandIndexRoute = AdminMasterBrandIndexRouteImport.update({
+  id: '/master/brand/',
+  path: '/master/brand/',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUserUserIdEditRoute = AdminUserUserIdEditRouteImport.update({
@@ -230,15 +243,17 @@ export interface FileRoutesByFullPath {
   '/admin/user/create': typeof AdminUserCreateRoute
   '/products/$slug': typeof UserProductsSlugLazyRoute
   '/settings/': typeof UserSettingsIndexRoute
-  '/admin/category/': typeof AdminCategoryIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/user/': typeof AdminUserIndexRoute
   '/admin/setup/menu/create': typeof AdminSetupMenuCreateRoute
   '/admin/setup/permission/create': typeof AdminSetupPermissionCreateRoute
   '/admin/setup/role/create': typeof AdminSetupRoleCreateRoute
   '/admin/user/$userId/edit': typeof AdminUserUserIdEditRoute
+  '/admin/master/brand/': typeof AdminMasterBrandIndexRoute
+  '/admin/master/category/': typeof AdminMasterCategoryIndexRoute
   '/admin/setup/menu/': typeof AdminSetupMenuIndexRoute
   '/admin/setup/permission/': typeof AdminSetupPermissionIndexRoute
+  '/admin/setup/prefix/': typeof AdminSetupPrefixIndexRoute
   '/admin/setup/role/': typeof AdminSetupRoleIndexRoute
   '/admin/setup/menu/$menuId/edit': typeof AdminSetupMenuMenuIdEditRoute
   '/admin/setup/permission/$permissionId/edit': typeof AdminSetupPermissionPermissionIdEditRoute
@@ -259,15 +274,17 @@ export interface FileRoutesByTo {
   '/admin/user/create': typeof AdminUserCreateRoute
   '/products/$slug': typeof UserProductsSlugLazyRoute
   '/settings': typeof UserSettingsIndexRoute
-  '/admin/category': typeof AdminCategoryIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/user': typeof AdminUserIndexRoute
   '/admin/setup/menu/create': typeof AdminSetupMenuCreateRoute
   '/admin/setup/permission/create': typeof AdminSetupPermissionCreateRoute
   '/admin/setup/role/create': typeof AdminSetupRoleCreateRoute
   '/admin/user/$userId/edit': typeof AdminUserUserIdEditRoute
+  '/admin/master/brand': typeof AdminMasterBrandIndexRoute
+  '/admin/master/category': typeof AdminMasterCategoryIndexRoute
   '/admin/setup/menu': typeof AdminSetupMenuIndexRoute
   '/admin/setup/permission': typeof AdminSetupPermissionIndexRoute
+  '/admin/setup/prefix': typeof AdminSetupPrefixIndexRoute
   '/admin/setup/role': typeof AdminSetupRoleIndexRoute
   '/admin/setup/menu/$menuId/edit': typeof AdminSetupMenuMenuIdEditRoute
   '/admin/setup/permission/$permissionId/edit': typeof AdminSetupPermissionPermissionIdEditRoute
@@ -293,15 +310,17 @@ export interface FileRoutesById {
   '/admin/user/create': typeof AdminUserCreateRoute
   '/_user/products/$slug': typeof UserProductsSlugLazyRoute
   '/_user/settings/': typeof UserSettingsIndexRoute
-  '/admin/category/': typeof AdminCategoryIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/user/': typeof AdminUserIndexRoute
   '/admin/setup/menu/create': typeof AdminSetupMenuCreateRoute
   '/admin/setup/permission/create': typeof AdminSetupPermissionCreateRoute
   '/admin/setup/role/create': typeof AdminSetupRoleCreateRoute
   '/admin/user/$userId/edit': typeof AdminUserUserIdEditRoute
+  '/admin/master/brand/': typeof AdminMasterBrandIndexRoute
+  '/admin/master/category/': typeof AdminMasterCategoryIndexRoute
   '/admin/setup/menu/': typeof AdminSetupMenuIndexRoute
   '/admin/setup/permission/': typeof AdminSetupPermissionIndexRoute
+  '/admin/setup/prefix/': typeof AdminSetupPrefixIndexRoute
   '/admin/setup/role/': typeof AdminSetupRoleIndexRoute
   '/admin/setup/menu/$menuId/edit': typeof AdminSetupMenuMenuIdEditRoute
   '/admin/setup/permission/$permissionId/edit': typeof AdminSetupPermissionPermissionIdEditRoute
@@ -327,15 +346,17 @@ export interface FileRouteTypes {
     | '/admin/user/create'
     | '/products/$slug'
     | '/settings/'
-    | '/admin/category/'
     | '/admin/settings/'
     | '/admin/user/'
     | '/admin/setup/menu/create'
     | '/admin/setup/permission/create'
     | '/admin/setup/role/create'
     | '/admin/user/$userId/edit'
+    | '/admin/master/brand/'
+    | '/admin/master/category/'
     | '/admin/setup/menu/'
     | '/admin/setup/permission/'
+    | '/admin/setup/prefix/'
     | '/admin/setup/role/'
     | '/admin/setup/menu/$menuId/edit'
     | '/admin/setup/permission/$permissionId/edit'
@@ -356,15 +377,17 @@ export interface FileRouteTypes {
     | '/admin/user/create'
     | '/products/$slug'
     | '/settings'
-    | '/admin/category'
     | '/admin/settings'
     | '/admin/user'
     | '/admin/setup/menu/create'
     | '/admin/setup/permission/create'
     | '/admin/setup/role/create'
     | '/admin/user/$userId/edit'
+    | '/admin/master/brand'
+    | '/admin/master/category'
     | '/admin/setup/menu'
     | '/admin/setup/permission'
+    | '/admin/setup/prefix'
     | '/admin/setup/role'
     | '/admin/setup/menu/$menuId/edit'
     | '/admin/setup/permission/$permissionId/edit'
@@ -389,15 +412,17 @@ export interface FileRouteTypes {
     | '/admin/user/create'
     | '/_user/products/$slug'
     | '/_user/settings/'
-    | '/admin/category/'
     | '/admin/settings/'
     | '/admin/user/'
     | '/admin/setup/menu/create'
     | '/admin/setup/permission/create'
     | '/admin/setup/role/create'
     | '/admin/user/$userId/edit'
+    | '/admin/master/brand/'
+    | '/admin/master/category/'
     | '/admin/setup/menu/'
     | '/admin/setup/permission/'
+    | '/admin/setup/prefix/'
     | '/admin/setup/role/'
     | '/admin/setup/menu/$menuId/edit'
     | '/admin/setup/permission/$permissionId/edit'
@@ -505,13 +530,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsIndexRouteImport
       parentRoute: typeof AdminSettingsRoute
     }
-    '/admin/category/': {
-      id: '/admin/category/'
-      path: '/category'
-      fullPath: '/admin/category/'
-      preLoaderRoute: typeof AdminCategoryIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/_user/settings/': {
       id: '/_user/settings/'
       path: '/'
@@ -568,6 +586,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSetupRoleIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/setup/prefix/': {
+      id: '/admin/setup/prefix/'
+      path: '/setup/prefix'
+      fullPath: '/admin/setup/prefix/'
+      preLoaderRoute: typeof AdminSetupPrefixIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/setup/permission/': {
       id: '/admin/setup/permission/'
       path: '/setup/permission'
@@ -580,6 +605,20 @@ declare module '@tanstack/react-router' {
       path: '/setup/menu'
       fullPath: '/admin/setup/menu/'
       preLoaderRoute: typeof AdminSetupMenuIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/master/category/': {
+      id: '/admin/master/category/'
+      path: '/master/category'
+      fullPath: '/admin/master/category/'
+      preLoaderRoute: typeof AdminMasterCategoryIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/master/brand/': {
+      id: '/admin/master/brand/'
+      path: '/master/brand'
+      fullPath: '/admin/master/brand/'
+      preLoaderRoute: typeof AdminMasterBrandIndexRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/user/$userId/edit': {
@@ -697,14 +736,16 @@ interface AdminRouteChildren {
   AdminSettingsRoute: typeof AdminSettingsRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
   AdminUserCreateRoute: typeof AdminUserCreateRoute
-  AdminCategoryIndexRoute: typeof AdminCategoryIndexRoute
   AdminUserIndexRoute: typeof AdminUserIndexRoute
   AdminSetupMenuCreateRoute: typeof AdminSetupMenuCreateRoute
   AdminSetupPermissionCreateRoute: typeof AdminSetupPermissionCreateRoute
   AdminSetupRoleCreateRoute: typeof AdminSetupRoleCreateRoute
   AdminUserUserIdEditRoute: typeof AdminUserUserIdEditRoute
+  AdminMasterBrandIndexRoute: typeof AdminMasterBrandIndexRoute
+  AdminMasterCategoryIndexRoute: typeof AdminMasterCategoryIndexRoute
   AdminSetupMenuIndexRoute: typeof AdminSetupMenuIndexRoute
   AdminSetupPermissionIndexRoute: typeof AdminSetupPermissionIndexRoute
+  AdminSetupPrefixIndexRoute: typeof AdminSetupPrefixIndexRoute
   AdminSetupRoleIndexRoute: typeof AdminSetupRoleIndexRoute
   AdminSetupMenuMenuIdEditRoute: typeof AdminSetupMenuMenuIdEditRoute
   AdminSetupPermissionPermissionIdEditRoute: typeof AdminSetupPermissionPermissionIdEditRoute
@@ -715,14 +756,16 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSettingsRoute: AdminSettingsRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
   AdminUserCreateRoute: AdminUserCreateRoute,
-  AdminCategoryIndexRoute: AdminCategoryIndexRoute,
   AdminUserIndexRoute: AdminUserIndexRoute,
   AdminSetupMenuCreateRoute: AdminSetupMenuCreateRoute,
   AdminSetupPermissionCreateRoute: AdminSetupPermissionCreateRoute,
   AdminSetupRoleCreateRoute: AdminSetupRoleCreateRoute,
   AdminUserUserIdEditRoute: AdminUserUserIdEditRoute,
+  AdminMasterBrandIndexRoute: AdminMasterBrandIndexRoute,
+  AdminMasterCategoryIndexRoute: AdminMasterCategoryIndexRoute,
   AdminSetupMenuIndexRoute: AdminSetupMenuIndexRoute,
   AdminSetupPermissionIndexRoute: AdminSetupPermissionIndexRoute,
+  AdminSetupPrefixIndexRoute: AdminSetupPrefixIndexRoute,
   AdminSetupRoleIndexRoute: AdminSetupRoleIndexRoute,
   AdminSetupMenuMenuIdEditRoute: AdminSetupMenuMenuIdEditRoute,
   AdminSetupPermissionPermissionIdEditRoute:

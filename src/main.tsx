@@ -15,15 +15,14 @@ import {
   ValidationModule,
 } from "ag-grid-community";
 import { FontProvider } from "./context/FontProvider";
+import { ThemeProvider } from "./context/ThemeProvider";
+import { routeTree } from "./routeTree.gen";
+import "./styles/index.css";
 
 ModuleRegistry.registerModules([
   AllCommunityModule,
   ...(import.meta.env.DEV ? [ValidationModule] : []),
 ]);
-import { ThemeProvider } from "./context/ThemeProvider";
-import { routeTree } from "./routeTree.gen";
-import "./styles/index.css";
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
