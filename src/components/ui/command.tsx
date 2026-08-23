@@ -50,12 +50,15 @@ function CommandDialog({
       </DialogHeader>
       <DialogContent
         className={cn(
-          "top-1/3 translate-y-0 overflow-hidden rounded-4xl! p-0",
+          "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-4xl! p-0",
           className,
         )}
         showCloseButton={showCloseButton}
       >
-        {children}
+        {/* The <Command> wrapper is required: cmdk primitives (CommandInput,
+            CommandList, ...) read context from it. Without it the palette throws
+            "can't access property 'subscribe'" the moment the dialog opens. */}
+        <Command className="bg-transparent">{children}</Command>
       </DialogContent>
     </Dialog>
   );

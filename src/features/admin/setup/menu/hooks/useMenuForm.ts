@@ -111,7 +111,7 @@ export function useMenuForm({ menuId }: UseMenuFormOptions) {
   const generateRequestIdRef = useRef(0);
   const lastGeneratedSignatureRef = useRef("");
 
-  const menusQuery = useGetMenusListQuery();
+  const menusQuery = useGetMenusListQuery({ no_pagination: true });
 
   const menuDetailQuery = useGetMenuByIdQuery(menuId as string, {
     queryConfig: { enabled: isEditMode },

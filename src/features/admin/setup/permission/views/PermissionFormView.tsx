@@ -1,4 +1,9 @@
-import { FieldInput, FieldSelect, FieldTextarea, getFieldError } from "@/components/field";
+import {
+  FieldInput,
+  FieldSelect,
+  FieldTextarea,
+  getFieldError,
+} from "@/components/field";
 import {
   Card,
   CardContent,
@@ -81,7 +86,10 @@ export function PermissionFormView({
             <div className="grid gap-4 md:grid-cols-2">
               <form.Field
                 name="menuId"
-                validators={{ onBlur: formValidators.menuId, onSubmit: formValidators.menuId }}
+                validators={{
+                  onBlur: formValidators.menuId,
+                  onSubmit: formValidators.menuId,
+                }}
               >
                 {(field) => (
                   <FieldSelect
@@ -101,7 +109,10 @@ export function PermissionFormView({
 
               <form.Field
                 name="name"
-                validators={{ onBlur: formValidators.name, onSubmit: formValidators.name }}
+                validators={{
+                  onBlur: formValidators.name,
+                  onSubmit: formValidators.name,
+                }}
               >
                 {(field) => (
                   <FieldInput
@@ -119,21 +130,25 @@ export function PermissionFormView({
 
               <form.Field
                 name="code"
-                validators={{ onBlur: formValidators.code, onSubmit: formValidators.code }}
+                validators={{
+                  onBlur: formValidators.code,
+                  onSubmit: formValidators.code,
+                }}
               >
                 {(field) => (
                   <FieldInput
                     label="Code"
                     required
-                    hint="Dihasilkan otomatis berdasarkan menu dan nama permission."
+                    hint="Dihasilkan otomatis dari menu dan nama permission. Bisa diubah manual."
                     value={field.state.value}
                     error={getFieldError(field.state.meta)}
+                    onBlur={field.handleBlur}
+                    onChange={(event) => field.handleChange(event.target.value)}
                     placeholder={
                       menuOptionsLoading
                         ? "Menghasilkan code..."
                         : "Code akan terisi otomatis"
                     }
-                    disabled
                   />
                 )}
               </form.Field>
@@ -141,7 +156,10 @@ export function PermissionFormView({
               <div className="md:col-span-2">
                 <form.Field
                   name="description"
-                  validators={{ onBlur: formValidators.description, onSubmit: formValidators.description }}
+                  validators={{
+                    onBlur: formValidators.description,
+                    onSubmit: formValidators.description,
+                  }}
                 >
                   {(field) => (
                     <FieldTextarea

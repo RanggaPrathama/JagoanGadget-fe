@@ -4,6 +4,7 @@ import { getCookie } from "@/lib/cookies";
 import { cn } from "@/utils/cn";
 import { LayoutProvider } from "@/context/LayoutProvider";
 import { SearchProvider } from "@/context/SearchProvider";
+import { CommandMenu } from "@/components/CommandMenu";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layouts/admin/AppSidebar";
 import { SkipToMain } from "@/components/SkipToMain";
@@ -138,6 +139,8 @@ export function AdminLayout({
           </SidebarProvider>
         </TooltipProvider>
       </LayoutProvider>
+      {/* Command palette mounted once for the whole admin shell. */}
+      <CommandMenu />
     </SearchProvider>
   );
 }

@@ -48,6 +48,7 @@ export function AppSidebar() {
   const { collapsible, variant } = useLayout();
   const { state, isMobile } = useSidebar();
   const isCollapsed = state === "collapsed" && !isMobile;
+
   const { data, isLoading } = useMe();
   const sidebarData = data ? buildSidebarDataFromMe(data) : null;
   return (
@@ -65,7 +66,11 @@ export function AppSidebar() {
         <Search
           iconOnly={isCollapsed}
           placeholder="Search menu..."
-          className="h-10 w-full rounded-xl border border-primary/15 bg-primary/8 px-3 text-sm text-sidebar-foreground shadow-none ring-1 ring-primary/8 transition-colors hover:bg-primary/12 focus-visible:ring-primary/20"
+          className={
+            isCollapsed
+              ? "size-10 rounded-2xl border-sidebar-border/60 bg-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent/80"
+              : "h-9 w-full rounded-xl border-sidebar-border/60 bg-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent/80"
+          }
         />
         <SidebarSeparator className="mx-0 bg-sidebar-border/60" />
       </SidebarHeader>

@@ -2,13 +2,12 @@ import React from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import {
   ArrowRight,
-  ChevronRight,
   Laptop,
   Moon,
   Palette,
   Sun,
 } from 'lucide-react'
-import { useSearch } from '@/context/SearchProvider'
+import { useSearch } from '@/hooks/useSearch'
 import { useTheme } from '@/context/ThemeProvider'
 import { THEME_PRESETS, THEME_PRESET_LABELS } from '@/lib/theme'
 import {
@@ -47,6 +46,22 @@ export function CommandMenu() {
           <CommandEmpty>No results found.</CommandEmpty>
           {(sidebarData?.navGroups ?? []).map((group) => (
             <CommandGroup key={group.title} heading={group.title}>
+              {/* A group with its own route (e.g. Dashboard, User) is itself a
+                  clickable destination, not just a heading. */}
+              {group.url ? (
+                <CommandItem
+                  key={`${group.url}-group`}
+                  value={group.title}
+                  onSelect={() => {
+                    runCommand(() => navigate({ to: group.url as string }))
+                  }}
+                >
+                  <div className='flex size-4 items-center justify-center'>
+                    <ArrowRight className='size-2 text-muted-foreground/80' />
+                  </div>
+                  {group.title}
+                </CommandItem>
+              ) : null}
               {group.children.map((navItem, i) => (
                 <CommandItem
                   key={`${navItem.url}-${i}`}
@@ -58,8 +73,6 @@ export function CommandMenu() {
                   <div className='flex size-4 items-center justify-center'>
                     <ArrowRight className='size-2 text-muted-foreground/80' />
                   </div>
-                  {group.url ? group.title : ""}
-                  {group.url ? <ChevronRight /> : ""}
                   {navItem.title}
                 </CommandItem>
               ))}

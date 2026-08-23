@@ -15,6 +15,7 @@ export type MenuListParams = {
   show?: "active" | "inactive";
   page?: number;
   limit?: number;
+  no_pagination?: boolean;
 };
 
 // Build a stable query key that includes filter + pagination params so TanStack Query caches each combination separately.
@@ -24,6 +25,7 @@ export const getMenusListQueryKey = (params?: MenuListParams): unknown[] => [
   params?.show ?? "all",
   params?.page ?? 1,
   params?.limit ?? 25,
+  params?.no_pagination ?? false,
 ];
 
 // Query options factory for the paginated menu list — callers spread these into useQuery or prefetch.

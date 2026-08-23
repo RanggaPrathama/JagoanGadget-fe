@@ -106,7 +106,7 @@ export function usePermissionForm({ permissionId }: UsePermissionFormOptions) {
   });
 
   // Reuse the menu query to populate the "Menu" dropdown.
-  const menusQuery = useGetMenusListQuery({ limit: 30 });
+  const menusQuery = useGetMenusListQuery({ no_pagination: true });
 
   // Build menu lookup map
   const rawMenus = useMemo(() => menusQuery.data?.items ?? [], [menusQuery.data?.items]);

@@ -1,46 +1,34 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { CommandMenu } from '@/components/CommandMenu'
-
-type SearchContextType = {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const SearchContext = createContext<SearchContextType | null>(null)
+import { useEffect, useState } from "react";
+import { SearchContext } from "@/hooks/useSearch";
 
 type SearchProviderProps = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 export function SearchProvider({ children }: SearchProviderProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
+  // Global ⌘K / Ctrl+K shortcut to toggle the command palette.
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((open) => !open)
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((open) => !open);
       }
-    }
-    document.addEventListener('keydown', down)
-    return () => document.removeEventListener('keydown', down)
-  }, [])
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   return (
-    <SearchContext value={{ open, setOpen }}>
+    <SearchContext
+      value={{
+        open,
+        setOpen,
+        toggle: () => setOpen((open) => !open),
+      }}
+    >
       {children}
-      <CommandMenu />
     </SearchContext>
-  )
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useSearch = () => {
-  const searchContext = useContext(SearchContext)
-
-  if (!searchContext) {
-    throw new Error('useSearch has to be used within SearchProvider')
-  }
-
-  return searchContext
+  );
 }

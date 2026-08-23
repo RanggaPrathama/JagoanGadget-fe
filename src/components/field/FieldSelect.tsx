@@ -58,6 +58,14 @@ function FieldSelect({
   // --- searchable combobox state ---
   const [comboInput, setComboInput] = React.useState("");
 
+  // Base UI Combobox links `value` <-> `inputValue`. For non-searchable usage
+  // there is no visible input, so derive inputValue from the selected option's
+  // label to keep the Combobox's internal state in sync with the chosen value.
+  // For searchable usage inputValue is the user's live query (comboInput).
+  const resolvedInputValue = searchable
+    ? comboInput
+    : (selectedOption?.label ?? "");
+
   const filteredOptions =
     searchable && comboInput
       ? options.filter((opt) =>
@@ -76,14 +84,10 @@ function FieldSelect({
       required={required}
     >
       <Combobox
-        value={selectedValue || undefined}
+        value={selectedValue}
+        inputValue={resolvedInputValue}
+        onInputValueChange={(val: string) => setComboInput(val)}
         disabled={isDisabled}
-        {...(searchable && {
-          inputValue: comboInput,
-          onInputValueChange: (val: string) => {
-            setComboInput(val);
-          },
-        })}
         onValueChange={(nextValue) => {
           if (nextValue === null || nextValue === undefined) {
             onValueChange("");

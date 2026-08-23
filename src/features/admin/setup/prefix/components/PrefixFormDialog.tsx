@@ -8,7 +8,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FieldInput, FieldSelect, FieldSwitch, getFieldError } from "@/components/field";
+import { FieldInput, FieldSwitch, FieldShell, getFieldError } from "@/components/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 type PrefixFormDialogProps = {
   mode: PrefixDialogMode;
   prefixId: string | null;
@@ -105,31 +112,40 @@ export function PrefixFormDialog({
               validators={{ onBlur: formValidators.type, onSubmit: formValidators.type }}
             >
               {(field) => (
-                <FieldSelect
-                  placeholder="Pilih Tipe Prefix"
-                  emptyText="Tidak ada tipe prefix"
+                <FieldShell
                   label="Type"
                   required
-                  onValueChange={(value) => {
-                    const newType = (value || "text") as
-                      | "sequence"
-                      | "day"
-                      | "month"
-                      | "year"
-                      | "text";
-                    field.handleChange(newType);
-                  }}
-                  value={field.state.value ?? ""}
                   error={getFieldError(field.state.meta)}
-                  disabled={readonly || isSubmitting}
-                  options={[
-                    { value: "sequence", label: "Sequence" },
-                    { value: "day", label: "Day" },
-                    { value: "month", label: "Month" },
-                    { value: "year", label: "Year" },
-                    { value: "text", label: "Text" },
-                  ]}
-                />
+                >
+                  <Select
+                    value={field.state.value}
+                    onValueChange={(value) =>
+                      field.handleChange(
+                        value as
+                          | "sequence"
+                          | "day"
+                          | "month"
+                          | "year"
+                          | "text",
+                      )
+                    }
+                    disabled={readonly || isSubmitting}
+                  >
+                    <SelectTrigger
+                      className="w-full"
+                      aria-invalid={!!getFieldError(field.state.meta)}
+                    >
+                      <SelectValue placeholder="Pilih Tipe Prefix" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sequence">Sequence</SelectItem>
+                      <SelectItem value="day">Day</SelectItem>
+                      <SelectItem value="month">Month</SelectItem>
+                      <SelectItem value="year">Year</SelectItem>
+                      <SelectItem value="text">Text</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FieldShell>
               )}
             </form.Field>
 

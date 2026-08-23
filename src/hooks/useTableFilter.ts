@@ -31,6 +31,7 @@ export function useTableFilter<TFilters extends Record<string, unknown>>(
 
   return {
     search: debouncedSearch,
+    setSearch,
     filters,
     page,
     limit,
