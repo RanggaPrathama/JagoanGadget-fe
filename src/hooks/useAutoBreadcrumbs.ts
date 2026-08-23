@@ -8,6 +8,8 @@ const routeBreadcrumbs: Record<string, { title: string; href?: string }> = {
   '/admin/setup/': { title: 'Setup', href: '/admin/setup/menu/' },
   '/admin/setup/menu/': { title: 'Menu', href: '/admin/setup/menu/' },
   '/admin/setup/menu/create/': { title: 'Create Menu' },
+  '/admin/setup/warehouse/': { title: 'Warehouse', href: '/admin/setup/warehouse/' },
+  '/admin/setup/warehouse/create/': { title: 'Create Warehouse' },
   '/admin/setup/role/': { title: 'Role', href: '/admin/setup/role/' },
   '/admin/setup/role/create/': { title: 'Create Role' },
   '/admin/setup/permission/': { title: 'Permission', href: '/admin/setup/permission/' },
@@ -33,7 +35,7 @@ export function useAutoBreadcrumbs(): BreadcrumbLinkItem[] {
     for (let i = 1; i < segments.length; i++) {
       if (
         segments[1] === 'setup' &&
-        ['menu', 'role', 'permission', 'user'].includes(segments[2]) &&
+        ['menu', 'role', 'permission', 'user', 'warehouse'].includes(segments[2]) &&
         i === segments.length - 2 &&
         segments[segments.length - 1] === 'edit'
       ) {
@@ -44,7 +46,9 @@ export function useAutoBreadcrumbs(): BreadcrumbLinkItem[] {
               ? 'Permission'
               : segments[2] === 'user'
                 ? 'User'
-                : 'Menu'
+                : segments[2] === 'warehouse'
+                  ? 'Warehouse'
+                  : 'Menu'
 
         breadcrumbs.push({
           title: `Edit ${titlePrefix}`,

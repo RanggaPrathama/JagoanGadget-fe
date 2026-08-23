@@ -152,6 +152,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
                     onChange={(url) => field.handleChange(url)}
                     disabled={readonly}
                     hint="Format JPG, PNG, GIF, WEBP, atau SVG. Maksimal 2MB."
+                    purpose="avatar"
                   />
                 )}
               </form.Field>

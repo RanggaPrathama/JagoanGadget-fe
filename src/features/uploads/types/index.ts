@@ -1,4 +1,4 @@
-export type UploadPurpose = "avatar" | "document" ;
+export type UploadPurpose = "avatar" | "document" | "brands" ;
 
 export type PresignResponse = {
   uploadUrl: string;

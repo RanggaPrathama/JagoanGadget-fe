@@ -24,6 +24,8 @@ export type MenuPayload = {
   isActive?: boolean;
   type: string;
   parentId?: string | null;
+  createPermission?: boolean;
+  permissionName?: string;
 };
 
 export type GenerateMenuCodePayload = {

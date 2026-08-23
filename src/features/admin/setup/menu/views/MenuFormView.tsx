@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FieldInput, FieldSelect, FieldSelectIcons, FieldSwitch, getFieldError } from "@/components/field";
 import {
   Card,
@@ -13,6 +14,7 @@ import {
 } from "@/components/admin";
 import { useStore } from "@tanstack/react-store";
 import { formValidators, useMenuForm } from "../hooks/useMenuForm";
+import { MenuSavePermissionDialog } from "../components/MenuSavePermissionDialog";
 
 type MenuFormViewProps = {
   menuId?: string;
@@ -31,6 +33,8 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
     parentOptionsLoading,
   } = useMenuForm({ menuId });
 
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const menuName = useStore(form.store, (state) => state.values.name);
   const typeValue = useStore(form.store, (state) => state.values.type);
 
   const title = readonly
@@ -56,7 +60,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
         onSubmit={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          void form.handleSubmit();
+          setSaveDialogOpen(true);
         }}
       >
         {/* Header section: back button, badge, title, description, and edit/readonly indicators. */}
@@ -282,6 +286,25 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
           basePermissionCode="setup.menu"
         />
       </form>
+
+      <MenuSavePermissionDialog
+        open={saveDialogOpen}
+        onOpenChange={setSaveDialogOpen}
+        menuName={menuName}
+        isLoading={isSubmitting}
+        onConfirm={(permissionName) => {
+          form.setFieldValue("permissionName", permissionName);
+          form.setFieldValue("createPermission", true);
+          setSaveDialogOpen(false);
+          void form.handleSubmit();
+        }}
+        onSkip={() => {
+          form.setFieldValue("permissionName", "");
+          form.setFieldValue("createPermission", false);
+          setSaveDialogOpen(false);
+          void form.handleSubmit();
+        }}
+      />
     </div>
   );
 }

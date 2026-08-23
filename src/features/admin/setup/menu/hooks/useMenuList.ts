@@ -2,7 +2,7 @@ import { useDeleteMenu } from "../service/menu.mutations";
 import { useGetMenusListQuery } from "../service/menu.queries";
 import type { MenuItem } from "../types";
 import type { UnwrappedPaginated } from "@/lib/api-response";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export type MenuTableRow = MenuItem & {
   parentLabel: string;
@@ -48,19 +48,21 @@ export function useMenuList(
   const deleteMutation = useDeleteMenu();
 
   const data = menuQuery.data as UnwrappedPaginated<MenuItem> | undefined;
-  const rawMenus = data?.items ?? [];
   const pagination = data?.pagination;
   const totalMenus = pagination?.totalItems ?? 0;
-  // Build a lookup map so resolveParentLabel can find parent names by ID without extra queries.
-  const menuMap = new Map(rawMenus.map((menu) => [menu.id, menu]));
-  // Map API rows to table rows: normalize nulls, resolve parent label, and keep all original fields.
-  const menus: MenuTableRow[] = rawMenus.map((menu) => ({
-    ...menu,
-    icon: menu.iconName ?? null,
-    parentLabel: resolveParentLabel(menu, menuMap),
-    sortOrder: menu.sortOrder ?? 0,
-    isActive: menu.isActive ?? true,
-  }));
+
+  const rawMenus = useMemo(() => data?.items ?? [], [data?.items]);
+
+  const menus = useMemo<MenuTableRow[]>(() => {
+    const menuMap = new Map(rawMenus.map((menu) => [menu.id, menu]));
+    return rawMenus.map((menu) => ({
+      ...menu,
+      icon: menu.iconName ?? null,
+      parentLabel: resolveParentLabel(menu, menuMap),
+      sortOrder: menu.sortOrder ?? 0,
+      isActive: menu.isActive ?? true,
+    }));
+  }, [rawMenus]);
 
   const selectedMenu = menus.find((m) => m.id === selectedId) ?? null;
 

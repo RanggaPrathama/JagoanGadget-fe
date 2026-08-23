@@ -51,6 +51,12 @@ const menuFormSchema = z.object({
     .trim()
     .transform((value) => (value === "" ? null : value))
     .nullable(),
+  createPermission: z.boolean().default(true),
+  permissionName: z
+    .string()
+    .trim()
+    .max(100, "Maksimal 100 karakter.")
+    .optional(),
 });
 
 type MenuFormValues = z.input<typeof menuFormSchema>;
@@ -64,6 +70,8 @@ const defaultValues: MenuFormValues = {
   isActive: true,
   type: "menu",
   parentId: "",
+  createPermission: true,
+  permissionName: "",
 };
 
 export const formValidators = {
@@ -75,6 +83,8 @@ export const formValidators = {
   isActive: menuFormSchema.shape.isActive,
   type: menuFormSchema.shape.type,
   parentId: menuFormSchema.shape.parentId,
+  createPermission: menuFormSchema.shape.createPermission,
+  permissionName: menuFormSchema.shape.permissionName,  
 };
 
 type UseMenuFormOptions = {
@@ -94,6 +104,8 @@ function toPayload(values: MenuFormValues): MenuPayload {
     isActive: parsed.isActive,
     type: parsed.type,
     parentId: parsed.parentId,
+    createPermission: parsed.createPermission,
+    permissionName: parsed.permissionName,
   };
 }
 

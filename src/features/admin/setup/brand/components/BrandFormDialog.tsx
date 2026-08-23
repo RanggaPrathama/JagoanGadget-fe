@@ -88,6 +88,7 @@ export function BrandFormDialog({ mode, brandId, onClose, onSaved }: BrandFormDi
                   previewUrl={field.state.value ?? null}
                   onChange={(tempKey) => field.handleChange(tempKey)}
                   disabled={isSubmitting}
+                  purpose="brands"
                   hint="Unggah logo brand (format gambar)."
                 />
               )}

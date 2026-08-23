@@ -33,18 +33,31 @@ export async function getMenuById(menuId: string) {
 
 // POST admin/menus — create a new menu entry.
 export async function createMenu(payload: MenuPayload) {
+  const cleanedPayload = {
+    ...payload,
+    permissionName: payload.createPermission
+      ? payload.permissionName
+      : undefined,
+  };
   const response = await api.post<ApiResponse<MenuItem>>(
     "admin/menus",
-    payload,
+    cleanedPayload,
   );
   return unwrapData<MenuItem>(response.data);
 }
 
 // PUT admin/menus/:menuId — update an existing menu entry.
 export async function updateMenu(menuId: string, payload: MenuPayload) {
+  const cleanedPayload = {
+    ...payload,
+    permissionName: payload.createPermission
+      ? payload.permissionName
+      : undefined,
+  };
+
   const response = await api.put<ApiResponse<MenuItem>>(
     `admin/menus/${menuId}`,
-    payload,
+    cleanedPayload,
   );
   return unwrapData<MenuItem>(response.data);
 }

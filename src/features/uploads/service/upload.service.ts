@@ -48,13 +48,16 @@ export async function putTempFile(
     throw new Error("Gagal mengunggah file. Coba lagi.");
   }
 
-  let data: UploadTempResult | null = null;
+  // Backend wraps the result in the standard envelope { success, message, data: T }.
+  // The actual UploadTempResult lives under `.data`.
+  let envelope: { data?: UploadTempResult } | null = null;
   try {
-    data = (await response.json()) as UploadTempResult;
+    envelope = (await response.json()) as { data?: UploadTempResult };
   } catch {
-    // Some signed-URL hosts return 200 with an empty body — leave data null.
+    // Some signed-URL hosts return 200 with an empty body — leave envelope null.
   }
 
+  const data = envelope?.data ?? null;
   if (!data?.tempKey) {
     throw new Error("Key file sementara tidak diterima dari server. Coba lagi.");
   }
