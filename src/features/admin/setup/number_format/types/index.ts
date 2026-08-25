@@ -1,7 +1,4 @@
-/**
- * One segment of a number format: which prefix occupies which position.
- * Mirrors backend `SegmentDto`.
- */
+
 export type NumberFormatSegment = {
   /** UUID referencing a prefix master entry (admin/setup/prefix). */
   prefixId: string;
@@ -39,6 +36,22 @@ export type NumberFormatListParams = {
   page?: number;
   /** Page size (default 25). */
   limit?: number;
+
+  /** Active-status filter forwarded to the backend. */
+  show?: "active" | "inactive" | "all";
+};
+
+/**
+ * Payload for creating/updating a number format.
+ * Mirrors backend `CreateNumberFormatDto`.
+ */
+export type NumberFormatPayload = {
+  /** Linked menu UUID, or null to unbind. Enforces 1 format per menu on the backend. */
+  menuId?: string | null;
+  /** Ordered segments composing the format (1..20 entries, validated server-side). */
+  segments: NumberFormatSegment[];
+  /** Whether this format is active (defaults true server-side when omitted). */
+  isActive?: boolean;
 };
 
 /**

@@ -1,7 +1,10 @@
 import { queryOptions, useQuery, type QueryClient } from "@tanstack/react-query";
 import type { QueryConfig } from "@/lib/react-query";
 import type { NumberFormatListParams } from "../types";
-import { getNumberFormatsList } from "./number_format.service";
+import {
+  getNumberFormatById,
+  getNumberFormatsList,
+} from "./number_format.service";
 
 /**
  * Base query key shared by every number-format list query.
@@ -36,6 +39,19 @@ export const getNumberFormatsListQueryOptions = (params?: NumberFormatListParams
     queryFn: () => getNumberFormatsList(params),
   });
 
+/**
+ * TanStack Query options for a single number format.
+ * Keyed under the list base key so one invalidate covers list + detail.
+ *
+ * @param numberFormatId - target format UUID.
+ * @returns `queryOptions` object usable with `useQuery`/`ensureQueryData`.
+ */
+export const getNumberFormatByIdQueryOptions = (numberFormatId: string) =>
+  queryOptions({
+    queryKey: [...numberFormatListQueryKey, numberFormatId],
+    queryFn: () => getNumberFormatById(numberFormatId),
+  });
+
 type UseNumberFormatsQueryOptions = {
   queryConfig?: QueryConfig<typeof getNumberFormatsListQueryOptions>;
 };
@@ -51,6 +67,20 @@ export const useGetNumberFormatsListQuery = (
   params?: NumberFormatListParams,
   { queryConfig }: UseNumberFormatsQueryOptions = {},
 ) => useQuery({ ...getNumberFormatsListQueryOptions(params), ...queryConfig });
+
+/**
+ * Hook: fetch a single number format by ID.
+ *
+ * @param numberFormatId - target format UUID.
+ * @param config - optional per-call overrides (e.g. `enabled`).
+ * @returns react-query result for the detail query.
+ */
+export const useGetNumberFormatByIdQuery = (
+  numberFormatId: string,
+  {
+    queryConfig,
+  }: { queryConfig?: QueryConfig<typeof getNumberFormatByIdQueryOptions> } = {},
+) => useQuery({ ...getNumberFormatByIdQueryOptions(numberFormatId), ...queryConfig });
 
 /**
  * Invalidate every number-format query keyed under

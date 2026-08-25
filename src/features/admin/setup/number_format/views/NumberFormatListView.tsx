@@ -8,13 +8,37 @@ import { useTableFilter } from "@/hooks/useTableFilter";
 import { getNumberFormatColumns } from "../components/number-format-columns";
 import { useNumberFormatList } from "../hooks/useNumberFormatList";
 import { Link, useLocation } from "@tanstack/react-router";
+import { RowActions } from "@/components/admin/RowActions";
+import { useNavigate } from "@tanstack/react-router";
+import { ConfirmDialog } from "@/components/dialog/ConfirmDialog";
+
+type NumberFormatFilters = {
+  status: "all" | "active" | "inactive";
+};
+const STATUS_OPTIONS: {
+  value: NumberFormatFilters["status"];
+  label: string;
+}[] = [
+  { value: "all", label: "Semua" },
+  { value: "active", label: "Aktif" },
+  { value: "inactive", label: "Non-Aktif" },
+];
 
 // View: read-only number-format list page with search, refresh, and AG Grid table.
 export function NumberFormatListView() {
+  const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
-  const { search, page, limit, handleSearch, setPage, setLimit } =
-    useTableFilter<Record<string, never>>({});
+  const {
+    search,
+    page,
+    limit,
+    handleSearch,
+    setPage,
+    setLimit,
+    filters,
+    updateFilter,
+  } = useTableFilter<NumberFormatFilters>({ status: "all" });
 
   const {
     numberFormats,
@@ -23,7 +47,14 @@ export function NumberFormatListView() {
     isLoading,
     isRefreshing,
     refetchNumberFormats,
-  } = useNumberFormatList(search, page, limit);
+    selectedNumberFormat,
+    setSelectedId,
+    selectedId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    isDeleting,
+    deleteNumberFormat,
+  } = useNumberFormatList(search, page, limit, filters.status);
 
   return (
     <div className="space-y-5">
@@ -64,6 +95,23 @@ export function NumberFormatListView() {
       </Tabs>
       <Card className="overflow-hidden border-border/60 bg-card/90 shadow-sm">
         <CardContent className="px-0 pb-0 pt-0">
+          <div className="flex flex-wrap items-center gap-1.5 px-6">
+            <span className="mr-1 text-sm font-medium text-muted-foreground">
+              Filter Status:
+            </span>
+            {STATUS_OPTIONS.map((opt) => (
+              <Button
+                key={opt.value}
+                type="button"
+                variant={filters.status === opt.value ? "default" : "outline"}
+                size="sm"
+                className="rounded-lg"
+                onClick={() => updateFilter("status", opt.value)}
+              >
+                {opt.label}
+              </Button>
+            ))}
+          </div>
           <div className="flex flex-col gap-2.5 border-b border-border/60 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
               <div className="relative w-full max-w-xs">
@@ -75,6 +123,35 @@ export function NumberFormatListView() {
                   className="h-9 rounded-xl pl-9 pr-3 text-sm"
                 />
               </div>
+              <RowActions
+                basePermissionCode="setup.number-format"
+                iconOnly
+                className="shrink-0"
+                disabled={!selectedNumberFormat || isDeleting}
+                // Open the selected number format in read-only detail view.
+                onView={() => {
+                  if (!selectedNumberFormat) return;
+                  navigate({
+                    to: "/admin/setup/number-format/$numberFormatId/edit",
+                    params: { numberFormatId: selectedNumberFormat.id },
+                    search: { mode: "readonly" as const },
+                  });
+                }}
+                // Open the selected number format in the edit form.
+                onEdit={() => {
+                  if (!selectedNumberFormat) return;
+                  navigate({
+                    to: "/admin/setup/number-format/$numberFormatId/edit",
+                    params: { numberFormatId: selectedNumberFormat.id },
+                    search: { mode: "edit" as const },
+                  });
+                }}
+                // Stage the selected number format for deletion via the confirm dialog.
+                onDelete={() => {
+                  if (!selectedNumberFormat) return;
+                  setConfirmDeleteId(selectedNumberFormat.id);
+                }}
+              />
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <Button
@@ -114,11 +191,31 @@ export function NumberFormatListView() {
               onNextPage={() => {
                 if (pagination?.hasNextPage) setPage((p) => p + 1);
               }}
+              selectedRowId={selectedId}
               getRowId={(row) => row.id}
+              onRowClick={(row) =>
+                setSelectedId((prev) => (prev === row.id ? null : row.id))
+              }
             />
           </div>
         </CardContent>
       </Card>
+
+      {/* Delete confirmation dialog — calls deleteNumberFormat mutation and clears the selected ID on confirm/close. */}
+      <ConfirmDialog
+        open={!!confirmDeleteId}
+        onOpenChange={(open) => !open && setConfirmDeleteId(null)}
+        title="Hapus Number Format"
+        desc="Apakah Anda yakin ingin menghapus number format ini? Tindakan ini tidak dapat dibatalkan."
+        destructive
+        isLoading={isDeleting}
+        handleConfirm={() => {
+          if (confirmDeleteId) {
+            void deleteNumberFormat(confirmDeleteId);
+          }
+          setConfirmDeleteId(null);
+        }}
+      />
     </div>
   );
 }

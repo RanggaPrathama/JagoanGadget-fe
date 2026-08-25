@@ -13,11 +13,11 @@ import { ConfirmDialog } from "@/components/dialog/ConfirmDialog";
 import { useTableFilter } from "@/hooks/useTableFilter";
 import { PrefixFormDialog } from "../components/PrefixFormDialog";
 
-type StatusFilter = {
+type PrefixStatusFilter = {
   status: "all" | "active" | "inactive";
 };
 
-const STATUS_OPTIONS: { value: StatusFilter["status"]; label: string }[] = [
+const STATUS_OPTIONS: { value: PrefixStatusFilter["status"]; label: string }[] = [
   { value: "all", label: "Semua" },
   { value: "active", label: "Aktif" },
   { value: "inactive", label: "Non-Aktif" },
@@ -35,7 +35,7 @@ export const PrefixListView = () => {
     updateFilter,
     setPage,
     setLimit,
-  } = useTableFilter<StatusFilter>({ status: "all" });
+  } = useTableFilter<PrefixStatusFilter>({ status: "all" });
 
   const {
     prefixes,
@@ -69,7 +69,6 @@ export const PrefixListView = () => {
           <p className="text-sm text-muted-foreground">Kelola daftar prefix</p>
         </div>
       </div>
-      {/* Segmented-pill nav between sibling setup pages. */}
       <Tabs value={pathname}>
         <TabsList className="h-auto gap-1 rounded-full border border-border/60 bg-muted/60 p-1 shadow-sm">
           <TabsTrigger
@@ -130,7 +129,7 @@ export const PrefixListView = () => {
                 />
               </div>
               <RowActions
-                basePermissionCode="setup.menu"
+                basePermissionCode="setup.prefix"
                 iconOnly
                 className="shrink-0"
                 disabled={!selectedPrefix || isDeleting}

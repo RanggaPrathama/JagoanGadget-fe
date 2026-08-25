@@ -43,6 +43,7 @@ import { Route as AdminSetupMenuCreateRouteImport } from './routes/admin/setup/m
 import { Route as AdminMasterWarehouseCreateRouteImport } from './routes/admin/master/warehouse/create'
 import { Route as AdminSetupRoleRoleIdEditRouteImport } from './routes/admin/setup/role/$roleId.edit'
 import { Route as AdminSetupPermissionPermissionIdEditRouteImport } from './routes/admin/setup/permission/$permissionId.edit'
+import { Route as AdminSetupNumberFormatNumberFormatIdEditRouteImport } from './routes/admin/setup/number-format/$numberFormatId.edit'
 import { Route as AdminSetupMenuMenuIdEditRouteImport } from './routes/admin/setup/menu/$menuId.edit'
 import { Route as AdminMasterWarehouseWarehouseIdEditRouteImport } from './routes/admin/master/warehouse/$warehouseId.edit'
 
@@ -240,6 +241,12 @@ const AdminSetupPermissionPermissionIdEditRoute =
     path: '/setup/permission/$permissionId/edit',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminSetupNumberFormatNumberFormatIdEditRoute =
+  AdminSetupNumberFormatNumberFormatIdEditRouteImport.update({
+    id: '/setup/number-format/$numberFormatId/edit',
+    path: '/setup/number-format/$numberFormatId/edit',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminSetupMenuMenuIdEditRoute =
   AdminSetupMenuMenuIdEditRouteImport.update({
     id: '/setup/menu/$menuId/edit',
@@ -288,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/admin/setup/role/': typeof AdminSetupRoleIndexRoute
   '/admin/master/warehouse/$warehouseId/edit': typeof AdminMasterWarehouseWarehouseIdEditRoute
   '/admin/setup/menu/$menuId/edit': typeof AdminSetupMenuMenuIdEditRoute
+  '/admin/setup/number-format/$numberFormatId/edit': typeof AdminSetupNumberFormatNumberFormatIdEditRoute
   '/admin/setup/permission/$permissionId/edit': typeof AdminSetupPermissionPermissionIdEditRoute
   '/admin/setup/role/$roleId/edit': typeof AdminSetupRoleRoleIdEditRoute
 }
@@ -323,6 +331,7 @@ export interface FileRoutesByTo {
   '/admin/setup/role': typeof AdminSetupRoleIndexRoute
   '/admin/master/warehouse/$warehouseId/edit': typeof AdminMasterWarehouseWarehouseIdEditRoute
   '/admin/setup/menu/$menuId/edit': typeof AdminSetupMenuMenuIdEditRoute
+  '/admin/setup/number-format/$numberFormatId/edit': typeof AdminSetupNumberFormatNumberFormatIdEditRoute
   '/admin/setup/permission/$permissionId/edit': typeof AdminSetupPermissionPermissionIdEditRoute
   '/admin/setup/role/$roleId/edit': typeof AdminSetupRoleRoleIdEditRoute
 }
@@ -363,6 +372,7 @@ export interface FileRoutesById {
   '/admin/setup/role/': typeof AdminSetupRoleIndexRoute
   '/admin/master/warehouse/$warehouseId/edit': typeof AdminMasterWarehouseWarehouseIdEditRoute
   '/admin/setup/menu/$menuId/edit': typeof AdminSetupMenuMenuIdEditRoute
+  '/admin/setup/number-format/$numberFormatId/edit': typeof AdminSetupNumberFormatNumberFormatIdEditRoute
   '/admin/setup/permission/$permissionId/edit': typeof AdminSetupPermissionPermissionIdEditRoute
   '/admin/setup/role/$roleId/edit': typeof AdminSetupRoleRoleIdEditRoute
 }
@@ -403,6 +413,7 @@ export interface FileRouteTypes {
     | '/admin/setup/role/'
     | '/admin/master/warehouse/$warehouseId/edit'
     | '/admin/setup/menu/$menuId/edit'
+    | '/admin/setup/number-format/$numberFormatId/edit'
     | '/admin/setup/permission/$permissionId/edit'
     | '/admin/setup/role/$roleId/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -438,6 +449,7 @@ export interface FileRouteTypes {
     | '/admin/setup/role'
     | '/admin/master/warehouse/$warehouseId/edit'
     | '/admin/setup/menu/$menuId/edit'
+    | '/admin/setup/number-format/$numberFormatId/edit'
     | '/admin/setup/permission/$permissionId/edit'
     | '/admin/setup/role/$roleId/edit'
   id:
@@ -477,6 +489,7 @@ export interface FileRouteTypes {
     | '/admin/setup/role/'
     | '/admin/master/warehouse/$warehouseId/edit'
     | '/admin/setup/menu/$menuId/edit'
+    | '/admin/setup/number-format/$numberFormatId/edit'
     | '/admin/setup/permission/$permissionId/edit'
     | '/admin/setup/role/$roleId/edit'
   fileRoutesById: FileRoutesById
@@ -736,6 +749,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSetupPermissionPermissionIdEditRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/setup/number-format/$numberFormatId/edit': {
+      id: '/admin/setup/number-format/$numberFormatId/edit'
+      path: '/setup/number-format/$numberFormatId/edit'
+      fullPath: '/admin/setup/number-format/$numberFormatId/edit'
+      preLoaderRoute: typeof AdminSetupNumberFormatNumberFormatIdEditRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/setup/menu/$menuId/edit': {
       id: '/admin/setup/menu/$menuId/edit'
       path: '/setup/menu/$menuId/edit'
@@ -832,6 +852,7 @@ interface AdminRouteChildren {
   AdminSetupRoleIndexRoute: typeof AdminSetupRoleIndexRoute
   AdminMasterWarehouseWarehouseIdEditRoute: typeof AdminMasterWarehouseWarehouseIdEditRoute
   AdminSetupMenuMenuIdEditRoute: typeof AdminSetupMenuMenuIdEditRoute
+  AdminSetupNumberFormatNumberFormatIdEditRoute: typeof AdminSetupNumberFormatNumberFormatIdEditRoute
   AdminSetupPermissionPermissionIdEditRoute: typeof AdminSetupPermissionPermissionIdEditRoute
   AdminSetupRoleRoleIdEditRoute: typeof AdminSetupRoleRoleIdEditRoute
 }
@@ -857,6 +878,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminMasterWarehouseWarehouseIdEditRoute:
     AdminMasterWarehouseWarehouseIdEditRoute,
   AdminSetupMenuMenuIdEditRoute: AdminSetupMenuMenuIdEditRoute,
+  AdminSetupNumberFormatNumberFormatIdEditRoute:
+    AdminSetupNumberFormatNumberFormatIdEditRoute,
   AdminSetupPermissionPermissionIdEditRoute:
     AdminSetupPermissionPermissionIdEditRoute,
   AdminSetupRoleRoleIdEditRoute: AdminSetupRoleRoleIdEditRoute,
