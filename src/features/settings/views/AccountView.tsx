@@ -61,9 +61,9 @@ export function AccountView() {
           <CardContent className="p-5 sm:p-6 space-y-4">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1.5">
-                <span className="text-blue-600 dark:text-blue-400 font-extrabold text-sm tracking-tight">jagoan</span>
-                <span className="text-amber-500 dark:text-amber-400 font-extrabold text-sm tracking-tight">gadget</span>
-                <span className="text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-2 py-0.5 rounded-full ml-1">
+                <span className="text-primary font-extrabold text-sm tracking-tight">jagoan</span>
+                <span className="text-accent font-extrabold text-sm tracking-tight">gadget</span>
+                <span className="text-xs font-semibold bg-primary/10 text-primary dark:bg-primary/20 px-2 py-0.5 rounded-full ml-1">
                   Pusat Akun
                 </span>
               </div>
@@ -72,14 +72,14 @@ export function AccountView() {
               </p>
             </div>
 
-            <div className="relative flex flex-col gap-4 rounded-xl bg-blue-50/40 dark:bg-slate-900/40 p-4 border border-blue-100/50 dark:border-slate-800">
+            <div className="relative flex flex-col gap-4 rounded-xl bg-primary/5 dark:bg-primary/10 p-4 border border-primary/15 dark:border-primary/20">
               {/* Pencil Icon Button on the top-right of the inner profile detail box */}
               <div className="absolute top-4 right-4">
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => setIsEditing(true)}
-                  className="rounded-full h-8 w-8 hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-slate-800 border-border/50 shadow-xs cursor-pointer"
+                  className="rounded-full h-8 w-8 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 border-border/50 shadow-xs cursor-pointer"
                   title="Ubah Profil"
                 >
                   <Pencil className="size-3.5" />
@@ -87,11 +87,11 @@ export function AccountView() {
               </div>
 
               <div className="flex items-center gap-4 pr-10">
-                <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-yellow-400 overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
+                <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary overflow-hidden border-2 border-card dark:border-border shadow-sm">
                   {avatarPreviewUrl ? (
                     <img src={avatarPreviewUrl} alt="Avatar" className="h-full w-full object-cover" />
                   ) : (
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 text-white">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground">
                       <svg className="size-7" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-3.5-9c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5s.67 1.5 1.5 1.5zm7 0c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8s-1.5.67-1.5 1.5.67 1.5 1.5 1.5zm-3.5 5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
                       </svg>
@@ -113,7 +113,7 @@ export function AccountView() {
                 </div>
               </div>
 
-              <div className="text-[10px] text-muted-foreground border-t border-blue-100/30 dark:border-slate-800/50 pt-2 font-medium">
+              <div className="text-[10px] text-muted-foreground border-t border-border/30 dark:border-border/50 pt-2 font-medium">
                 Peran kamu ditentukan dari akun yang digunakan untuk masuk ke Jagoan Gadget.
               </div>
             </div>

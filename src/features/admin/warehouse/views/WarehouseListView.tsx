@@ -93,7 +93,7 @@ export function WarehouseListView() {
                 onView={() => {
                   if (!selectedWarehouse) return;
                   navigate({
-                    to: "/admin/setup/warehouse/$warehouseId/edit",
+                    to: "/admin/master/warehouse/$warehouseId/edit",
                     params: { warehouseId: selectedWarehouse.id },
                     search: { mode: "readonly" as const },
                   });
@@ -102,7 +102,7 @@ export function WarehouseListView() {
                 onEdit={() => {
                   if (!selectedWarehouse) return;
                   navigate({
-                    to: "/admin/setup/warehouse/$warehouseId/edit",
+                    to: "/admin/master/warehouse/$warehouseId/edit",
                     params: { warehouseId: selectedWarehouse.id },
                     search: { mode: "edit" as const },
                   });
@@ -136,7 +136,7 @@ export function WarehouseListView() {
                 permission="setup.warehouse.create"
                 size="sm"
                 className="rounded-lg"
-                onClick={() => navigate({ to: "/admin/setup/warehouse/create" })}
+                onClick={() => navigate({ to: "/admin/master/warehouse/create" })}
                 icon={<Plus className="h-4 w-4" />}
               >
                 Tambah Warehouse

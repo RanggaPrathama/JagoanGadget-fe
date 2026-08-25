@@ -112,7 +112,7 @@ export function useWarehouseForm({ warehouseId }: UseWarehouseFormOptions) {
       }
 
       await invalidateMe(queryClient);
-      void navigate({ to: "/admin/setup/warehouse" });
+      void navigate({ to: "/admin/master/warehouse" });
     },
     onError: (error) => {
       const msg = getErrorMessage(

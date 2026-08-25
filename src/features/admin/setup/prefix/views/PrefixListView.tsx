@@ -6,7 +6,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { usePrefixList } from "../hooks/usePrefixList";
 import { RowActions, ActionButton } from "@/components/admin";
-import { RefreshCw, Plus } from "lucide-react";
+import { RefreshCw, Plus, Hash, ListOrdered } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
 import { getPrefixColumns } from "../components/prefix-column";
 import { ConfirmDialog } from "@/components/dialog/ConfirmDialog";
@@ -69,10 +69,28 @@ export const PrefixListView = () => {
           <p className="text-sm text-muted-foreground">Kelola daftar prefix</p>
         </div>
       </div>
+      {/* Segmented-pill nav between sibling setup pages. */}
       <Tabs value={pathname}>
-        <TabsList variant="line">
-          <TabsTrigger value="/admin/setup/prefix" asChild>
-            <Link to="/admin/setup/prefix">Prefix</Link>
+        <TabsList className="h-auto gap-1 rounded-full border border-border/60 bg-muted/60 p-1 shadow-sm">
+          <TabsTrigger
+            value="/admin/setup/prefix"
+            asChild
+            className="rounded-full px-5 py-2 text-sm font-medium"
+          >
+            <Link to="/admin/setup/prefix">
+              <Hash data-icon="inline-start" />
+              Prefix
+            </Link>
+          </TabsTrigger>
+          <TabsTrigger
+            value="/admin/setup/number-format"
+            asChild
+            className="rounded-full px-5 py-2 text-sm font-medium"
+          >
+            <Link to="/admin/setup/number-format">
+              <ListOrdered data-icon="inline-start" />
+              Number Format
+            </Link>
           </TabsTrigger>
         </TabsList>
       </Tabs>
