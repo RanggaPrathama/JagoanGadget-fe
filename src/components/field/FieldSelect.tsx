@@ -23,6 +23,10 @@ export type FieldSelectProps = FieldBaseProps & {
   options: FieldOption[];
   loading?: boolean;
   searchable?: boolean;
+  /** Skip client-side filtering — use when an external source (e.g. server) already filters results. */
+  disableClientFilter?: boolean;
+  /** Called on every search input change. Useful for parent components to intercept search for server-side filtering. */
+  onSearchChange?: (search: string) => void;
   emptyText?: string;
   name?: string;
 };
@@ -33,6 +37,7 @@ function toStringValue(value?: string | number | null) {
 
 function FieldSelect({
   className,
+  disableClientFilter = false,
   disabled = false,
   emptyText = "No options found.",
   error,
@@ -40,6 +45,7 @@ function FieldSelect({
   label,
   loading = false,
   name,
+  onSearchChange,
   onValueChange,
   options,
   placeholder = "Select an option",
@@ -67,7 +73,7 @@ function FieldSelect({
     : (selectedOption?.label ?? "");
 
   const filteredOptions =
-    searchable && comboInput
+    searchable && comboInput && !disableClientFilter
       ? options.filter((opt) =>
           opt.label.toLowerCase().includes(comboInput.toLowerCase()),
         )
@@ -86,7 +92,10 @@ function FieldSelect({
       <Combobox
         value={selectedValue}
         inputValue={resolvedInputValue}
-        onInputValueChange={(val: string) => setComboInput(val)}
+        onInputValueChange={(val: string) => {
+          setComboInput(val);
+          onSearchChange?.(val);
+        }}
         disabled={isDisabled}
         onValueChange={(nextValue) => {
           if (nextValue === null || nextValue === undefined) {

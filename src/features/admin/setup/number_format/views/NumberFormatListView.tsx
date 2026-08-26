@@ -1,4 +1,4 @@
-import { RefreshCw, Search, Hash, ListOrdered } from "lucide-react";
+import { RefreshCw, Search, Hash, ListOrdered, Plus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "@/components/data-table/data-table";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { RowActions } from "@/components/admin/RowActions";
 import { useNavigate } from "@tanstack/react-router";
 import { ConfirmDialog } from "@/components/dialog/ConfirmDialog";
+import { ActionButton } from "@/components/button/ActionButton";
 
 type NumberFormatFilters = {
   status: "all" | "active" | "inactive";
@@ -168,6 +169,18 @@ export function NumberFormatListView() {
                   className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
                 />
               </Button>
+
+              <ActionButton
+                permission="setup.number-format.create"
+                size="sm"
+                className="rounded-lg"
+                onClick={() =>
+                  navigate({ to: "/admin/setup/number-format/create" })
+                }
+                icon={<Plus className="h-4 w-4" />}
+              >
+                Add Number Format
+              </ActionButton>
             </div>
           </div>
 

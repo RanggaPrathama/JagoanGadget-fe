@@ -18,6 +18,8 @@ export type NumberFormatItem = {
   id: string;
   /** Linked menu UUID, or null when the format is not bound to a menu. Enforces 1 format per menu. */
   menuId?: string | null;
+  /// Optional human-readable preview of the generated number (e.g. `#1 #3`). Empty string when no segments.
+  preview?: string;
   /** Ordered segments composing the format (1..20 entries). */
   segments: NumberFormatSegment[];
   /** Whether this format is active. */
@@ -48,6 +50,8 @@ export type NumberFormatListParams = {
 export type NumberFormatPayload = {
   /** Linked menu UUID, or null to unbind. Enforces 1 format per menu on the backend. */
   menuId?: string | null;
+
+  preview?: string;
   /** Ordered segments composing the format (1..20 entries, validated server-side). */
   segments: NumberFormatSegment[];
   /** Whether this format is active (defaults true server-side when omitted). */

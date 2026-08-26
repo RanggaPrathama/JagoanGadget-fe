@@ -1,41 +1,108 @@
-import { useQuery, type QueryKey } from "@tanstack/react-query"
+import * as React from "react";
+import { useQuery, type QueryKey } from "@tanstack/react-query";
 
-import { FieldSelect, type FieldSelectProps } from "./FieldSelect"
-import type { FieldOption } from "./types"
+import { useDebounce } from "@/hooks/useDebounce";
+import { FieldSelect, type FieldSelectProps } from "./FieldSelect";
+import type { FieldOption } from "./types";
 
-export type FieldSelectAsyncProps<T> = Omit<FieldSelectProps, "loading" | "options"> & {
-  queryKey: QueryKey
-  queryFn: () => Promise<T[]>
-  mapOption: (item: T) => FieldOption
-  queryErrorMessage?: string
-}
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+type ServerSearchConfig = {
+  /** Debounce delay in ms before firing the query. Default: 300 */
+  debounceMs?: number;
+  /** Placeholder shown in the search input while idle */
+  searchPlaceholder?: string;
+};
+
+export type FieldSelectAsyncProps<T> = Omit<
+  FieldSelectProps,
+  "loading" | "options" | "disableClientFilter"
+> & {
+  queryKey: QueryKey;
+  /**
+   * Fetch options from the server.
+   * - Without `serverSearch`: called with no arguments on mount.
+   * - With `serverSearch`: called with `{ search }` on every debounced search change.
+   */
+  queryFn: (params?: { search: string }) => Promise<T[]>;
+  /** Transform each raw item into a FieldOption for the select dropdown. */
+  mapOption: (item: T) => FieldOption;
+  /** Error message shown when the query fails. Default: "Failed to load options." */
+  queryErrorMessage?: string;
+  /** Debounce delay in ms before firing the query. Default: 300. Only applies when `serverSearch` is enabled. */
+  debounceMs?: number;
+  /** Placeholder shown in the search input when `serverSearch` is enabled. */
+  searchPlaceholder?: string;
+  /**
+   * Enable server-side search.
+   * - `true`: activates with default debounce (300 ms).
+   * - `{ debounceMs }`: custom debounce delay.
+   * - `false` / omitted: fetches once on mount, filters client-side (legacy behavior).
+   */
+  serverSearch?: boolean | ServerSearchConfig;
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 function FieldSelectAsync<T>({
+  debounceMs = 300,
+  error,
   mapOption,
   queryErrorMessage = "Failed to load options.",
   queryFn,
   queryKey,
-  searchable = true,
-  error,
+  serverSearch = false,
+  searchPlaceholder,
   ...props
 }: FieldSelectAsyncProps<T>) {
-  const { data, isError, isLoading } = useQuery({
-    queryKey,
-    queryFn,
-  })
+  const isServerSearch = Boolean(serverSearch);
+  const config =
+    typeof serverSearch === "object" ? serverSearch : undefined;
+  const resolvedDebounceMs = config?.debounceMs ?? debounceMs;
 
-  const options = (data ?? []).map(mapOption)
-  const resolvedError = error ?? (isError ? queryErrorMessage : undefined)
+  // --- Search state (only active when isServerSearch) ---
+  const [rawSearch, setRawSearch] = React.useState("");
+  const debouncedSearch = useDebounce(rawSearch, resolvedDebounceMs);
+
+  // --- Query ---
+  const { data, isError, isLoading, isFetching } = useQuery({
+    queryKey: isServerSearch
+      ? [...queryKey, "search", debouncedSearch]
+      : queryKey,
+    queryFn: isServerSearch
+      ? () => queryFn({ search: debouncedSearch })
+      : () => queryFn(),
+  });
+
+  // --- Map raw data to FieldOption[] ---
+  const options = (data ?? []).map(mapOption);
+
+  // --- Error resolution ---
+  const resolvedError = error ?? (isError ? queryErrorMessage : undefined);
+
+  // --- Loading: show spinner for initial load or refetch with no cached data ---
+  const loading = isLoading || (isFetching && !data);
 
   return (
     <FieldSelect
       {...props}
+      disableClientFilter={isServerSearch}
       error={resolvedError}
-      loading={isLoading}
+      loading={loading}
+      onSearchChange={isServerSearch ? setRawSearch : undefined}
       options={options}
-      searchable={searchable}
+      placeholder={
+        isServerSearch && searchPlaceholder
+          ? searchPlaceholder
+          : props.placeholder
+      }
+      searchable={isServerSearch || props.searchable}
     />
-  )
+  );
 }
 
-export { FieldSelectAsync }
+export { FieldSelectAsync };

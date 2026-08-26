@@ -31,3 +31,20 @@ export function formatSegmentsPreview(
     .map((segment) => `#${segment.index + 1}`)
     .join(" ");
 }
+
+/**
+ * Resolve each segment's prefix value and concatenate into a preview string.
+ * Falls back to `#N` position tokens when a prefix is not in the map.
+ *
+ * @param segments - segments in any order
+ * @param prefixMap - map of prefixId → { value } for resolving display values
+ * @returns concatenated preview string, e.g. `"INV/2024/001"`
+ */
+export function resolveSegmentsPreview(
+  segments: NumberFormatSegment[],
+  prefixMap: Map<string, { value: string }>,
+): string {
+  return sortSegmentsByIndex(segments)
+    .map((s) => prefixMap.get(s.prefixId)?.value ?? `#${s.index + 1}`)
+    .join("");
+}

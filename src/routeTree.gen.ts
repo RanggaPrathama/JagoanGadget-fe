@@ -39,6 +39,7 @@ import { Route as AdminMasterBrandIndexRouteImport } from './routes/admin/master
 import { Route as AdminUserUserIdEditRouteImport } from './routes/admin/user/$userId.edit'
 import { Route as AdminSetupRoleCreateRouteImport } from './routes/admin/setup/role/create'
 import { Route as AdminSetupPermissionCreateRouteImport } from './routes/admin/setup/permission/create'
+import { Route as AdminSetupNumberFormatCreateRouteImport } from './routes/admin/setup/number-format/create'
 import { Route as AdminSetupMenuCreateRouteImport } from './routes/admin/setup/menu/create'
 import { Route as AdminMasterWarehouseCreateRouteImport } from './routes/admin/master/warehouse/create'
 import { Route as AdminSetupRoleRoleIdEditRouteImport } from './routes/admin/setup/role/$roleId.edit'
@@ -218,6 +219,12 @@ const AdminSetupPermissionCreateRoute =
     path: '/setup/permission/create',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminSetupNumberFormatCreateRoute =
+  AdminSetupNumberFormatCreateRouteImport.update({
+    id: '/setup/number-format/create',
+    path: '/setup/number-format/create',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminSetupMenuCreateRoute = AdminSetupMenuCreateRouteImport.update({
   id: '/setup/menu/create',
   path: '/setup/menu/create',
@@ -282,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/admin/user/': typeof AdminUserIndexRoute
   '/admin/master/warehouse/create': typeof AdminMasterWarehouseCreateRoute
   '/admin/setup/menu/create': typeof AdminSetupMenuCreateRoute
+  '/admin/setup/number-format/create': typeof AdminSetupNumberFormatCreateRoute
   '/admin/setup/permission/create': typeof AdminSetupPermissionCreateRoute
   '/admin/setup/role/create': typeof AdminSetupRoleCreateRoute
   '/admin/user/$userId/edit': typeof AdminUserUserIdEditRoute
@@ -318,6 +326,7 @@ export interface FileRoutesByTo {
   '/admin/user': typeof AdminUserIndexRoute
   '/admin/master/warehouse/create': typeof AdminMasterWarehouseCreateRoute
   '/admin/setup/menu/create': typeof AdminSetupMenuCreateRoute
+  '/admin/setup/number-format/create': typeof AdminSetupNumberFormatCreateRoute
   '/admin/setup/permission/create': typeof AdminSetupPermissionCreateRoute
   '/admin/setup/role/create': typeof AdminSetupRoleCreateRoute
   '/admin/user/$userId/edit': typeof AdminUserUserIdEditRoute
@@ -359,6 +368,7 @@ export interface FileRoutesById {
   '/admin/user/': typeof AdminUserIndexRoute
   '/admin/master/warehouse/create': typeof AdminMasterWarehouseCreateRoute
   '/admin/setup/menu/create': typeof AdminSetupMenuCreateRoute
+  '/admin/setup/number-format/create': typeof AdminSetupNumberFormatCreateRoute
   '/admin/setup/permission/create': typeof AdminSetupPermissionCreateRoute
   '/admin/setup/role/create': typeof AdminSetupRoleCreateRoute
   '/admin/user/$userId/edit': typeof AdminUserUserIdEditRoute
@@ -400,6 +410,7 @@ export interface FileRouteTypes {
     | '/admin/user/'
     | '/admin/master/warehouse/create'
     | '/admin/setup/menu/create'
+    | '/admin/setup/number-format/create'
     | '/admin/setup/permission/create'
     | '/admin/setup/role/create'
     | '/admin/user/$userId/edit'
@@ -436,6 +447,7 @@ export interface FileRouteTypes {
     | '/admin/user'
     | '/admin/master/warehouse/create'
     | '/admin/setup/menu/create'
+    | '/admin/setup/number-format/create'
     | '/admin/setup/permission/create'
     | '/admin/setup/role/create'
     | '/admin/user/$userId/edit'
@@ -476,6 +488,7 @@ export interface FileRouteTypes {
     | '/admin/user/'
     | '/admin/master/warehouse/create'
     | '/admin/setup/menu/create'
+    | '/admin/setup/number-format/create'
     | '/admin/setup/permission/create'
     | '/admin/setup/role/create'
     | '/admin/user/$userId/edit'
@@ -721,6 +734,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSetupPermissionCreateRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/setup/number-format/create': {
+      id: '/admin/setup/number-format/create'
+      path: '/setup/number-format/create'
+      fullPath: '/admin/setup/number-format/create'
+      preLoaderRoute: typeof AdminSetupNumberFormatCreateRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/setup/menu/create': {
       id: '/admin/setup/menu/create'
       path: '/setup/menu/create'
@@ -839,6 +859,7 @@ interface AdminRouteChildren {
   AdminUserIndexRoute: typeof AdminUserIndexRoute
   AdminMasterWarehouseCreateRoute: typeof AdminMasterWarehouseCreateRoute
   AdminSetupMenuCreateRoute: typeof AdminSetupMenuCreateRoute
+  AdminSetupNumberFormatCreateRoute: typeof AdminSetupNumberFormatCreateRoute
   AdminSetupPermissionCreateRoute: typeof AdminSetupPermissionCreateRoute
   AdminSetupRoleCreateRoute: typeof AdminSetupRoleCreateRoute
   AdminUserUserIdEditRoute: typeof AdminUserUserIdEditRoute
@@ -864,6 +885,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUserIndexRoute: AdminUserIndexRoute,
   AdminMasterWarehouseCreateRoute: AdminMasterWarehouseCreateRoute,
   AdminSetupMenuCreateRoute: AdminSetupMenuCreateRoute,
+  AdminSetupNumberFormatCreateRoute: AdminSetupNumberFormatCreateRoute,
   AdminSetupPermissionCreateRoute: AdminSetupPermissionCreateRoute,
   AdminSetupRoleCreateRoute: AdminSetupRoleCreateRoute,
   AdminUserUserIdEditRoute: AdminUserUserIdEditRoute,
