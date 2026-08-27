@@ -1,24 +1,22 @@
-import { useCallback, useEffect, useMemo, useSyncExternalStore, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useStore } from "@tanstack/react-store";
 import { useQueries } from "@tanstack/react-query";
 
 import type { PrefixItem } from "@/features/admin/setup/prefix/types";
 import { getPrefixByIdQueryOptions } from "@/features/admin/setup/prefix/services";
 import { resolveSegmentsPreview } from "../utils/segments";
+import type { NumberFormatFormValues } from "./useNumberFormatForm";
 import type { NumberFormatSegment } from "../types";
-
-// ---------------------------------------------------------------------------
-// Hook
-// ---------------------------------------------------------------------------
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- TanStack Form generics are too complex to type narrowly */
 function useNumberFormatSegments({ form }: { form: any }) {
   // User-selected prefixes (from ButtonSelect dialog)
   const [selectedPrefixes, setSelectedPrefixes] = useState<PrefixItem[]>([]);
 
-  // --- Reactive segments from form store (no deprecated useStore) ---
-  const segments: NumberFormatSegment[] = useSyncExternalStore(
-    (listener) => form.store.subscribe(listener),
-    () => form.store.get().values.segments,
+  // --- Reactive segments from form store ---
+  const segments: NumberFormatSegment[] = useStore(
+    form.store,
+    (state: { values: NumberFormatFormValues }) => state.values.segments,
   );
 
   // --- Proactively fetch prefix details for edit mode (unknown prefixIds) ---
@@ -61,7 +59,7 @@ function useNumberFormatSegments({ form }: { form: any }) {
     [segments, prefixMap],
   );
 
-  // --- Sync preview back to form field (external system sync — allowed) ---
+  // --- Sync preview to form field (external system update — allowed) ---
   useEffect(() => {
     form.setFieldValue("preview", preview);
   }, [form, preview]);

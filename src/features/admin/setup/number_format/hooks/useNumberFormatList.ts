@@ -3,7 +3,6 @@ import {
   useGetNumberFormatsListQuery,
 } from "../service/number_format.queries";
 import { useDeleteNumberFormat } from "../service/number_format.mutations";
-import { formatSegmentsPreview } from "../utils/segments";
 import type { NumberFormatItem, NumberFormatTableRow } from "../types";
 import { useState } from "react";
 
@@ -41,7 +40,7 @@ export function useNumberFormatList(
   const numberFormats: NumberFormatTableRow[] = (data?.items ?? []).map(
     (item) => ({
       ...item,
-      segmentsPreview: formatSegmentsPreview(item.segments ?? []),
+      segmentsPreview: item.preview,
       isActiveLabel: item.isActive ? "Aktif" : "Nonaktif",
     }),
   );

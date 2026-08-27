@@ -1,9 +1,12 @@
 import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
+import { useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createNumberFormat, updateNumberFormat } from "../service";
 import { useGetNumberFormatByIdQuery } from "../service/number_format.queries";
+import {
+  useCreateNumberFormat,
+  useUpdateNumberFormat,
+} from "../service/number_format.mutations";
 
 type UseNumberFormatOptions = {
   numberFormatId?: string;
@@ -28,7 +31,6 @@ const toPayload = (values: NumberFormatFormValues) => {
   return {
     menuId: values.menuId,
     isActive: values.isActive,
-    preview: values.preview,
     segments: values.segments.map((segment) => ({
       prefixId: segment.prefixId,
       index: segment.index,
@@ -55,7 +57,7 @@ export const formValidators = {
 export const useNumberFormatForm = ({
   numberFormatId,
 }: UseNumberFormatOptions) => {
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const isEditMode = Boolean(numberFormatId);
 
   // --- Fetch detail in edit mode ---
@@ -63,27 +65,26 @@ export const useNumberFormatForm = ({
     queryConfig: { enabled: isEditMode },
   });
 
-  // --- Mutations (reuse existing mutation hooks pattern) ---
-  const mutation = useMutation({
-    mutationFn: async (values: NumberFormatFormValues) => {
-      const payload = toPayload(values);
-      if (isEditMode && numberFormatId) {
-        return updateNumberFormat(numberFormatId, payload);
-      }
-      return createNumberFormat(payload);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["number-formats"] });
-    },
-    onError: (error) => {
-      console.error("Error saving number format:", error);
-    },
+  // --- Mutations (use dedicated hooks with toast + redirect) ---
+  const createMutation = useCreateNumberFormat();
+  const updateMutation = useUpdateNumberFormat({
+    numberFormatId: numberFormatId!,
   });
+
+  const mutation = isEditMode ? updateMutation : createMutation;
 
   const form = useForm({
     defaultValues,
     onSubmit: async ({ value }) => {
-      await mutation.mutateAsync(value);
+      const payload = toPayload(value);
+      if (isEditMode && numberFormatId) {
+        await updateMutation.mutateAsync(payload);
+      } else {
+        await createMutation.mutateAsync(payload);
+      }
+
+      // Redirect to list after success
+      void navigate({ to: "/admin/setup/number-format" });
     },
   });
 
@@ -103,5 +104,6 @@ export const useNumberFormatForm = ({
     mutation,
     formValidators,
     isLoadingDetail: detailQuery.isLoading,
+    isSubmitting: mutation.isPending,
   };
 };

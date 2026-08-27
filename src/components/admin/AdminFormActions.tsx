@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ActionButton } from "../button/ActionButton";
 import { Link } from "@tanstack/react-router";
 import { Save } from "lucide-react";
@@ -37,6 +38,24 @@ export function AdminFormActions({
   basePermissionCode,
 }: AdminFormActionsProps) {
   const labels = { create: "Simpan", update: "Update", ...entityLabels };
+
+  // --- Ctrl+S keyboard shortcut ---
+  useEffect(() => {
+    if (readonly) return;
+
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        const form = document.getElementById(formId) as HTMLFormElement | null;
+        if (form) {
+          form.requestSubmit();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [formId, readonly]);
 
   return (
     <div className="admin-form-actions sticky bottom-4 z-20 flex flex-col-reverse gap-4 rounded-[1.75rem] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">

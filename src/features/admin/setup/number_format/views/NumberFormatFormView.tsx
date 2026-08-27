@@ -1,4 +1,8 @@
-import { AdminFormHeader, FormSkeleton } from "@/components/admin";
+import {
+  AdminFormActions,
+  AdminFormHeader,
+  FormSkeleton,
+} from "@/components/admin";
 import { useNumberFormatForm } from "../hooks/useNumberFormatForm";
 import { useNumberFormatSegments } from "../hooks/useNumberFormatSegments";
 import {
@@ -36,7 +40,7 @@ export const NumberFormatFormView = ({
       ? "Edit Number Format"
       : "Create Number Format";
 
-  const { isEditMode, form, formValidators, isLoadingDetail } =
+  const { isEditMode, form, formValidators, isLoadingDetail, isSubmitting } =
     useNumberFormatForm({ numberFormatId });
 
   const {
@@ -44,6 +48,7 @@ export const NumberFormatFormView = ({
     prefixMap,
     handlePrefixesAdded,
     handleSegmentsChange,
+    preview,
   } = useNumberFormatSegments({ form });
 
   if (isEditMode && isLoadingDetail) {
@@ -58,6 +63,8 @@ export const NumberFormatFormView = ({
         onSubmit={(e) => {
           e.preventDefault();
           // Handle form submission logic here
+          e.stopPropagation();
+          void form.handleSubmit();
         }}
       >
         <AdminFormHeader
@@ -79,19 +86,6 @@ export const NumberFormatFormView = ({
           </CardHeader>
 
           <CardContent className="grid md:grid-cols-2 gap-4 px-5 sm:px-7 sm:py-7">
-            <form.Field name="preview">
-              {(field) => (
-                <FieldInput
-                  label="Preview"
-                  readOnly
-                  value={field.state.value ?? ""}
-                  placeholder="Preview akan muncul setelah menambahkan segmen"
-                  disabled={readonly}
-                  className="font-mono"
-                />
-              )}
-            </form.Field>
-
             <form.Field
               name="menuId"
               validators={{
@@ -122,6 +116,15 @@ export const NumberFormatFormView = ({
                 />
               )}
             </form.Field>
+
+            <FieldInput
+              label="Preview"
+              readOnly
+              value={preview ?? ""}
+              placeholder="Preview akan muncul setelah menambahkan segmen"
+              disabled={readonly}
+              className="font-mono"
+            />
 
             <form.Field
               name="isActive"
@@ -164,6 +167,17 @@ export const NumberFormatFormView = ({
             />
           </CardContent>
         </Card>
+
+        <AdminFormActions
+          formId="number-format-form"
+          readonly={readonly}
+          isEditMode={isEditMode}
+          isSubmitting={isSubmitting}
+          backTo="/admin/setup/number-format"
+          hint="Pastikan number format dan segments sudah sesuai sebelum disimpan."
+          disabled={readonly || isSubmitting}
+          basePermissionCode="setup.number-format"
+        />
       </form>
     </div>
   );
