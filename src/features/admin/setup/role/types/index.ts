@@ -52,8 +52,7 @@ export type RolePayload = {
 };
 
 export type RoleStats = {
-  totalRoles: number;
-  activeRoles: number;
-  systemRoles: number;
-  customRoles: number;
+  totalRole: number;
+  totalActiveRole: number;
+  totalInactiveRole: number;
 };

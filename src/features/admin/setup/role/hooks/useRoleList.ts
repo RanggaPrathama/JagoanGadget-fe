@@ -1,15 +1,9 @@
-// Hook: paginated role list using shared queries/mutations.
 import { useState } from "react";
 import type { UnwrappedPaginated } from "@/lib/api-response";
 import { useDeleteRole, useGetRoleListQuery } from "../service";
 import type { RoleItem, RoleStats } from "../types";
-import {
-  Shield,
-  ShieldCheck,
-  Sparkles,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
+import { Shield, ShieldCheck, Users, type LucideIcon } from "lucide-react";
+import { useGetRoleStatisticsQuery } from "../service/role.queries";
 
 // Loads the paginated role list and exposes stats, delete + refetch helpers.
 export function useRoleList(
@@ -25,10 +19,8 @@ export function useRoleList(
   const pagination = data?.pagination;
   const totalRoles = pagination?.totalItems ?? roles.length;
 
-  // Derive the four stat values from the current page of roles.
-  const activeRoles = roles.filter((role) => role.isActive ?? true).length;
-  const systemRoles = roles.filter((role) => role.isSystem === true).length;
-  const customRoles = roles.filter((role) => role.isSystem !== true).length;
+  const dataStats = useGetRoleStatisticsQuery();
+  const stats = dataStats.data as RoleStats | undefined;
 
   const deleteMutation = useDeleteRole();
 
@@ -42,10 +34,9 @@ export function useRoleList(
     title: string;
     icon: LucideIcon;
   }[] = [
-    { key: "totalRoles", title: "Total Roles", icon: Users },
-    { key: "activeRoles", title: "Active Roles", icon: ShieldCheck },
-    { key: "systemRoles", title: "System Roles", icon: Shield },
-    { key: "customRoles", title: "Custom Roles", icon: Sparkles },
+    { key: "totalRole", title: "Total Roles", icon: Users },
+    { key: "totalActiveRole", title: "Active Roles", icon: ShieldCheck },
+    { key: "totalInactiveRole", title: "Inactive Roles", icon: Shield },
   ];
 
   return {
@@ -54,11 +45,10 @@ export function useRoleList(
     totalRoles,
     pagination,
     stats: {
-      totalRoles,
-      activeRoles,
-      systemRoles,
-      customRoles,
-    } satisfies RoleStats,
+      totalRole: stats?.totalRole ?? totalRoles,
+      totalActiveRole: stats?.totalActiveRole ?? 0,
+      totalInactiveRole: stats?.totalInactiveRole ?? 0,
+    },
     isLoading: query.isLoading,
     isRefreshing: query.isFetching,
     isDeleting: deleteMutation.isPending,

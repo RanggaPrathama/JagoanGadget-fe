@@ -4,7 +4,7 @@ import {
   type QueryClient,
 } from "@tanstack/react-query";
 import type { QueryConfig } from "@/lib/react-query";
-import { getRoles, getRoleById } from "./role.service";
+import { getRoles, getRoleById, getRoleStatistics } from "./role.service";
 
 // Base query key for all role queries (used for invalidation).
 export const roleListQueryKey = ["roles"] as const;
@@ -32,6 +32,12 @@ export const getRoleListQueryOptions = (params?: RoleListParams) =>
     queryFn: () => getRoles(params),
   });
 
+export const getRoleStatisticsQueryOptions = () =>
+  queryOptions({
+    queryKey: [...roleListQueryKey, "statistics"],
+    queryFn: () => getRoleStatistics(),
+  });
+
 // queryOptions for a single role (detail/edit screens).
 export const getRoleByIdQueryOptions = (roleId: string) =>
   queryOptions({
@@ -46,6 +52,12 @@ export const useGetRoleListQuery = (
     queryConfig,
   }: { queryConfig?: QueryConfig<typeof getRoleListQueryOptions> } = {},
 ) => useQuery({ ...getRoleListQueryOptions(params), ...queryConfig });
+
+// Hook: role statistics (total, active, inactive).
+export const useGetRoleStatisticsQuery = ({
+  queryConfig,
+}: { queryConfig?: QueryConfig<typeof getRoleStatisticsQueryOptions> } = {}) =>
+  useQuery({ ...getRoleStatisticsQueryOptions(), ...queryConfig });
 
 // Hook: single role by id.
 export const useGetRoleByIdQuery = (

@@ -62,7 +62,7 @@ export function RoleListView() {
       />
 
       {/* Stat cards — quick overview of role counts by category */}
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {ROLE_STATS.map((stat, index) => (
           <StaggerItem step={0.1} key={stat.key} index={index}>
             <StatCard
@@ -103,7 +103,7 @@ export function RoleListView() {
                   value={search}
                   onChange={(event) => handleSearch(event.target.value)}
                   startIcon={<Search />}
-                  placeholder="Cari nama menu..."
+                  placeholder="Cari nama atau kode role ..."
                 />
                 <RowActions
                   basePermissionCode="setup.role"

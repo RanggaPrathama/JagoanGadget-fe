@@ -20,7 +20,6 @@ export function useUserList(search?: string, page = 1, limit = 25) {
   // getUserStatisticsQuery returns the total number of users, active users, inactive users, and superadmins.
   const dataStats = useGetUserStatisticsQuery();
   const stats = dataStats.data as UserStats | undefined;
-  console.log("stats", stats);
 
   const deleteMutation = useDeleteUser();
 
