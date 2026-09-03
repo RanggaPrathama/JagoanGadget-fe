@@ -56,7 +56,7 @@ export function AppSidebar() {
     <Sidebar
       collapsible={collapsible}
       variant={variant}
-      className="border-sidebar-border/60 bg-sidebar"
+      className="border-sidebar-border/60 bg-sidebar h-full flex flex-col overflow-hidden"
     >
       <SidebarHeader className="gap-3 px-2.5 pt-3 pb-3">
         <AppTitle
@@ -75,27 +75,29 @@ export function AppSidebar() {
         />
         <SidebarSeparator className="mx-0 bg-sidebar-border/60" />
       </SidebarHeader>
-      <SidebarContent className="admin-scrollbar sidebar-scroll min-h-0 pb-3 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:pb-2">
-        <SidebarGroup className="gap-1 px-1  py-0.5 group-data-[collapsible=icon]:px-0.5 group-data-[collapsible=icon]:py-0.5">
-          <SidebarGroupLabel className="px-1.5 text-sm  tracking-tight text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">
-            Menu
-          </SidebarGroupLabel>
-          {isLoading || !sidebarData ? (
-            <SidebarNavSkeleton />
-          ) : (
-            sidebarData.navGroups.map((props, index) => (
-              <StaggerItem
-                key={`${props.title}-${index}`}
-                index={index}
-                inView={false}
-                className="group-data-[collapsible=icon]:contents"
-              >
-                <NavGroup {...props} />
-              </StaggerItem>
-            ))
-          )}
-        </SidebarGroup>
-      </SidebarContent>
+      <div className="flex-1 min-h-0  admin-scrollbar sidebar-scroll overflow-y-auto">
+        <SidebarContent className="pb-3 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:pb-2 ">
+          <SidebarGroup className="gap-1 px-1  py-0.5 group-data-[collapsible=icon]:px-0.5 group-data-[collapsible=icon]:py-0.5">
+            <SidebarGroupLabel className="px-1.5 text-sm  tracking-tight text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">
+              Menu
+            </SidebarGroupLabel>
+            {isLoading || !sidebarData ? (
+              <SidebarNavSkeleton />
+            ) : (
+              sidebarData.navGroups.map((props, index) => (
+                <StaggerItem
+                  key={`${props.title}-${index}`}
+                  index={index}
+                  inView={false}
+                  className="group-data-[collapsible=icon]:contents"
+                >
+                  <NavGroup {...props} />
+                </StaggerItem>
+              ))
+            )}
+          </SidebarGroup>
+        </SidebarContent>
+      </div>
       <SidebarFooter className="shrink-0 px-2.5 pt-2 pb-3 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:pb-2.5">
         {sidebarData ? (
           <FooterNav user={sidebarData.user} />

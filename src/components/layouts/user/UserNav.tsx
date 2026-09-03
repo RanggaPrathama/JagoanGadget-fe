@@ -25,7 +25,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
-import { ThemeSwitch } from "@/components/ThemeSwitch";
+import { ModeSwitch } from "@/components/ModeSwitch";
+import { ThemePresetPicker } from "@/components/ThemePresetPicker";
+import { useThemeMetaColor } from "@/hooks/useThemeMetaColor";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -134,6 +136,7 @@ function AccountMenu() {
 
 export function UserNav() {
   const { isLoading, isAuthenticated } = useAuth();
+  useThemeMetaColor();
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 md:px-6 md:pt-5">
@@ -237,7 +240,8 @@ export function UserNav() {
             </Link>
           </Button>
 
-          <ThemeSwitch compact />
+          <ModeSwitch />
+          <ThemePresetPicker />
 
           {isLoading ? (
             <div className="hidden items-center gap-2 sm:flex">

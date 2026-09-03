@@ -87,6 +87,17 @@ export function isThemePreset(value?: string): value is ThemePreset {
   return THEME_PRESETS.includes(value as ThemePreset);
 }
 
+export const THEME_PRESET_PRIMARY_COLORS: Record<ThemePreset, string> = {
+  default: "oklch(0.5771 0.2226 293.44)",
+  vercel: "oklch(0 0 0)",
+  claude: "oklch(0.6171 0.1375 39.0427)",
+  "astro-vista": "oklch(0.642 0.1691 38.5815)",
+  "light-green": "oklch(0.8871 0.2122 128.5041)",
+  "graphite-pulse": "oklch(0.6893 0.1857 175.19)",
+  "navy-gold": "oklch(0.7859 0.1342 83.7)",
+  "slate-blue": "oklch(0.5465 0.2213 260.03)",
+};
+
 export function getThemeMetaColor(
   resolvedTheme: ResolvedTheme,
   preset: ThemePreset,

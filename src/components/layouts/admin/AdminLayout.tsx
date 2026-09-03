@@ -13,7 +13,9 @@ import { Header } from "./Header";
 import { HeaderClock } from "./HeaderClock";
 import { Main } from "./Main";
 import { TopNav, type BreadcrumbLinkItem } from "./TopNav";
-import { ThemeSwitch } from "@/components/ThemeSwitch";
+import { ModeSwitch } from "@/components/ModeSwitch";
+import { ThemePresetPicker } from "@/components/ThemePresetPicker";
+import { useThemeMetaColor } from "@/hooks/useThemeMetaColor";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { useAutoBreadcrumbs } from "@/hooks/useAutoBreadcrumbs";
@@ -45,6 +47,7 @@ export function AdminLayout({
   const autoBreadcrumbs = useAutoBreadcrumbs();
   const finalBreadcrumbs = breadcrumbs ?? autoBreadcrumbs;
   const defaultOpen = getCookie("sidebar_state") !== "false";
+  useThemeMetaColor();
 
   useEffect(() => {
     const { body, documentElement } = document;
@@ -126,7 +129,8 @@ export function AdminLayout({
                     ) : null}
                     <span className="sr-only">Notifications</span>
                   </Button>
-                  <ThemeSwitch compact />
+                  <ModeSwitch />
+                  <ThemePresetPicker />
                   <HeaderClock />
                   {headerActions}
                 </div>
