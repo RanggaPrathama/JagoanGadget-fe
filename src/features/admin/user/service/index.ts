@@ -6,6 +6,7 @@ export {
   useGetUserListQuery,
   useGetUserByIdQuery,
   invalidateUserQueries,
+  useGetUserStatisticsQuery
 } from "./user.queries";
 export { useDeleteUser, useCreateUser, useUpdateUser } from "./user.mutations";
 

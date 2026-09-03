@@ -12,6 +12,7 @@ import {
   AdminFormHeader,
   FormSkeleton,
 } from "@/components/admin";
+import { AnimatedContainer } from "@/components/motion";
 import { useStore } from "@tanstack/react-store";
 import { formValidators, useMenuForm } from "../hooks/useMenuForm";
 import { MenuSavePermissionDialog } from "../components/MenuSavePermissionDialog";
@@ -74,6 +75,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
         />
 
         {/* Form card: "Informasi Menu" section with type, parent, name, icon, code, sortOrder, route, and status fields. */}
+        <AnimatedContainer delay={0.3}>
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <CardTitle className="text-base">Informasi Menu</CardTitle>
@@ -274,6 +276,7 @@ export function MenuFormView({ menuId, mode = "edit" }: MenuFormViewProps) {
             </form.Field>
           </CardContent>
         </Card>
+        </AnimatedContainer>
 
         <AdminFormActions
           formId="menu-form"

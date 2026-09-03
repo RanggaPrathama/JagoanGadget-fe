@@ -4,12 +4,11 @@ import {
   Plus,
   RefreshCw,
   Search,
-  Users,
-  UserCheck,
-  ShieldAlert,
+
 } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
-import { RowActions, ActionButton } from "@/components/admin";
+import { RowActions, ActionButton, AdminListHeader } from "@/components/admin";
+import { AnimatedContainer, StaggerItem } from "@/components/motion";
 import { ConfirmDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,6 +27,7 @@ export function UserListView() {
   const debouncedSearch = useDebounce(search, 400);
 
   const {
+    USER_STATS,
     users,
     totalUsers,
     pagination,
@@ -51,140 +51,134 @@ export function UserListView() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-3">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            User Management
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Manage users and assign their roles in the system.
-          </p>
-        </div>
-      </div>
+      <AdminListHeader
+        title="User Management"
+        description="Manage users and assign their roles in the system."
+      />
 
-      {/* Summary stat cards: total users, active users, and superadmin count. */}
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        <StatCard icon={Users} title="Total Users" value={stats.totalUsers} />
-        <StatCard
-          icon={UserCheck}
-          title="Active Users"
-          value={stats.activeUsers}
-          description={`/ ${stats.totalUsers}`}
-        />
-        <StatCard
-          icon={ShieldAlert}
-          title="Superadmins"
-          value={stats.superadmins}
-        />
+      {/* Summary stat cards: total users, active users, and Inactive count. */}
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {USER_STATS.map((stat, index) => (
+          <StaggerItem step={0.1} key={stat.key} index={index}>
+            <StatCard
+              icon={stat.icon}
+              title={stat.title}
+              value={stats[stat.key]}
+            />
+          </StaggerItem>
+        ))}
       </div>
 
       {/* Card wrapping the search toolbar and the data table. */}
-      <Card className="overflow-hidden border-border/60 bg-card/90 shadow-sm">
-        <CardContent className="px-0 pb-0 pt-0">
-          {/* Toolbar: search input, row actions, refresh button, and create button. */}
-          <div className="flex flex-col gap-2.5 border-b border-border/60 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-1 flex-wrap items-center gap-2">
-              <div className="relative w-full max-w-xs">
-                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  value={search}
-                  onChange={(event) => handleSearch(event.target.value)}
-                  placeholder="Cari user..."
-                  className="h-9 rounded-xl pl-9 pr-3 text-sm"
+      <AnimatedContainer delay={0.3}>
+        <Card className="overflow-hidden border-border/60 bg-card/90 shadow-sm">
+          <CardContent className="px-0 pb-0 pt-0">
+            {/* Toolbar: search input, row actions, refresh button, and create button. */}
+            <div className="flex flex-col gap-2.5 border-b border-border/60 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-1 flex-wrap items-center gap-2">
+                <div className="relative w-full max-w-xs">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={search}
+                    onChange={(event) => handleSearch(event.target.value)}
+                    placeholder="Cari user..."
+                    className="h-9 rounded-xl pl-9 pr-3 text-sm"
+                  />
+                </div>
+                <RowActions
+                  basePermissionCode="user"
+                  iconOnly
+                  className="shrink-0"
+                  disabled={!selectedUser || isDeleting}
+                  onView={() => {
+                    if (!selectedUser) return;
+                    navigate({
+                      to: "/admin/user/$userId/edit",
+                      params: { userId: selectedUser.id },
+                      search: { mode: "readonly" as const },
+                    });
+                  }}
+                  onEdit={() => {
+                    if (!selectedUser) return;
+                    navigate({
+                      to: "/admin/user/$userId/edit",
+                      params: { userId: selectedUser.id },
+                      search: { mode: "edit" as const },
+                    });
+                  }}
+                  onDelete={() => {
+                    if (!selectedUser) return;
+                    setConfirmDeleteId(selectedUser.id);
+                  }}
                 />
               </div>
-              <RowActions
-                basePermissionCode="user"
-                iconOnly
-                className="shrink-0"
-                disabled={!selectedUser || isDeleting}
-                onView={() => {
-                  if (!selectedUser) return;
-                  navigate({
-                    to: "/admin/user/$userId/edit",
-                    params: { userId: selectedUser.id },
-                    search: { mode: "readonly" as const },
-                  });
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                className="rounded-lg border-border/70"
+                onClick={() => {
+                  void refetchUsers();
                 }}
-                onEdit={() => {
-                  if (!selectedUser) return;
-                  navigate({
-                    to: "/admin/user/$userId/edit",
-                    params: { userId: selectedUser.id },
-                    search: { mode: "edit" as const },
-                  });
+                disabled={isRefreshing}
+                aria-label="Refresh data"
+                title="Refresh data"
+              >
+                <RefreshCw
+                  className={cn("size-4", isRefreshing && "animate-spin")}
+                />
+              </Button>
+
+              <ActionButton
+                permission="user.create"
+                size="sm"
+                className="w-full rounded-lg sm:w-auto"
+                onClick={() => navigate({ to: "/admin/user/create" })}
+                icon={<Plus data-icon="inline-start" />}
+              >
+                Create User
+              </ActionButton>
+            </div>
+
+            <div className="h-[min(72vh,44rem)] min-h-[28rem] overflow-hidden">
+              <DataTable
+                columns={getUserColumns()}
+                rows={users}
+                loading={isLoading || isRefreshing}
+                emptyMessage="Belum ada data user."
+                totalRows={totalUsers}
+                currentPage={pagination?.page}
+                totalPagesOverride={pagination?.totalPages}
+                hasNextPage={pagination?.hasNextPage}
+                hasPreviousPage={pagination?.hasPreviousPage}
+                pageSize={limit}
+                onPageSizeChange={(size) => {
+                  setLimit(size);
+                  setPage(1);
                 }}
-                onDelete={() => {
-                  if (!selectedUser) return;
-                  setConfirmDeleteId(selectedUser.id);
+                onPrevPage={() =>
+                  setPage((currentPage) => Math.max(1, currentPage - 1))
+                }
+                onNextPage={() => {
+                  if (pagination?.hasNextPage) {
+                    setPage((currentPage) => currentPage + 1);
+                  }
                 }}
+                selectedRowId={selectedId}
+                getRowId={(user) => user.id}
+                onRowClick={(user) =>
+                  setSelectedId((currentId) =>
+                    currentId === user.id ? null : user.id,
+                  )
+                }
               />
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-sm"
-              className="rounded-lg border-border/70"
-              onClick={() => {
-                void refetchUsers();
-              }}
-              disabled={isRefreshing}
-              aria-label="Refresh data"
-              title="Refresh data"
-            >
-              <RefreshCw
-                className={cn("size-4", isRefreshing && "animate-spin")}
-              />
-            </Button>
+          </CardContent>
+        </Card>
+      </AnimatedContainer>
 
-            <ActionButton
-              permission="user.create"
-              size="sm"
-              className="w-full rounded-lg sm:w-auto"
-              onClick={() => navigate({ to: "/admin/user/create" })}
-              icon={<Plus data-icon="inline-start" />}
-            >
-              Create User
-            </ActionButton>
-          </div>
-
-          <div className="h-[min(72vh,44rem)] min-h-[28rem] overflow-hidden">
-            <DataTable
-              columns={getUserColumns()}
-              rows={users}
-              loading={isLoading || isRefreshing}
-              emptyMessage="Belum ada data user."
-              totalRows={totalUsers}
-              currentPage={pagination?.page}
-              totalPagesOverride={pagination?.totalPages}
-              hasNextPage={pagination?.hasNextPage}
-              hasPreviousPage={pagination?.hasPreviousPage}
-              pageSize={limit}
-              onPageSizeChange={(size) => {
-                setLimit(size);
-                setPage(1);
-              }}
-              onPrevPage={() =>
-                setPage((currentPage) => Math.max(1, currentPage - 1))
-              }
-              onNextPage={() => {
-                if (pagination?.hasNextPage) {
-                  setPage((currentPage) => currentPage + 1);
-                }
-              }}
-              selectedRowId={selectedId}
-              getRowId={(user) => user.id}
-              onRowClick={(user) =>
-                setSelectedId((currentId) =>
-                  currentId === user.id ? null : user.id,
-                )
-              }
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-          {/* Confirmation dialog for user deletion. */}
+      {/* Confirmation dialog for user deletion. */}
       <ConfirmDialog
         open={!!confirmDeleteId}
         onOpenChange={(open) => !open && setConfirmDeleteId(null)}

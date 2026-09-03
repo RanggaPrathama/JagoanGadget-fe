@@ -1,4 +1,4 @@
-import { Gem } from "lucide-react";
+import { Loaders } from "./Loaders";
 
 /**
  * Route-level transport loader, shown only while the lazy route chunk resolves.
@@ -9,7 +9,7 @@ import { Gem } from "lucide-react";
 export function RoutePending() {
   return (
     <div className="flex min-h-[100dvh] w-full flex-col items-center justify-center gap-3">
-      <Gem className="size-8 animate-spin text-primary" aria-hidden="true" />
+      <Loaders />
       <p className="text-sm font-medium text-muted-foreground">Loading…</p>
     </div>
   );

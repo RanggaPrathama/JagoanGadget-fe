@@ -61,6 +61,8 @@ export type NumberFormatPayload = {
  * @remarks Derived in {@link ../hooks/useNumberFormatList | useNumberFormatList}.
  */
 export type NumberFormatTableRow = NumberFormatItem & {
+  /** Derived in {@link ../hooks/useNumberFormatList | useNumberFormatList} from `item.preview`. Backend may omit → undefined. */
+  segmentsPreview?: string;
   /** `"Aktif"` or `"Nonaktif"`. */
   isActiveLabel: string;
 };

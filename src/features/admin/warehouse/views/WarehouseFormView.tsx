@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AdminFormActions, AdminFormHeader, FormSkeleton } from "@/components/admin";
+import { AnimatedContainer } from "@/components/motion";
 import { formValidators, useWarehouseForm } from "../hooks/useWarehouseForm";
 
 type WarehouseFormViewProps = {
@@ -65,6 +66,7 @@ export function WarehouseFormView({
         />
 
         {/* Form card: "Informasi Warehouse" section with code, name, address, and status fields. */}
+        <AnimatedContainer>
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <CardTitle className="text-base">Informasi Warehouse</CardTitle>
@@ -158,6 +160,7 @@ export function WarehouseFormView({
             </form.Field>
           </CardContent>
         </Card>
+        </AnimatedContainer>
 
         <AdminFormActions
           formId="warehouse-form"

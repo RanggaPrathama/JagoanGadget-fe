@@ -29,6 +29,8 @@ export type FieldSelectProps = FieldBaseProps & {
   onSearchChange?: (search: string) => void;
   emptyText?: string;
   name?: string;
+  /** Optional footer rendered at the bottom of the dropdown list (e.g. an "add new" action). */
+  footer?: React.ReactNode;
 };
 
 function toStringValue(value?: string | number | null) {
@@ -41,6 +43,7 @@ function FieldSelect({
   disabled = false,
   emptyText = "No options found.",
   error,
+  footer,
   hint,
   label,
   loading = false,
@@ -177,6 +180,7 @@ function FieldSelect({
               </>
             )}
           </ComboboxList>
+          {footer}
         </ComboboxContent>
       </Combobox>
     </FieldShell>

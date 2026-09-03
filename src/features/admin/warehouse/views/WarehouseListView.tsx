@@ -1,7 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Plus, RefreshCw, Search } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
-import { RowActions, ActionButton } from "@/components/admin";
+import { RowActions, ActionButton, AdminListHeader } from "@/components/admin";
+import { AnimatedContainer } from "@/components/motion";
 import { ConfirmDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,16 +44,13 @@ export function WarehouseListView() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Warehouse Setup</h1>
-          <p className="text-sm text-muted-foreground">
-            Kelola gudang, status aktif, dan informasi alamat masing-masing.
-          </p>
-        </div>
-      </div>
+      <AdminListHeader
+        title="Warehouse Setup"
+        description="Kelola gudang, status aktif, dan informasi alamat masing-masing."
+      />
 
-      <Card className="overflow-hidden border-border/60 bg-card/90 shadow-sm">
+      <AnimatedContainer delay={0.3}>
+        <Card className="overflow-hidden border-border/60 bg-card/90 shadow-sm">
         <CardContent className="px-0 pb-0 pt-0">
           <div className="flex flex-wrap items-center gap-1.5 px-6">
             <span className="mr-1 text-sm font-medium text-muted-foreground">
@@ -174,6 +172,7 @@ export function WarehouseListView() {
           </div>
         </CardContent>
       </Card>
+      </AnimatedContainer>
 
       {/* Delete confirmation dialog — calls deleteWarehouse mutation and clears the selected ID on confirm/close. */}
       <ConfirmDialog

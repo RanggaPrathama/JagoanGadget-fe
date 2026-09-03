@@ -15,6 +15,7 @@ import {
   FormSkeleton,
   FormTable,
 } from "@/components/admin";
+import { AnimatedContainer } from "@/components/motion";
 import { formValidators, useUserForm } from "../hooks/useUserForm";
 import { getRoles } from "../../setup/role/service/role.service";
 import type { RoleItem } from "../../setup/role/service/role.service";
@@ -74,6 +75,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
         />
 
         {/* Card: user identity and contact fields. */}
+        <AnimatedContainer delay={0}>
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <CardTitle className="text-base">Informasi User</CardTitle>
@@ -195,8 +197,10 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
             </div>
           </CardContent>
         </Card>
+        </AnimatedContainer>
 
         {/* Card: role assignment via multi-select and removable role rows. */}
+        <AnimatedContainer delay={0.05}>
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <div className="flex justify-between items-center gap-4">
@@ -298,6 +302,7 @@ export function UserFormView({ userId, mode = "edit" }: UserFormViewProps) {
             />
           </CardContent>
         </Card>
+        </AnimatedContainer>
 
         <AdminFormActions
           formId="user-form"

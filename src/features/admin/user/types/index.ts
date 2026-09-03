@@ -32,3 +32,10 @@ export type UserFormInput = {
   roleIds: string[]; // For assigning roles during creation/edit
   avatarTempKey?: string;
 };
+
+export type UserStats = {
+  totalUsers: number;
+  totalActiveUsers: number;
+  totalInactiveUsers: number;
+  totalSuperAdmins: number;
+}

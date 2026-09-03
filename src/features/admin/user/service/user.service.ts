@@ -1,9 +1,7 @@
 import { api } from "@/lib/axios";
 import { unwrapData, unwrapPaginated } from "@/lib/api-response";
 import type { ApiResponse, PaginatedResponse } from "@/lib/api-response";
-import type { UserEntity, UserFormInput } from "../types";
-// Re-export domain types so callers importing from this file keep working.
-export type { UserEntity, UserFormInput, UserRoleEntity } from "../types";
+import type { UserEntity, UserFormInput, UserStats } from "../types";
 
 export async function getUsers(params?: {
   search?: string;
@@ -39,4 +37,9 @@ export async function deleteUser(id: string) {
     `admin/users/${id}`,
   );
   return unwrapData<{ success?: boolean }>(response.data);
+}
+
+export async function getStatisticsUser(){
+  const response = await api.get<ApiResponse<UserStats>>("admin/users/statistics");
+  return unwrapData<UserStats>(response.data);
 }

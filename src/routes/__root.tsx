@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Toaster } from "@/components/ui/sonner";
 import { NavigationProgress } from "@/components/NavigationProgress";
+import { RoutePending } from "@/components/RoutePending";
 import { GeneralError } from "@/features/errors/GeneralError";
 import { NotFoundError } from "@/features/errors/NotFoundError";
 
@@ -26,5 +27,6 @@ export const Route = createRootRouteWithContext<{
     );
   },
   notFoundComponent: NotFoundError,
+  pendingComponent: RoutePending,
   errorComponent: GeneralError,
 });

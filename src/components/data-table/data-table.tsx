@@ -4,6 +4,7 @@ import type { ColDef, RowClickedEvent } from "ag-grid-community";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { AnimatedContainer } from "@/components/motion";
 import { cn } from "@/utils/cn";
 
 const PAGE_SIZE_OPTIONS = [25, 50, 100] as const;
@@ -152,7 +153,7 @@ export function DataTable<TData>({
   }, [columns]);
 
   return (
-    <div className={cn("flex h-full flex-col", className)}>
+    <AnimatedContainer className={cn("flex h-full flex-col", className)}>
       {/* AG Grid */}
       <div className="ag-theme-quartz ag-table-theme min-h-0 flex-1">
         <AgGridReact<TData>
@@ -292,6 +293,6 @@ export function DataTable<TData>({
           </Button>
         </div>
       </div>
-    </div>
+    </AnimatedContainer>
   );
 }

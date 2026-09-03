@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/plus-jakarta-sans";
 @import "./theme.css";
 @import "./base/global.css";
 @import "./utilities/layout.css";

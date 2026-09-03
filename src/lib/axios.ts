@@ -32,11 +32,15 @@ api.interceptors.response.use(
 
     if (status === 401) {
       if (!skipAuthRedirect) {
-        const returnUrl = encodeURIComponent(
-          `${window.location.pathname}${window.location.search}`,
-        );
+        // Already on sign-in → don't hard-redirect (prevents redirect loops
+        // and stale `/me` refetch errors bubbling to the error boundary).
+        if (!window.location.pathname.startsWith("/sign-in")) {
+          const returnUrl = encodeURIComponent(
+            `${window.location.pathname}${window.location.search}`,
+          );
 
-        window.location.href = `/sign-in?redirect=${returnUrl}`;
+          window.location.href = `/sign-in?redirect=${returnUrl}`;
+        }
       }
 
       return Promise.reject(error);

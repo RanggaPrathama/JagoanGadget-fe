@@ -3,6 +3,7 @@ import {
   AdminFormHeader,
   FormSkeleton,
 } from "@/components/admin";
+import { AnimatedContainer } from "@/components/motion";
 import { useNumberFormatForm } from "../hooks/useNumberFormatForm";
 import { useNumberFormatSegments } from "../hooks/useNumberFormatSegments";
 import {
@@ -77,6 +78,7 @@ export const NumberFormatFormView = ({
         />
 
         {/* Basic Information */}
+        <AnimatedContainer delay={0}>
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <CardTitle className="text-base">Basic Information</CardTitle>
@@ -147,8 +149,10 @@ export const NumberFormatFormView = ({
             </form.Field>
           </CardContent>
         </Card>
+        </AnimatedContainer>
 
         {/* Segments Builder */}
+        <AnimatedContainer delay={0.05}>
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <CardTitle className="text-base">Segments</CardTitle>
@@ -167,6 +171,7 @@ export const NumberFormatFormView = ({
             />
           </CardContent>
         </Card>
+        </AnimatedContainer>
 
         <AdminFormActions
           formId="number-format-form"

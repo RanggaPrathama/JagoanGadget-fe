@@ -17,6 +17,11 @@ export const getPrefixColumns = (): ColDef<PrefixItem>[] => {
       flex: 1.5,
     },
     {
+      headerName: "Type Prefix",
+      field: "type",
+      filter: "agTextColumnFilter",
+    },
+    {
       headerName: "Value Prefix",
       field: "value",
       minWidth: 250,

@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AppTitle } from "./AppTitle";
 import { NavGroup } from "./NavGroup";
 import { FooterNav } from "./FooterNav";
+import { StaggerItem } from "@/components/motion";
 
 /** Placeholder rows mirroring NavGroup's row height (h-9) + icon (size-4). */
 function SidebarNavSkeleton() {
@@ -74,7 +75,7 @@ export function AppSidebar() {
         />
         <SidebarSeparator className="mx-0 bg-sidebar-border/60" />
       </SidebarHeader>
-      <SidebarContent className="admin-scrollbar sidebar-scroll min-h-0 px-2.5 pb-3 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:pb-2">
+      <SidebarContent className="admin-scrollbar sidebar-scroll min-h-0 pb-3 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:pb-2">
         <SidebarGroup className="gap-1 px-1  py-0.5 group-data-[collapsible=icon]:px-0.5 group-data-[collapsible=icon]:py-0.5">
           <SidebarGroupLabel className="px-1.5 text-sm  tracking-tight text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">
             Menu
@@ -83,7 +84,14 @@ export function AppSidebar() {
             <SidebarNavSkeleton />
           ) : (
             sidebarData.navGroups.map((props, index) => (
-              <NavGroup key={`${props.title}-${index}`} {...props} />
+              <StaggerItem
+                key={`${props.title}-${index}`}
+                index={index}
+                inView={false}
+                className="group-data-[collapsible=icon]:contents"
+              >
+                <NavGroup {...props} />
+              </StaggerItem>
             ))
           )}
         </SidebarGroup>

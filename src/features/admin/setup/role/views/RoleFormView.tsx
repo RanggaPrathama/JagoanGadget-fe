@@ -29,6 +29,7 @@ import {
   AdminFormHeader,
   FormSkeleton,
 } from "@/components/admin";
+import { AnimatedContainer } from "@/components/motion";
 import { cn } from "@/lib/utils";
 import { getMenusList } from "@/features/admin/setup/menu/service/menu.service";
 import type { MenuItem } from "@/features/admin/setup/menu/service/menu.service";
@@ -130,6 +131,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
 
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]">
           {/* Basic info card — name, code, description, status */}
+          <AnimatedContainer delay={0}>
           <Card className="admin-form-panel overflow-hidden p-0 gap-0">
             <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
               <CardTitle className="text-base">Basic Information</CardTitle>
@@ -216,6 +218,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
               </div>
             </CardContent>
           </Card>
+          </AnimatedContainer>
 
           {/* Summary card — shows active status, permission count, and selected modules */}
           <div className="flex flex-col gap-3">
@@ -228,6 +231,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
         </div>
 
         {/* Permission Assignment — select menus, then toggle individual permissions per menu */}
+        <AnimatedContainer delay={0.05}>
         <Card className="admin-form-panel overflow-hidden p-0 gap-0">
           <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 px-5 pt-5 pb-5 sm:px-7 sm:pt-6 sm:pb-6">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -440,6 +444,7 @@ export function RoleFormView({ roleId, mode = "edit" }: RoleFormViewProps) {
             )}
           </CardContent>
         </Card>
+        </AnimatedContainer>
 
         {/* Sticky Footer */}
         <AdminFormActions

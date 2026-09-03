@@ -3,7 +3,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { Plus, RefreshCw, Search } from "lucide-react";
 
 import { DataTable } from "@/components/data-table/data-table";
-import { RowActions, ActionButton } from "@/components/admin";
+import { RowActions, ActionButton, AdminListHeader } from "@/components/admin";
+import { AnimatedContainer } from "@/components/motion";
 import { ConfirmDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,18 +44,13 @@ export function PermissionListView() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Permission Setup
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Kelola daftar permission dan hak akses yang tersedia.
-          </p>
-        </div>
-      </div>
+      <AdminListHeader
+        title="Permission Setup"
+        description="Kelola daftar permission dan hak akses yang tersedia."
+      />
 
-      <Card className="overflow-hidden border-border/60 bg-card/90 shadow-sm">
+      <AnimatedContainer delay={0.3}>
+        <Card className="overflow-hidden border-border/60 bg-card/90 shadow-sm">
         <CardContent className="px-0 pb-0 pt-0">
           {/* Toolbar */}
           <div className="flex flex-col gap-2.5 border-b border-border/60 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
@@ -160,6 +156,7 @@ export function PermissionListView() {
           </div>
         </CardContent>
       </Card>
+      </AnimatedContainer>
 
       {/* ConfirmDialog: confirms deletion of a permission row and calls the
           delete mutation; closes on cancel or after mutation completes. */}

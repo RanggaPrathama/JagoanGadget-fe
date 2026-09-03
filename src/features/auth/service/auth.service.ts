@@ -62,18 +62,20 @@ export async function signOutAuth(
     return;
   }
 
-  const redirectTo = opts?.redirectTo ?? router.state.location.href;
+  const redirectTo = opts?.redirectTo ?? "/";
 
   try {
     await authClient.signOut();
-    clearAuthCache(queryClient);
-    await router.invalidate();
     toast.success("Berhasil keluar dari akun.");
+    // Navigate first, then clear cache. Clearing before navigate would make
+    // still-mounted `/me` observers (sidebar, command menu, user nav) refetch
+    // without the session cookie → 401 → error boundary (page 500).
     await router.navigate({
       to: "/sign-in",
       search: { redirect: redirectTo },
       replace: true,
     });
+    clearAuthCache(queryClient);
   } catch (error) {
     toast.error(getErrorMessage(error, "Gagal keluar dari akun."));
   }

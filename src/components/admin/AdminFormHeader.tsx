@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FadeIn } from "../motion";
 
 type AdminFormHeaderProps = {
   backTo: string;
@@ -22,7 +23,13 @@ export function AdminFormHeader({
   isEditMode,
 }: AdminFormHeaderProps) {
   return (
-    <section className="admin-form-shell p-3 sm:p-5 lg:p-6">
+    <FadeIn
+      y={-20}
+      inView={true}
+      once={true}
+      delay={0.2}
+      className="admin-form-shell p-3 sm:p-5 lg:p-6"
+    >
       <div className="relative z-10 flex items-center gap-4">
         <Button
           variant="outline"
@@ -41,7 +48,11 @@ export function AdminFormHeader({
               {badge}
             </Badge>
             <span className="rounded-full border border-border/70 bg-background/80 px-3 py-0.5 text-[11px] font-medium text-muted-foreground">
-              {readonly ? "View mode" : isEditMode ? "Edit mode" : "Create mode"}
+              {readonly
+                ? "View mode"
+                : isEditMode
+                  ? "Edit mode"
+                  : "Create mode"}
             </span>
           </div>
 
@@ -53,6 +64,6 @@ export function AdminFormHeader({
           </p>
         </div>
       </div>
-    </section>
+    </FadeIn>
   );
 }

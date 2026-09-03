@@ -50,3 +50,10 @@ export type RolePayload = {
   isActive: boolean;
   permissionIds: string[];
 };
+
+export type RoleStats = {
+  totalRoles: number;
+  activeRoles: number;
+  systemRoles: number;
+  customRoles: number;
+};

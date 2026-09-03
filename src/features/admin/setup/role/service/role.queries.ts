@@ -1,4 +1,8 @@
-import { queryOptions, useQuery, type QueryClient } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useQuery,
+  type QueryClient,
+} from "@tanstack/react-query";
 import type { QueryConfig } from "@/lib/react-query";
 import { getRoles, getRoleById } from "./role.service";
 
@@ -8,16 +12,16 @@ export const roleListQueryKey = ["roles"] as const;
 export type RoleListParams = {
   search?: string;
   page?: number;
+  show?: "active" | "inactive" | "all";
   limit?: number;
 };
 
 // Build the full query key including current filter/page params.
-export const getRoleListQueryKey = (
-  params?: RoleListParams,
-): unknown[] => [
+export const getRoleListQueryKey = (params?: RoleListParams): unknown[] => [
   ...roleListQueryKey,
   params?.search ?? "",
   params?.page ?? 1,
+  params?.show ?? "all",
   params?.limit ?? 25,
 ];
 
@@ -38,13 +42,17 @@ export const getRoleByIdQueryOptions = (roleId: string) =>
 // Hook: paginated role list.
 export const useGetRoleListQuery = (
   params?: RoleListParams,
-  { queryConfig }: { queryConfig?: QueryConfig<typeof getRoleListQueryOptions> } = {},
+  {
+    queryConfig,
+  }: { queryConfig?: QueryConfig<typeof getRoleListQueryOptions> } = {},
 ) => useQuery({ ...getRoleListQueryOptions(params), ...queryConfig });
 
 // Hook: single role by id.
 export const useGetRoleByIdQuery = (
   roleId: string,
-  { queryConfig }: { queryConfig?: QueryConfig<typeof getRoleByIdQueryOptions> } = {},
+  {
+    queryConfig,
+  }: { queryConfig?: QueryConfig<typeof getRoleByIdQueryOptions> } = {},
 ) => useQuery({ ...getRoleByIdQueryOptions(roleId), ...queryConfig });
 
 // Invalidate every role query so list/detail observers refetch.

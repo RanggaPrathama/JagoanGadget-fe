@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { AnimatedContainer } from "../motion";
 
 type AdminFormActionsProps = {
   formId: string;
@@ -58,7 +59,7 @@ export function AdminFormActions({
   }, [formId, readonly]);
 
   return (
-    <div className="admin-form-actions sticky bottom-4 z-20 flex flex-col-reverse gap-4 rounded-[1.75rem] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+    <AnimatedContainer delay={0.4} className="admin-form-actions sticky bottom-4 z-20 flex flex-col-reverse gap-4 rounded-[1.75rem] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
       {!readonly && (
         <>
           <div className="flex items-center justify-center sm:justify-start">
@@ -101,6 +102,6 @@ export function AdminFormActions({
           </ActionButton>
         )}
       </div>
-    </div>
+    </AnimatedContainer>
   );
 }

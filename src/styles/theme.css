@@ -1,6 +1,4 @@
 @import './themes/default.css';
-
-/* Import individual theme files */
 @import './themes/claude.css';
 @import './themes/light-green.css';
 @import './themes/astro-vista.css';
@@ -14,6 +12,15 @@ body {
 
 :root {
   --header-height: calc(var(--spacing, 0.25rem) * 12 + 1px);
+}
+
+/* Define font faces for FontProvider (`font-inter`, `font-manrope`,
+   `font-plus-jakarta`, `font-system`) and for `var(--font-*)` references.
+   `@theme` both emits the CSS variables AND generates the `font-*` utilities. */
+@theme {
+  --font-inter: "Inter Variable", system-ui, sans-serif;
+  --font-manrope: "Manrope Variable", system-ui, sans-serif;
+  --font-plus-jakarta: "Plus Jakarta Sans Variable", system-ui, sans-serif;
 }
 
 /* Apply theme fonts to body for all themes */
