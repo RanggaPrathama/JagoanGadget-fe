@@ -9,7 +9,7 @@ import type { NumberFormatFormValues } from "./useNumberFormatForm";
 import type { NumberFormatSegment } from "../types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- TanStack Form generics are too complex to type narrowly */
-function useNumberFormatSegments({ form }: { form: any }) {
+function useNumberFormatSegments({ form, isEditMode }: { form: any, isEditMode?: boolean }) {
   // User-selected prefixes (from ButtonSelect dialog)
   const [selectedPrefixes, setSelectedPrefixes] = useState<PrefixItem[]>([]);
 
@@ -60,9 +60,12 @@ function useNumberFormatSegments({ form }: { form: any }) {
   );
 
   // --- Sync preview to form field (external system update — allowed) ---
+  // In edit mode, keep the DB preview intact (server-generated, e.g. WH-20260904-0001)
+  // instead of overwriting it with the client-computed preview.
   useEffect(() => {
+    if (isEditMode) return;
     form.setFieldValue("preview", preview);
-  }, [form, preview]);
+  }, [form, preview, isEditMode]);
 
   // --- Handlers ---
   const handlePrefixesAdded = useCallback((items: PrefixItem[]) => {

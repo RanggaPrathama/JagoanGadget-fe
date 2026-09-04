@@ -61,6 +61,7 @@ export type ButtonSelectProps<T> = {
   debounceMs?: number;
   disabled?: boolean;
   className?: string;
+  allowDuplicates?: boolean;
 };
 
 // ---------------------------------------------------------------------------
@@ -85,6 +86,7 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
     debounceMs = 400,
     disabled = false,
     className,
+    allowDuplicates = false,
   } = props;
 
   const [open, setOpen] = React.useState(false);
@@ -152,6 +154,7 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
     visibleIds.length > 0 && visibleIds.some((id) => tempSet.has(id));
 
   const handleSelectAll = (checked: boolean) => {
+    if (allowDuplicates) return;
     if (checked) {
       const next = new Set(tempSelected);
       visibleIds.forEach((id) => next.add(id));
@@ -173,21 +176,22 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
   // ---- Dialog handlers ----
 
   const handleOpen = () => {
-    setTempSelected([...selectedIds]);
+    setTempSelected(allowDuplicates ? [] : [...selectedIds]);
     setSearch("");
     setOpen(true);
   };
 
   const handleSave = () => {
-    const selectedItems = allItems.filter((item) =>
-      tempSet.has(getRowId(item)),
-    );
-    onSelectionChange(tempSelected, selectedItems);
+    const selectedItems = tempSelected.flatMap((id) => {
+      const match = allItems.find((item) => getRowId(item) === id);
+      return match ? [match] : [];
+    });
+    onSelectionChange(allowDuplicates ? [] : tempSelected, selectedItems);
     setOpen(false);
   };
 
   const handleCancel = () => {
-    setTempSelected([...selectedIds]);
+    setTempSelected(allowDuplicates ? [] : [...selectedIds]);
     setOpen(false);
   };
 
@@ -210,7 +214,7 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
         className={cn("rounded-xl", className)}
       >
         {triggerText}
-        {selectedIds.length > 0 && (
+        {!allowDuplicates && selectedIds.length > 0 && (
           <span className="ml-1.5 rounded-full bg-primary-foreground/20 px-1.5 py-0.5 text-xs font-medium">
             {selectedIds.length}
           </span>
@@ -242,15 +246,17 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
             <Table>
               <TableHeader className="sticky top-0 z-10 bg-background">
                 <TableRow>
-                  <TableHead className="w-10">
-                    <Checkbox
-                      checked={renderCheckboxState()}
-                      onCheckedChange={(checked) =>
-                        handleSelectAll(checked === true)
-                      }
-                      aria-label="Select all"
-                    />
-                  </TableHead>
+                  {!allowDuplicates && (
+                    <TableHead className="w-10">
+                      <Checkbox
+                        checked={renderCheckboxState()}
+                        onCheckedChange={(checked) =>
+                          handleSelectAll(checked === true)
+                        }
+                        aria-label="Select all"
+                      />
+                    </TableHead>
+                  )}
                   {columns.map((col) => (
                     <TableHead key={String(col.accessorKey)}>
                       {col.header}
@@ -288,6 +294,9 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
                     {allItems.map((row) => {
                       const rowId = getRowId(row);
                       const isSelected = tempSet.has(rowId);
+                      const count = allowDuplicates
+                        ? tempSelected.filter((id) => id === rowId).length
+                        : 0;
 
                       return (
                         <TableRow
@@ -297,17 +306,30 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
                             "cursor-pointer",
                             isSelected && "bg-primary/5",
                           )}
-                          onClick={() => handleRowToggle(rowId, !isSelected)}
+                          onClick={() => {
+                            if (allowDuplicates) {
+                              handleRowToggle(rowId, true);
+                            } else {
+                              handleRowToggle(rowId, !isSelected);
+                            }
+                          }}
                         >
                           <TableCell>
-                            <Checkbox
-                              checked={isSelected}
-                              onCheckedChange={(checked) =>
-                                handleRowToggle(rowId, checked === true)
-                              }
-                              onClick={(e) => e.stopPropagation()}
-                              aria-label={`Select row ${rowId}`}
-                            />
+                            <div className="flex items-center gap-1.5">
+                              <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={(checked) =>
+                                  handleRowToggle(rowId, checked === true)
+                                }
+                                onClick={(e) => e.stopPropagation()}
+                                aria-label={`Select row ${rowId}`}
+                              />
+                              {allowDuplicates && count > 0 && (
+                                <span className="inline-flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                                  {count}
+                                </span>
+                              )}
+                            </div>
                           </TableCell>
                           {columns.map((col) => (
                             <TableCell key={String(col.accessorKey)}>

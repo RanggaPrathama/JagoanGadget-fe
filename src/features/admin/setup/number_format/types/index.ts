@@ -1,4 +1,8 @@
+import type { MenuItem } from "../../menu/types";
+
 export type NumberFormatSegment = {
+  /** Stable client-side unique ID for distinguishing duplicate prefixes. Not sent to backend. */
+  id?: string;
   /** UUID referencing a prefix master entry (admin/setup/prefix). */
   prefixId: string;
   /** Zero-based ordinal position within the generated number (0-based). */
@@ -17,6 +21,8 @@ export type NumberFormatItem = {
   id: string;
   /** Linked menu UUID, or null when the format is not bound to a menu. Enforces 1 format per menu. */
   menuId?: string | null;
+  /** Nested menu detail returned by the detail endpoint (edit/readonly display). */
+  menu?: MenuItem | null;
   /// generate preview string from segments, e.g. `"#1 #3"` or `""` when no segments
   preview?: string;
   /** Ordered segments composing the format (1..20 entries). */
@@ -49,6 +55,8 @@ export type NumberFormatListParams = {
 export type NumberFormatPayload = {
   /** Linked menu UUID, or null to unbind. Enforces 1 format per menu on the backend. */
   menuId?: string | null;
+
+  preview?: string;
   /** Ordered segments composing the format (1..20 entries, validated server-side). */
   segments: NumberFormatSegment[];
   /** Whether this format is active (defaults true server-side when omitted). */

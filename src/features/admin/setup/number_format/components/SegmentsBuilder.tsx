@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Hash, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -41,20 +42,28 @@ function SegmentsBuilder({
   const sortedSegments = sortSegmentsByIndex(segments);
   const segmentIds = sortedSegments.map((s) => s.prefixId);
 
+  // --- Backfill stable ids for segments loaded from backend (edit mode) ---
+  // Backend segments have no `id`; generate one per row so drag keys stay
+  // unique even with duplicate prefixes. Runs once per distinct missing id.
+  useEffect(() => {
+    const needsId = segments.some((s) => !s.id);
+    if (!needsId) return;
+    onSegmentsChange(
+      segments.map((s) => ({ ...s, id: s.id ?? crypto.randomUUID() })),
+    );
+  }, [segments, onSegmentsChange]);
+
   // --- Reorder handler (called by DraggableTable after drag) ---
   const handleReorder = (reordered: NumberFormatSegment[]) => {
     onSegmentsChange(reordered.map((s, i) => ({ ...s, index: i })));
   };
 
-  // --- ButtonSelect onChange: detect newly added prefixes ---
+  // --- ButtonSelect onChange: add new segments ---
   const handlePrefixSelect = (_ids: string[], items: PrefixItem[]) => {
-    const currentIds = new Set(segments.map((s) => s.prefixId));
-    const added = items.filter((item) => !currentIds.has(item.id));
-
-    if (added.length === 0) return;
+    if (items.length === 0) return;
 
     // Check max limit
-    if (segments.length + added.length > MAX_SEGMENTS) {
+    if (segments.length + items.length > MAX_SEGMENTS) {
       // TODO: toast warning
       return;
     }
@@ -64,7 +73,8 @@ function SegmentsBuilder({
         ? Math.max(...segments.map((s) => s.index)) + 1
         : 0;
 
-    const newSegments: NumberFormatSegment[] = added.map((item, i) => ({
+    const newSegments: NumberFormatSegment[] = items.map((item, i) => ({
+      id: crypto.randomUUID(),
       prefixId: item.id,
       index: nextIndex + i,
     }));
@@ -91,6 +101,7 @@ function SegmentsBuilder({
               : "Belum ada segmen"}
           </p>
           <ButtonSelect<PrefixItem>
+            allowDuplicates
             triggerText="Pilih Prefix"
             title="Pilih Prefix untuk Segmen"
             queryKey={["prefixes"]}
@@ -126,7 +137,7 @@ function SegmentsBuilder({
           <DraggableTable
             items={sortedSegments}
             onReorder={handleReorder}
-            getKey={(s) => s.prefixId}
+            getKey={(s) => s.id || s.prefixId}
           >
             <Table>
               <TableHeader>
@@ -146,8 +157,8 @@ function SegmentsBuilder({
 
                   return (
                     <DraggableRow
-                      key={segment.prefixId}
-                      id={segment.prefixId}
+                      key={segment.id || segment.prefixId}
+                      id={segment.id || segment.prefixId}
                       disabled={readonly}
                     >
                       <TableCell className="w-20">

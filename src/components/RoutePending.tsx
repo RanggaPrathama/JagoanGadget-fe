@@ -1,4 +1,5 @@
 import { Loaders } from "./Loaders";
+import { motion } from "framer-motion";
 
 /**
  * Route-level transport loader, shown only while the lazy route chunk resolves.
@@ -10,7 +11,19 @@ export function RoutePending() {
   return (
     <div className="flex min-h-[100dvh] w-full flex-col items-center justify-center gap-3">
       <Loaders />
-      <p className="text-sm font-medium text-muted-foreground">Loading…</p>
+      <motion.p
+        initial={{ opacity: 0.3 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: 0.8,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "easeInOut",
+        }}
+        className="text-sm font-medium text-muted-foreground"
+      >
+        Loading…
+      </motion.p>
     </div>
   );
 }

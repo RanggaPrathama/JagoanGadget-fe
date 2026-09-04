@@ -230,13 +230,7 @@ function NavBadge({ children }: { children: ReactNode }) {
 }
 
 /** Renders a leaf nav item as a plain route link. */
-function SidebarMenuLink({
-  item,
-  href,
-}: {
-  item: NavChildItem;
-  href: string;
-}) {
+function SidebarMenuLink({ item, href }: { item: NavChildItem; href: string }) {
   const { setOpenMobile } = useSidebar();
   const Icon = item.icon ?? Option;
   return (

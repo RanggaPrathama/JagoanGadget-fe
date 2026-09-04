@@ -42,6 +42,14 @@ export type FieldSelectAsyncProps<T> = Omit<
    * - `false` / omitted: fetches once on mount, filters client-side (legacy behavior).
    */
   serverSearch?: boolean | ServerSearchConfig;
+  /**
+   * Pre-resolved option for the current value. Merged into the dropdown so
+   * its label renders even if it's absent from the queried options (e.g.
+   * edit mode where the chosen item isn't in the server-filtered set).
+   * Use when the parent already holds the selected item (e.g. nested in the
+   * detail response) — avoids an extra fetch by id.
+   */
+  selectedOption?: FieldOption;
 };
 
 // ---------------------------------------------------------------------------
@@ -55,8 +63,9 @@ function FieldSelectAsync<T>({
   queryErrorMessage = "Failed to load options.",
   queryFn,
   queryKey,
-  serverSearch = false,
   searchPlaceholder,
+  selectedOption,
+  serverSearch = false,
   ...props
 }: FieldSelectAsyncProps<T>) {
   const isServerSearch = Boolean(serverSearch);
@@ -78,8 +87,24 @@ function FieldSelectAsync<T>({
       : () => queryFn(),
   });
 
+  // --- Resolve the selected option by id (edit mode with server filtering) ---
   // --- Map raw data to FieldOption[] ---
-  const options = (data ?? []).map(mapOption);
+  const options = React.useMemo(() => {
+    const mapped = (data ?? []).map(mapOption);
+
+    // Merge the pre-resolved selected option so its label renders even when
+    // it's absent from the queried options (e.g. server-filtered edit mode).
+    if (selectedOption) {
+      const alreadyListed = mapped.some(
+        (opt) => String(opt.value) === String(selectedOption.value),
+      );
+      if (!alreadyListed) {
+        mapped.unshift(selectedOption);
+      }
+    }
+
+    return mapped;
+  }, [data, mapOption, selectedOption]);
 
   // --- Error resolution ---
   const resolvedError = error ?? (isError ? queryErrorMessage : undefined);

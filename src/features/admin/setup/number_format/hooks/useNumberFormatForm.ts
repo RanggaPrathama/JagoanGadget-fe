@@ -96,6 +96,7 @@ export const useNumberFormatForm = ({
     form.setFieldValue("menuId", detail.menuId ?? "");
     form.setFieldValue("isActive", detail.isActive ?? true);
     form.setFieldValue("segments", detail.segments ?? []);
+    form.setFieldValue("preview", detail.preview ?? "");
   }, [detailQuery.data, form]);
 
   return {
@@ -103,6 +104,7 @@ export const useNumberFormatForm = ({
     form,
     mutation,
     formValidators,
+    detailQuery,
     isLoadingDetail: detailQuery.isLoading,
     isSubmitting: mutation.isPending,
   };

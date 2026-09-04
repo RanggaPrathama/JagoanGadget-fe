@@ -41,8 +41,14 @@ export const NumberFormatFormView = ({
       ? "Edit Number Format"
       : "Create Number Format";
 
-  const { isEditMode, form, formValidators, isLoadingDetail, isSubmitting } =
-    useNumberFormatForm({ numberFormatId });
+  const {
+    isEditMode,
+    form,
+    formValidators,
+    detailQuery,
+    isLoadingDetail,
+    isSubmitting,
+  } = useNumberFormatForm({ numberFormatId });
 
   const {
     segments,
@@ -50,7 +56,7 @@ export const NumberFormatFormView = ({
     handlePrefixesAdded,
     handleSegmentsChange,
     preview,
-  } = useNumberFormatSegments({ form });
+  } = useNumberFormatSegments({ form, isEditMode });
 
   if (isEditMode && isLoadingDetail) {
     return <FormSkeleton count={2} />;
@@ -114,19 +120,37 @@ export const NumberFormatFormView = ({
                     value: menu.id,
                   })}
                   serverSearch
+                  selectedOption={
+                    detailQuery.data?.menu
+                      ? {
+                          label: `${detailQuery.data.menu.name} (${detailQuery.data.menu.code})`,
+                          value: detailQuery.data.menu.id,
+                        }
+                      : undefined
+                  }
                   queryErrorMessage="Failed to load menus."
                 />
               )}
             </form.Field>
 
-            <FieldInput
-              label="Preview"
-              readOnly
-              value={preview ?? ""}
-              placeholder="Preview akan muncul setelah menambahkan segmen"
-              disabled={readonly}
-              className="font-mono"
-            />
+            <form.Field
+              name="preview"
+              validators={{
+                onBlur: formValidators.preview,
+                onSubmit: formValidators.preview,
+              }}
+            >
+              {(field) => (
+                <FieldInput
+                  label="Preview"
+                  readOnly
+                  value={field.state.value ?? preview ?? ""}
+                  placeholder="Preview akan muncul setelah menambahkan segmen"
+                  disabled={readonly}
+                  className="font-mono"
+                />
+              )}
+            </form.Field>
 
             <form.Field
               name="isActive"
